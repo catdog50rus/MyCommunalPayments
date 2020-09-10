@@ -1,0 +1,132 @@
+﻿@page "/Services/invoiceServices"
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> repository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> periodRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> invoiceServicesRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Квитанции ЖКХ </h2>
+            <!--  Отображение таблицы со счетами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="w-50">Услуга</th>
+                        <th scope="col" class="w-25">Показания счетчика</th>
+                        <th class="w-25"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+
+                <tbody>
+                    <tr>
+                        <td>
+                            <!--Услуга-->
+                            <div>
+                                <select class="form-control" placeholder="Услуга" @bind="serviceName">
+                                    @foreach (var item in servicesList)
+                                    {
+                                        <option>@item.NameService</option>
+                                    }
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <!--Показания счетчика-->
+                            <div class="text-center">
+                                <input class="form-control" placeholder="Показания счетчика" @bind="amount" />
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-sm btn-primary" @onclick="AddService">Добавить</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@code
+{
+
+    #region Поля, Инициализация формы, Модальное окно
+    private Invoice invoice;
+    private IEnumerable<Invoice> invoices;
+
+    //Periods
+    //private Period period;
+    private List<Period> periodsList;
+    private string periodName;
+
+    //Services
+    private Service service;
+    private List<Service> servicesList;
+    private string serviceName;
+    private int amount;
+
+    private InvoiceServices invoiceServices;
+    private IEnumerable<InvoiceServices> invoiceServicesCollection;
+
+
+    protected override void OnInitialized()
+    {
+        periodsList = periodRepository.GetAll().ToList();
+        servicesList = servicesRepository.GetAll().ToList();
+        invoices = repository.GetAll();
+        periodName = periodsList[0].Month;
+        serviceName = servicesList[0].NameService;
+        invoiceServicesCollection = invoiceServicesRepository.GetAll();
+
+        invoice = default;
+    }
+
+    private Period GetPeriodByName(string name)
+    {
+        return periodsList.SingleOrDefault(n => n.Month == name);
+    }
+
+    private Service GetServiceByName(string name)
+    {
+        return servicesList.Single(s => s.NameService == name);
+    }
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    private void SetService(Invoice item)
+    {
+        invoice = item;
+        invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
+    }
+
+    private void AddService()
+    {
+        service = GetServiceByName(serviceName);
+        invoiceServices = new InvoiceServices()
+        {
+            Invoice = invoice,
+            Service = service,
+            Amount = amount
+        };
+        invoiceServicesRepository.Add(invoiceServices);
+
+    }
+
+    private void RemoveService(InvoiceServices item)
+    {
+        invoiceServicesRepository.Remove(item);
+    }
+
+
+    #endregion
+
+
+}

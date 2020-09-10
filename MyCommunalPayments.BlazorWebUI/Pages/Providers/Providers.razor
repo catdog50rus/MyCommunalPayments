@@ -1,0 +1,164 @@
+﻿@page "/Providers/providers"
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> repository
+
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Поставщики услуг ЖКХ </h2>
+            <!--Добавление нового поставщика-->
+            <div class="row mb-3">
+                <div class="col">
+                    <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
+                </div>
+            </div>
+            <!--  Таблица с услугами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="w-50">Наименование поставщика</th>
+                        <th scope="col">Web site</th>
+                        <th scope="col" class="w-auto text-center"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+                @foreach (var item in providers)
+                {
+                    <tbody>
+                        <tr>
+                            <!--Наименование услуги-->
+                            <td>
+                                <div>
+                                    @item.NameProvider
+                                </div>
+
+                            </td>
+                            <!--Количество-->
+                            <td>
+                                <div>
+                                    @item.WebSite
+                                </div>
+
+                            </td>
+                            <!--Блок кнопок-->
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<Modal @ref="modal">
+    <Title>Добавление нового поставщика услуг ЖКХ</Title>
+    <CloseButton>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </CloseButton>
+    <Body>
+        <div class="col mb-3">
+            <input class="form-control" placeholder="Новый поставщик" @bind-value="@provideName" />
+        </div>
+        <div class="col mb-3">
+            <input class="form-control" placeholder="Web site" @bind-value="webSite" />
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+    </Footer>
+</Modal>
+
+
+@code
+{
+    #region Поля, Инициализация формы, Модальное окно
+
+    private Provider provider = default;
+    private IEnumerable<Provider> providers;
+    private string provideName;
+    private string webSite;
+
+    //Модальное окно
+    private Modal modal { get; set; }
+    private void CloseModal()
+    {
+        provideName = default;
+        webSite = default;
+        modal.Close();
+    }
+    private void OpenModal()
+    {
+        modal.Open();
+    }
+
+    protected override void OnInitialized()
+    {
+        providers = new List<Provider>();
+        providers = repository.GetAll();
+    }
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    /// <summary>
+    /// Добавить или отредактировать
+    /// </summary>
+    private void Add()
+    {
+        if (!string.IsNullOrWhiteSpace(provideName) || !string.IsNullOrWhiteSpace(provider.NameProvider))
+        {
+
+            if (provider == null)
+            {
+                provider = new Provider()
+                {
+                    NameProvider = provideName,
+                    WebSite = webSite
+                };
+
+                repository.Add(provider);
+            }
+            else
+            {
+                provider.NameProvider = provideName;
+                provider.WebSite = webSite;
+                repository.Edit(provider);
+            }
+        }
+
+        CloseModal();
+    }
+
+    /// <summary>
+    /// Изменить запись
+    /// </summary>
+    private void Edit(Provider item)
+    {
+        provider = item;
+        modal.Open();
+        provideName = item.NameProvider;
+        webSite = item.WebSite;
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    /// <param name="item"></param>
+    private void Remove(Provider item)
+    {
+        repository.Remove(item);
+    }
+
+    #endregion
+
+}

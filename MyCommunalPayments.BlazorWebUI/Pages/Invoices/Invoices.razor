@@ -1,0 +1,416 @@
+﻿@page "/Invoices/invoices"
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> repository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> periodRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> invoiceServicesRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Квитанции ЖКХ </h2>
+            <!--Добавление нового счета-->
+            <div class="row mb-3">
+                <div class="col">
+                    <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
+                </div>
+            </div>
+            <!--  Отображение таблицы со счетами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Оплачено</th>
+                        <th scope="col" class="w-auto">Период</th>
+                        <th scope="col" class="w-auto">Поставщик услуг</th>
+                        <th scope="col" class="w-auto">Сумма</th>
+                        <th scope="col" class="w-auto"></th>
+                        <th scope="col" class="w-auto"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+                @foreach (var item in invoices)
+                {
+                    <tbody>
+                        <tr>
+                            <!--Чек-бокс-->
+                            <td>
+                                <div class="text-center align-content-center">
+                                    @if (item.Pay)//Проверяем, был ли флажек в БД
+                                    {
+                                        //Если был ставим атрибут checked
+                                         <input onclick="return false;" type="checkbox" checked="checked" />
+                                    }
+                                    else
+                                    {
+                                        <input onclick="return false;" type="checkbox"  />
+                                    }
+                                </div>
+                            </td>
+                            <!--Период-->
+                            <td>
+                                <div>
+                                    @item.Period.Month
+                                </div>
+                            </td>
+                            <!--Поставщик-->
+                            <td>
+                                <div>
+                                    @item.Provider.NameProvider
+                                </div>
+                            </td>
+                            <!--Сумма-->
+                            <td>
+                                <div class="text-right">
+                                    @item.InvoiceSum
+                                </div>
+
+                            </td>
+                            <!--Блок кнопок-->
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                    <button class="btn btn-sm btn-warning" @onclick="(()=>SetService(item))">Услуги</button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <a class="btn btn-sm btn-outline-success" role="button" href="@item.Provider.WebSite" target="_blank" @onclick="()=>Pay(item)">Оплатить</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<Modal @ref="modal">
+    <Title>
+        @if (!isService)
+        {
+            <p>Добавление нового счета за ЖКХ</p>
+        }
+        else
+        {
+            <p>Добавить услуги</p>
+        }
+
+    </Title>
+    <CloseButton>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </CloseButton>
+    <Body>
+        @if (!isService)
+        {
+            <!--Период-->
+            <div class="col mb-3">
+                <select class="form-control" placeholder="Период" @bind="periodName">
+                    @foreach (var item in periodsList)
+                    {
+                        <option>@item.Month</option>
+                    }
+                </select>
+            </div>
+            <!--Поставщик-->
+            <div class="col mb-3">
+                <select class="form-control" placeholder="Поставщик" @bind="providerName">
+                    @foreach (var item in providersList)
+                    {
+                        <option>@item.NameProvider</option>
+                    }
+                </select>
+            </div>
+            <!--Сумма-->
+            <div class="col mb-3">
+                <input class="form-control" placeholder="Сумма" @bind="summ" />
+            </div>
+        }
+        else
+        {
+            <div >
+                <table class="table table-sm table-bordered table-hover">
+                    <!--Заголовок таблицы-->
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" class="w-50">Услуга</th>
+                            <th scope="col" class="w-25">Показания счетчика</th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <!--Тело таблицы-->
+                    @foreach (var item in invoiceServicesCollection)
+                    {
+                        <tbody>
+                            <tr>
+                                <!--Услуга-->
+                                <td>
+                                    <div>
+                                        @item.Service.NameService
+                                    </div>
+                                </td>
+
+                                <!--Показание счетчика-->
+                                <td>
+                                    <div class="text-center">
+                                        @item.Amount
+                                    </div>
+
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-danger" @onclick="(() => RemoveService(item))">Удалить</button>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
+            <div>
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="w-50"></th>
+                            <th class="w-25"></th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <!--Услуга-->
+                                <div>
+                                    <select class="form-control" placeholder="Услуга" @bind="serviceName">
+                                        @foreach (var item in servicesList)
+                                        {
+                                            <option>@item.NameService</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <!--Показания счетчика-->
+                                <div class="text-center">
+                                    <input class="form-control" placeholder="Показания счетчика" @bind="amount" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-sm btn-primary" @onclick="AddService">Добавить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+        }
+
+    </Body>
+    <Footer>
+        @if (!isService)
+        {
+            <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+        }
+        else
+        {
+           
+        }
+    </Footer>
+</Modal>
+
+@code
+{
+
+    #region Поля, Инициализация формы, Модальное окно
+    private Invoice invoice;
+    private IEnumerable<Invoice> invoices;
+    private decimal summ;
+    private bool pay;
+
+    //Providers
+    private Provider provider;
+    private List<Provider> providersList;
+    private string providerName;
+
+    //Periods
+    private Period period;
+    private List<Period> periodsList;
+    private string periodName;
+
+    //Services
+    private bool isService;
+    private Service service;
+    private List<Service> servicesList;
+    private string serviceName;
+    private int amount;
+
+    private InvoiceServices invoiceServices;
+    private IEnumerable<InvoiceServices> invoiceServicesCollection;
+
+
+    //Модальное окно
+    private Modal modal { get; set; }
+
+
+    private void CloseModal()
+    {
+        providerName = default;
+        periodName = default;
+        summ = default;
+        invoice = default;
+        isService = false;
+        invoiceServices = default;
+        pay = default;
+        modal.ModalSize = "";
+
+        modal.Close();
+    }
+
+    private void OpenModal()
+    {
+        modal.Open();
+    }
+
+    protected override void OnInitialized()
+    {
+        providersList = providerRepository.GetAll().ToList();
+        periodsList = periodRepository.GetAll().ToList();
+        servicesList = servicesRepository.GetAll().ToList();
+        invoices = repository.GetAll();
+        providerName = providersList[0].NameProvider;
+        periodName = periodsList[0].Month;
+        serviceName = servicesList[0].NameService;
+        pay = default;
+
+        invoice = default;
+    }
+
+    private Provider GetProviderByName(string name)
+    {
+        return providersList.SingleOrDefault(n => n.NameProvider == name);
+    }
+
+    private Period GetPeriodByName(string name)
+    {
+        return periodsList.SingleOrDefault(n => n.Month == name);
+    }
+
+    private Service GetServiceByName(string name)
+    {
+        return servicesList.Single(s => s.NameService == name);
+    }
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    /// <summary>
+    /// Добавить или отредактировать
+    /// </summary>
+    private void Add()
+    {
+        if (!string.IsNullOrWhiteSpace(periodName) && !string.IsNullOrWhiteSpace(providerName))
+        {
+            //Добавить новый
+            if (invoice == null)
+            {
+                provider = GetProviderByName(providerName);
+                period = GetPeriodByName(periodName);
+                invoice = new Invoice()
+                {
+                    Period = period,
+                    Provider = provider,
+                    InvoiceSum = summ,
+                    Pay = false
+                };
+                repository.Add(invoice);
+
+            }
+            //Отредактировать
+            else
+            {
+                invoice.Period = GetPeriodByName(periodName);
+                invoice.Provider = GetProviderByName(providerName);
+                invoice.InvoiceSum = summ;
+                invoice.Pay = pay;
+                repository.Edit(invoice);
+            }
+
+        }
+
+        CloseModal();
+    }
+
+    /// <summary>
+    /// Изменить запись
+    /// </summary>
+    private void Edit(Invoice item)
+    {
+        invoice = item;
+        modal.Open();
+
+        periodName = item.Period.Month;
+        providerName = item.Provider.NameProvider;
+        summ = item.InvoiceSum;
+        pay = item.Pay;
+
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    /// <param name="item"></param>
+    private void Remove(Invoice item)
+    {
+        repository.Remove(item);
+    }
+
+    private void SetService(Invoice item)
+    {
+        invoice = item;
+        invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
+        isService = true;
+        modal.ModalSize = "modal-lg";
+        OpenModal();
+    }
+
+    private void AddService()
+    {
+        service = GetServiceByName(serviceName);
+        invoiceServices = new InvoiceServices()
+        {
+            Invoice = invoice,
+            Service = service,
+            Amount = amount
+        };
+        invoiceServicesRepository.Add(invoiceServices);
+        //CloseModal();
+
+    }
+
+    private void RemoveService(InvoiceServices item)
+    {
+        invoiceServicesRepository.Remove(item);
+    }
+
+    private void Pay(Invoice item)
+    {
+        invoice = item;
+        invoice.Pay = true;
+        repository.Edit(invoice);
+    }
+
+    #endregion
+
+
+}

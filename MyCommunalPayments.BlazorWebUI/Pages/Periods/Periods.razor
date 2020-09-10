@@ -1,0 +1,164 @@
+﻿@page "/Periods/periods"
+@using MyCommunalPayments.BlazorWebUI.Pages
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> repository
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Поставщики услуг ЖКХ </h2>
+            <!--Добавление нового периода-->
+            <div class="row mb-3">
+                <div class="col">
+                    <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
+                </div>
+            </div>
+            <!--  Таблица с периодами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th scope="col" class="w-auto">Год</th>
+                        <th scope="col" class="w-auto">Расчетный период</th>
+                        <th scope="col" class="w-auto text-center"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+                @foreach (var item in periods)
+                {
+                    <tbody>
+                        <tr>
+                            <!--Год-->
+                            <td>
+                                <div>
+                                    @item.Year
+                                </div>
+
+                            </td>
+                            <!--Количество-->
+                            <td>
+                                <div>
+                                    @item.Month
+                                </div>
+
+                            </td>
+                            <!--Блок кнопок-->
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<Modal @ref="modal">
+    <Title>Добавление нового поставщика услуг ЖКХ</Title>
+    <CloseButton>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </CloseButton>
+    <Body>
+        <div class="col mb-3">
+            <input class="form-control" placeholder="Расчетный год" @bind-value="@year" />
+        </div>
+        <div class="col mb-3">
+            <input class="form-control" placeholder="расчетный период" @bind-value="month" />
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+    </Footer>
+</Modal>
+
+
+@code
+{
+    #region Поля, Инициализация формы, Модальное окно
+
+    private Period period = default;
+    private IEnumerable<Period> periods;
+    private string year;
+    private string month;
+
+    //Модальное окно
+    private Modal modal { get; set; }
+    private void CloseModal()
+    {
+        year = default;
+        month = default;
+        modal.Close();
+    }
+    private void OpenModal()
+    {
+        modal.Open();
+    }
+
+    protected override void OnInitialized()
+    {
+        periods = new List<Period>();
+        periods = repository.GetAll();
+    }
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    /// <summary>
+    /// Добавить или отредактировать
+    /// </summary>
+    private void Add()
+    {
+        if (!string.IsNullOrWhiteSpace(year) && !string.IsNullOrWhiteSpace(month))
+        {
+
+            if (period == null)
+            {
+                period = new Period()
+                {
+                    Year = year,
+                    Month = month
+                };
+
+                repository.Add(period);
+            }
+            else
+            {
+                period.Year = year;
+                period.Month = month;
+                repository.Edit(period);
+            }
+        }
+
+        CloseModal();
+    }
+
+    /// <summary>
+    /// Изменить запись
+    /// </summary>
+    private void Edit(Period item)
+    {
+        period = item;
+        modal.Open();
+        year = item.Year;
+        month = item.Month;
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    /// <param name="item"></param>
+    private void Remove(Period item)
+    {
+        repository.Remove(item);
+    }
+
+    #endregion
+
+}
