@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyCommunalPayments.Models.Models
@@ -15,7 +14,7 @@ namespace MyCommunalPayments.Models.Models
         /// <summary>
         /// Дата платежа
         /// </summary>
-        public DateTime DatePayment { get; set; } = DateTime.Today;
+        public string DatePayment { get; set; }
         /// <summary>
         /// Сумма платежа
         /// </summary>
@@ -24,5 +23,18 @@ namespace MyCommunalPayments.Models.Models
         /// Путь к платежке
         /// </summary>
         public string OrderPath { get; set; }
+        /// <summary>
+        /// Счет за ЖКХ
+        /// </summary>
+        public int IdInvoice { get; set; }
+        /// <summary>
+        /// Счет за ЖКХ
+        /// </summary>
+        [ForeignKey("IdInvoice")]
+        public Invoice Invoice { get; set; }
+        /// <summary>
+        /// Флаг была ли произведена оплата
+        /// </summary>
+        public bool Paid { get; set; }
     }
 }

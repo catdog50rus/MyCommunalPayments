@@ -1,0 +1,225 @@
+﻿@page "/Invoices/Payments/{invoiceId}"
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Payment> repository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoicesRepository
+
+
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Платежи за услуги ЖКХ </h2>
+            <!--Добавление нового платежа-->
+            <div class="row mb-3">
+                <div class="col">
+                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                </div>
+            </div>
+            <!--  Таблица с платежами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="w-50">Период</th>
+                        <th scope="col" class="w-50">Наименование поставщика</th>
+                        <th scope="col">Сумма по квитанции</th>
+                        <th scope="col">Дата оплаты</th>
+                        <th scope="col">Сумма платежа</th>
+                        <th scope="col" class="w-auto text-center"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+                @foreach (var item in paymentsList)
+                {
+                    <tbody>
+                        <tr>
+                            <!--Период-->
+                            <td>
+                                <div>
+                                    @item.Invoice.Period
+                                </div>
+
+                            </td>
+                            <!--Наименование поставщика-->
+                            <td>
+                                <div>
+                                    @item.Invoice.Provider.NameProvider
+                                </div>
+
+                            </td>
+                            <!--Сумма счета-->
+                            <td>
+                                <div>
+                                    @item.Invoice.InvoiceSum
+                                </div>
+
+                            </td>
+                            <!--Дата оплаты-->
+                            <td>
+                                <div>
+                                    @item.DatePayment
+                                </div>
+
+                            </td>
+                            <!--Сумма платежа-->
+                            <td>
+                                <div>
+                                    @item.PaymentSum
+                                </div>
+
+                            </td>
+                            <!--Блок кнопок-->
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<Modal @ref="modal">
+    <Title>Добавление новой оплаты за услуги ЖКХ</Title>
+    <CloseButton>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </CloseButton>
+    <Body>
+        <div class="row mb-3 text-center">
+            <div class="col-1 text-center align-content-center">
+                <!--Чек-бокс-->
+                @if (paid)//Проверяем, был ли флажек в БД
+                {
+                    //Если был ставим атрибут checked
+                    <input type="checkbox" checked="checked" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
+                }
+                else
+                {
+                    <input type="checkbox" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
+                }
+            </div>
+            <div class="col-4">
+                <input class="form-control" placeholder="Дата оплаты" @bind-value="datePayment" />
+            </div>
+            <div class="col-4">
+                <input class="form-control" placeholder="Сумма платежа" @bind-value="paymentSum" />
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-sm btn-secondary">Выбрать файл</button>
+            </div>
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+    </Footer>
+</Modal>
+
+
+@code
+{
+    #region Поля, Инициализация формы, Модальное окно
+
+    private Payment payment = default;
+    private IEnumerable<Payment> paymentsList;
+    private string datePayment;
+    private decimal paymentSum;
+    private string orderPath;
+    private Invoice invoice;
+    private bool paid;
+
+    [Parameter]
+    public string invoiceId { get; set; }
+    private int _invoiceId;
+
+
+    //Модальное окно
+    private Modal modal { get; set; }
+    private void CloseModal()
+    {
+        modal.Close();
+    }
+    private void OpenModal()
+    {
+        modal.ModalSize = "modal-lg";
+        modal.Open();
+    }
+
+    protected override void OnInitialized()
+    {
+        paymentsList = repository.GetAll();
+        _invoiceId = int.Parse(invoiceId);
+        invoice = invoicesRepository.GetAll().First(i => i.IdInvoice == _invoiceId);
+        datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
+
+    }
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    /// <summary>
+    /// Добавить или отредактировать
+    /// </summary>
+    private void Add()
+    {
+        if (!string.IsNullOrWhiteSpace(orderPath) && invoice != null)
+        {
+
+            if (payment == null)
+            {
+                payment = new Payment()
+                {
+                    DatePayment = datePayment,
+                    Invoice = invoice,
+                    OrderPath = orderPath,
+                    PaymentSum = paymentSum,
+                    Paid = paid
+                };
+
+                repository.Add(payment);
+            }
+            else
+            {
+                payment.DatePayment = datePayment;
+                payment.OrderPath = orderPath;
+                payment.Paid = paid;
+                payment.PaymentSum = paymentSum;
+                repository.Edit(payment);
+            }
+        }
+
+        CloseModal();
+    }
+
+    /// <summary>
+    /// Изменить запись
+    /// </summary>
+    private void Edit(Payment item)
+    {
+        payment = item;
+        paid = item.Paid;
+        datePayment = item.DatePayment;
+        paymentSum = item.PaymentSum;
+        orderPath = item.OrderPath;
+        modal.Open();
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    /// <param name="item"></param>
+    private void Remove(Payment item)
+    {
+        repository.Remove(item);
+    }
+
+    #endregion
+
+    
+}

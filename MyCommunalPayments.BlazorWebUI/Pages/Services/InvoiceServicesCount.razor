@@ -1,4 +1,5 @@
-﻿@page "/Services/invoiceServices"
+﻿@page "/Services/invoiceServices/"
+@page "/Services/invoiceServices/{invoiceId}"
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> repository
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> periodRepository
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> invoiceServicesRepository
@@ -7,45 +8,45 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h2 class="text-center">Квитанции ЖКХ </h2>
+            <h2 class="text-center">Показания счетчиков</h2>
+            <p>Период: <span>@periodName</span> </p>  
+            <p>Поставщик услуг: <span>@providerName</span> </p>
             <!--  Отображение таблицы со счетами  -->
             <table class="table table-sm table-bordered table-hover ">
                 <!--Заголовок таблицы-->
                 <thead class="table-dark">
                     <tr>
                         <th scope="col" class="w-50">Услуга</th>
-                        <th scope="col" class="w-25">Показания счетчика</th>
+                        <th scope="col" class="text-center w-25">Показания счетчика</th>
                         <th class="w-25"></th>
                     </tr>
                 </thead>
                 <!--Тело таблицы-->
+                @foreach (var item in invoiceServicesCollection)
+                {
+                    <tbody>
+                        <tr>
+                            <td>
+                                <!--Услуга-->
+                                <div>
+                                    @item.Service.NameService
+                                </div>
+                            </td>
+                            <td>
+                                <!--Показания счетчика-->
+                                <div class="text-center">
+                                    @item.Amount
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
 
-                <tbody>
-                    <tr>
-                        <td>
-                            <!--Услуга-->
-                            <div>
-                                <select class="form-control" placeholder="Услуга" @bind="serviceName">
-                                    @foreach (var item in servicesList)
-                                    {
-                                        <option>@item.NameService</option>
-                                    }
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <!--Показания счетчика-->
-                            <div class="text-center">
-                                <input class="form-control" placeholder="Показания счетчика" @bind="amount" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="text-center">
-                                <button type="button" class="btn btn-sm btn-primary" @onclick="AddService">Добавить</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
 
             </table>
         </div>
@@ -57,68 +58,37 @@
 {
 
     #region Поля, Инициализация формы, Модальное окно
-    private Invoice invoice;
-    private IEnumerable<Invoice> invoices;
+    [Parameter]
+    public string invoiceId { get; set; }
 
-    //Periods
-    //private Period period;
-    private List<Period> periodsList;
+    private int invoice;
     private string periodName;
+    private string providerName;
+    private List<InvoiceServices> invoiceServicesCollection;
 
-    //Services
-    private Service service;
-    private List<Service> servicesList;
-    private string serviceName;
-    private int amount;
+    protected override void OnParametersSet()
+    {
+        invoice = int.Parse(invoiceId);
+        invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice).ToList();
+        if(invoiceServicesCollection.Count > 0)
+        {
+            periodName = invoiceServicesCollection[0].Invoice.Period.Month;
+            providerName = invoiceServicesCollection[0].Invoice.Provider.NameProvider;
+        }
 
-    private InvoiceServices invoiceServices;
-    private IEnumerable<InvoiceServices> invoiceServicesCollection;
-
+    }
 
     protected override void OnInitialized()
     {
-        periodsList = periodRepository.GetAll().ToList();
-        servicesList = servicesRepository.GetAll().ToList();
-        invoices = repository.GetAll();
-        periodName = periodsList[0].Month;
-        serviceName = servicesList[0].NameService;
-        invoiceServicesCollection = invoiceServicesRepository.GetAll();
-
-        invoice = default;
+        periodName = "";
+        providerName = "";
     }
 
-    private Period GetPeriodByName(string name)
-    {
-        return periodsList.SingleOrDefault(n => n.Month == name);
-    }
-
-    private Service GetServiceByName(string name)
-    {
-        return servicesList.Single(s => s.NameService == name);
-    }
 
     #endregion
 
     #region Обработка нажатия кнопок
 
-    private void SetService(Invoice item)
-    {
-        invoice = item;
-        invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
-    }
-
-    private void AddService()
-    {
-        service = GetServiceByName(serviceName);
-        invoiceServices = new InvoiceServices()
-        {
-            Invoice = invoice,
-            Service = service,
-            Amount = amount
-        };
-        invoiceServicesRepository.Add(invoiceServices);
-
-    }
 
     private void RemoveService(InvoiceServices item)
     {

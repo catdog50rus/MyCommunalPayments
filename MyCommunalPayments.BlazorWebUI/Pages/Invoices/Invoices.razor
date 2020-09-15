@@ -4,6 +4,9 @@
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> periodRepository
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> invoiceServicesRepository
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository
+@inject NavigationManager navi
+
 <!-- Форма -->
 <div class="container-fluid">
     <div class="row">
@@ -39,11 +42,11 @@
                                     @if (item.Pay)//Проверяем, был ли флажек в БД
                                     {
                                         //Если был ставим атрибут checked
-                                         <input onclick="return false;" type="checkbox" checked="checked" />
+                                        <input onclick="return false;" type="checkbox" checked="checked" />
                                     }
                                     else
                                     {
-                                        <input onclick="return false;" type="checkbox"  />
+                                        <input onclick="return false;" type="checkbox" />
                                     }
                                 </div>
                             </td>
@@ -76,7 +79,8 @@
                             </td>
                             <td>
                                 <div class="text-center">
-                                    <a class="btn btn-sm btn-outline-success" role="button" href="@item.Provider.WebSite" target="_blank" @onclick="()=>Pay(item)">Оплатить</a>
+                                    <button class="btn btn-sm btn-outline-success" @onclick="()=>Pay(item)">Оплатить</button>
+                                    @*<a class="btn btn-sm btn-outline-success" role="button" href="@item.Provider.WebSite" target="_blank" @onclick="()=>Pay(item)">Оплатить</a>*@
                                 </div>
                             </td>
                         </tr>
@@ -133,7 +137,8 @@
         }
         else
         {
-            <div >
+            <!--Таблица выбранных услуг-->
+            <div>
                 <table class="table table-sm table-bordered table-hover">
                     <!--Заголовок таблицы-->
                     <thead class="table-dark">
@@ -174,6 +179,7 @@
                     }
                 </table>
             </div>
+            <!--Таблица выбора услуг-->
             <div>
                 <table class="table table-sm table-bordered table-hover">
                     <thead class="table-light">
@@ -189,9 +195,9 @@
                                 <!--Услуга-->
                                 <div>
                                     <select class="form-control" placeholder="Услуга" @bind="serviceName">
-                                        @foreach (var item in servicesList)
+                                        @foreach (var item in providersServicesList)
                                         {
-                                            <option>@item.NameService</option>
+                                            <option>@item.Service.NameService</option>
                                         }
                                     </select>
                                 </div>
@@ -223,7 +229,7 @@
         }
         else
         {
-           
+
         }
     </Footer>
 </Modal>
@@ -241,6 +247,7 @@
     private Provider provider;
     private List<Provider> providersList;
     private string providerName;
+    private List<ProvidersServices> providersServicesList;
 
     //Periods
     private Period period;
@@ -271,6 +278,7 @@
         isService = false;
         invoiceServices = default;
         pay = default;
+        providersServicesList = default;
         modal.ModalSize = "";
 
         modal.Close();
@@ -291,6 +299,7 @@
         periodName = periodsList[0].Month;
         serviceName = servicesList[0].NameService;
         pay = default;
+
 
         invoice = default;
     }
@@ -379,6 +388,7 @@
     {
         invoice = item;
         invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
+        providersServicesList = providersServicesRepository.GetAll().Where(p => p.IdProvider == item.IdProvider).ToList();
         isService = true;
         modal.ModalSize = "modal-lg";
         OpenModal();
@@ -394,7 +404,6 @@
             Amount = amount
         };
         invoiceServicesRepository.Add(invoiceServices);
-        //CloseModal();
 
     }
 
@@ -406,8 +415,9 @@
     private void Pay(Invoice item)
     {
         invoice = item;
-        invoice.Pay = true;
-        repository.Edit(invoice);
+        navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
+        //invoice.Pay = true;
+        //repository.Edit(invoice);
     }
 
     #endregion

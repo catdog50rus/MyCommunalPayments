@@ -41,7 +41,9 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
             services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
             services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
             services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
+            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();

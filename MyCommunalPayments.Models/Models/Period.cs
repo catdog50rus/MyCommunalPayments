@@ -16,7 +16,7 @@ namespace MyCommunalPayments.Models.Models
 
         public override string ToString()
         {
-            return Month;
+            return $"{Month} {Year}";
         }
     }
 }

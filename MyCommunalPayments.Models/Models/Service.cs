@@ -20,5 +20,11 @@ namespace MyCommunalPayments.Models.Models
         /// </summary>
         public bool IsCounter { get; set; }
 
+        public override string ToString()
+        {
+            return NameService;
+        }
+        
+
     }
 }

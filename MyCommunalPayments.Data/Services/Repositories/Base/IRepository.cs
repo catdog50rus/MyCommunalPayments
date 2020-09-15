@@ -24,5 +24,6 @@ namespace MyCommunalPayments.Data.Services.Repositories.Base
         /// Удалить услугу
         /// </summary>
         void Remove(T item);
+
     }
 }

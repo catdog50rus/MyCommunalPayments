@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyCommunalPayments.Data.Context;
 
 namespace MyCommunalPayments.Data.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20200911114548_AddTableProvidersServices")]
+    partial class AddTableProvidersServices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,21 +79,13 @@ namespace MyCommunalPayments.Data.Migrations
                     b.Property<DateTime>("DatePayment")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("IdInvoice")
-                        .HasColumnType("int");
-
                     b.Property<string>("OrderPath")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<bool>("Paid")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("PaymentSum")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("IdPayment");
-
-                    b.HasIndex("IdInvoice");
 
                     b.ToTable("Payments");
                 });
@@ -214,15 +208,6 @@ namespace MyCommunalPayments.Data.Migrations
                     b.HasOne("MyCommunalPayments.Models.Models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("IdService")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyCommunalPayments.Models.Models.Payment", b =>
-                {
-                    b.HasOne("MyCommunalPayments.Models.Models.Invoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("IdInvoice")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
