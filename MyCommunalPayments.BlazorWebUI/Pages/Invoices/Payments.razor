@@ -19,12 +19,12 @@
                 <!--Заголовок таблицы-->
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col" class="w-50">Период</th>
-                        <th scope="col" class="w-50">Наименование поставщика</th>
-                        <th scope="col">Сумма по квитанции</th>
-                        <th scope="col">Дата оплаты</th>
-                        <th scope="col">Сумма платежа</th>
-                        <th scope="col" class="w-auto text-center"></th>
+                        <th scope="col"> Период</th>
+                        <th scope="col" class="w-auto">Наименование поставщика</th>
+                        <th scope="col" class="w-auto">Сумма по квитанции</th>
+                        <th scope="col" class="w-auto">Дата оплаты</th>
+                        <th scope="col" class="w-auto">Сумма платежа</th>
+                        <th scope="col" class="w-auto"></th>
                     </tr>
                 </thead>
                 <!--Тело таблицы-->
@@ -84,7 +84,11 @@
 
 <!-- Modal -->
 <Modal @ref="modal">
-    <Title>Добавление новой оплаты за услуги ЖКХ</Title>
+    <Title>
+        Добавление новой оплаты за услуги ЖКХ <br/>
+        Поставщик услуг ЖКХ: @invoice.Provider.NameProvider <br/>
+        Период оплаты: @invoice.Period
+    </Title>
     <CloseButton>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
             <span aria-hidden="true">&times;</span>
@@ -97,7 +101,9 @@
                 @if (paid)//Проверяем, был ли флажек в БД
                 {
                     //Если был ставим атрибут checked
+
                     <input type="checkbox" checked="checked" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
+
                 }
                 else
                 {
@@ -110,13 +116,13 @@
             <div class="col-4">
                 <input class="form-control" placeholder="Сумма платежа" @bind-value="paymentSum" />
             </div>
-            <div class="col-3">
-                <button type="button" class="btn btn-sm btn-secondary">Выбрать файл</button>
+            <div class="col-2">
+                <a class="btn btn-sm btn-outline-success" role="button" href="@invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
             </div>
         </div>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+        <button type="button" class="btn btn-sm btn-danger" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
 
@@ -152,10 +158,21 @@
 
     protected override void OnInitialized()
     {
-        paymentsList = repository.GetAll();
-        _invoiceId = int.Parse(invoiceId);
-        invoice = invoicesRepository.GetAll().First(i => i.IdInvoice == _invoiceId);
+
+        if (!string.IsNullOrEmpty(invoiceId))
+        {
+            int result = 0;
+            _invoiceId = int.TryParse(invoiceId, out result) ? result : 0;
+            invoice = invoicesRepository.GetAll().First(i => i.IdInvoice == _invoiceId);
+            paymentsList = repository.GetAll().Where(i => i.Invoice == invoice);
+        }
+        else
+        {
+            paymentsList = repository.GetAll();
+        }
+
         datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
+        paymentSum = invoice.InvoiceSum;
 
     }
 
@@ -168,9 +185,8 @@
     /// </summary>
     private void Add()
     {
-        if (!string.IsNullOrWhiteSpace(orderPath) && invoice != null)
+        if (!string.IsNullOrWhiteSpace(datePayment) && invoice != null && paymentSum > 0)
         {
-
             if (payment == null)
             {
                 payment = new Payment()
@@ -180,7 +196,9 @@
                     OrderPath = orderPath,
                     PaymentSum = paymentSum,
                     Paid = paid
+                   
                 };
+                payment.Invoice.Pay = payment.Paid;
 
                 repository.Add(payment);
             }
@@ -190,6 +208,7 @@
                 payment.OrderPath = orderPath;
                 payment.Paid = paid;
                 payment.PaymentSum = paymentSum;
+                payment.Invoice.Pay = paid;
                 repository.Edit(payment);
             }
         }
@@ -221,5 +240,5 @@
 
     #endregion
 
-    
+
 }

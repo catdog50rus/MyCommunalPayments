@@ -15,6 +15,7 @@ using MyCommunalPayments.BlazorWebUI.Pages.Providers;
 using MyCommunalPayments.Models.Models;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Repositories;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
@@ -34,7 +35,7 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddDbContextPool<DBContext>(options =>
             {
                 //options.UseSqlite(Configuration.GetConnectionString("MySQLLiteDB"));
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion("8.0.19-mysql"));
+                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
             });
             services.AddScoped<IRepository<Service>, SQLService<Service>>();
             services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();

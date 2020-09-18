@@ -68,8 +68,14 @@
         <div class="col mb-3">
             <input class="form-control" placeholder="Расчетный год" @bind-value="@year" />
         </div>
+        <!--Период-->
         <div class="col mb-3">
-            <input class="form-control" placeholder="расчетный период" @bind-value="month" />
+            <select class="form-control" placeholder="Период" @bind="month">
+                @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
+                {
+                <option>@item</option>
+                }
+            </select>
         </div>
     </Body>
     <Footer>
@@ -85,7 +91,7 @@
     private Period period = default;
     private IEnumerable<Period> periods;
     private string year;
-    private string month;
+    private PeriodsName month;
 
     //Модальное окно
     private Modal modal { get; set; }
@@ -93,6 +99,7 @@
     {
         year = default;
         month = default;
+        period = default;
         modal.Close();
     }
     private void OpenModal()
@@ -103,7 +110,8 @@
     protected override void OnInitialized()
     {
         periods = new List<Period>();
-        periods = repository.GetAll();
+        periods = repository.GetAll().OrderBy(p=>p.ToSort());
+
     }
 
     #endregion
@@ -115,7 +123,7 @@
     /// </summary>
     private void Add()
     {
-        if (!string.IsNullOrWhiteSpace(year) && !string.IsNullOrWhiteSpace(month))
+        if (!string.IsNullOrWhiteSpace(year))
         {
 
             if (period == null)

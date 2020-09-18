@@ -12,16 +12,21 @@
     <div class="row">
         <div class="col">
             <h2 class="text-center">Квитанции ЖКХ </h2>
-            <!--Добавление нового счета-->
+            @*Флаг отображения оплаченных/неоплаченных квитанций*@
+            <div class="text-left align-content-center">
+                <label>Показывать только неоплаченные квитанции</label>
+                <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
+            </div>
+            @*Добавление нового счета*@
             <div class="row mb-3">
                 <div class="col">
                     <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
                 </div>
             </div>
-            <!--  Отображение таблицы со счетами  -->
+            @*  Отображение таблицы со счетами  *@ 
             <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark">
+                @*Заголовок таблицы*@
+                <thead class="table-dark ">
                     <tr>
                         <th scope="col">Оплачено</th>
                         <th scope="col" class="w-auto">Период</th>
@@ -31,7 +36,7 @@
                         <th scope="col" class="w-auto"></th>
                     </tr>
                 </thead>
-                <!--Тело таблицы-->
+                @*Тело таблицы*@
                 @foreach (var item in invoices)
                 {
                     <tbody>
@@ -53,7 +58,7 @@
                             <!--Период-->
                             <td>
                                 <div>
-                                    @item.Period.Month
+                                    @item.Period
                                 </div>
                             </td>
                             <!--Поставщик-->
@@ -77,10 +82,19 @@
                                     <button class="btn btn-sm btn-warning" @onclick="(()=>SetService(item))">Услуги</button>
                                 </div>
                             </td>
+                            @*Блок оплаты*@
                             <td>
                                 <div class="text-center">
-                                    <button class="btn btn-sm btn-outline-success" @onclick="()=>Pay(item)">Оплатить</button>
-                                    @*<a class="btn btn-sm btn-outline-success" role="button" href="@item.Provider.WebSite" target="_blank" @onclick="()=>Pay(item)">Оплатить</a>*@
+                                    @if (item.Pay)
+                                    {
+                                        <span class="text-center" style="color:green">Оплачено!</span>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" @onclick="()=>Pay(item)">Оплатить</button>
+                                    }
+
+                                    
                                 </div>
                             </td>
                         </tr>
@@ -117,7 +131,7 @@
                 <select class="form-control" placeholder="Период" @bind="periodName">
                     @foreach (var item in periodsList)
                     {
-                        <option>@item.Month</option>
+                        <option>@item.ToString()</option>
                     }
                 </select>
             </div>
@@ -134,6 +148,14 @@
             <div class="col mb-3">
                 <input class="form-control" placeholder="Сумма" @bind="summ" />
             </div>
+            @*Флаг оплаты. Можно только снять оплату*@
+            @if (pay)
+            {
+                <div>
+                    <input @onchange="()=>RePaid()" type="checkbox" checked="checked" value="@pay" />
+                </div>
+            }
+            
         }
         else
         {
@@ -242,6 +264,7 @@
     private IEnumerable<Invoice> invoices;
     private decimal summ;
     private bool pay;
+    private bool isNotPaided;
 
     //Providers
     private Provider provider;
@@ -294,11 +317,12 @@
         providersList = providerRepository.GetAll().ToList();
         periodsList = periodRepository.GetAll().ToList();
         servicesList = servicesRepository.GetAll().ToList();
-        invoices = repository.GetAll();
+        invoices = repository.GetAll().Where(i => i.Pay == false).OrderBy(p => p.Period.ToSort());
         providerName = providersList[0].NameProvider;
-        periodName = periodsList[0].Month;
+        periodName = periodsList[0].ToString();
         serviceName = servicesList[0].NameService;
         pay = default;
+        isNotPaided = true;
 
 
         invoice = default;
@@ -311,7 +335,7 @@
 
     private Period GetPeriodByName(string name)
     {
-        return periodsList.SingleOrDefault(n => n.Month == name);
+        return periodsList.SingleOrDefault(n => n.ToString() == name);
     }
 
     private Service GetServiceByName(string name)
@@ -368,7 +392,7 @@
         invoice = item;
         modal.Open();
 
-        periodName = item.Period.Month;
+        periodName = item.Period.ToString();
         providerName = item.Provider.NameProvider;
         summ = item.InvoiceSum;
         pay = item.Pay;
@@ -418,6 +442,25 @@
         navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
         //invoice.Pay = true;
         //repository.Edit(invoice);
+    }
+
+    private void ShowPaided()
+    {
+        isNotPaided = !isNotPaided;
+        if (isNotPaided)
+        {
+            invoices = repository.GetAll().Where(i => i.Pay == false).OrderBy(p=>p.Period.ToSort());
+        }
+        else
+        {
+            invoices = repository.GetAll().OrderBy(p=>p.Period.ToSort());
+        }
+    }
+
+    private void RePaid()
+    {
+        pay = !pay;
+
     }
 
     #endregion

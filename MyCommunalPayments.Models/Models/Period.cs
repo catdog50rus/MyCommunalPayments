@@ -12,11 +12,33 @@ namespace MyCommunalPayments.Models.Models
         [Key]
         public int IdKey { get; set; }
         public string Year { get; set; }
-        public string Month { get; set; }
+        public PeriodsName Month { get; set; }
 
         public override string ToString()
         {
             return $"{Month} {Year}";
         }
+
+        public int ToSort()
+        {
+            return int.Parse(Year) + (int)Month;
+        }
+    }
+
+    public enum PeriodsName
+    {
+        Январь = 1,
+        Февраль,
+        Март,
+        Апрель,
+        Май,
+        Июнь,
+        Июль,
+        Август,
+        Сентябрь,
+        Октябрь,
+        Ноябрь,
+        Декабрь
+
     }
 }
