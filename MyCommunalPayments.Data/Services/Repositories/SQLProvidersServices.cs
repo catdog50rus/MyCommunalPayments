@@ -13,12 +13,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
 
         #region Interface
 
-        public IEnumerable<T> GetAll()
-        {
-            IEnumerable<ProvidersServices> result;
-            result = Context.ProvidersServices;
-            return (IEnumerable<T>)result;
-        }
+        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.ProvidersServices;
 
         public void Add(T item)
         {
@@ -44,6 +39,8 @@ namespace MyCommunalPayments.Data.Services.Repositories
             Context.ProvidersServices.Remove(item);
             SaveChanges();
         }
+
+        public T GetById(int id) => (T)Context.ProvidersServices.FirstOrDefault(i => i.Id == id);
 
         #endregion
     }

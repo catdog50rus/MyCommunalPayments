@@ -2,30 +2,24 @@
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace MyCommunalPayments.Data.Services.Repositories
 {
-    public class SQLPeriods<T> : SQLRepository, IRepository<T> where T : Period
+    public class SQLServicesCounter<T> : SQLRepository, IRepository<T> where T : ServiceCounter
     {
-        public SQLPeriods(DBContext context) : base(context) { }
+        public SQLServicesCounter(DBContext context) : base(context) { }
 
         #region Interface
 
-        public IEnumerable<T> GetAll()
-        {
-            IEnumerable<Period> result;
-            result = Context.Periods;
-            return (IEnumerable<T>)result;
-        }
+        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.ServiceCounters;
 
         public void Add(T item)
         {
             if (item != null)
             {
-                Context.Periods.Add(item);
+                Context.ServiceCounters.Add(item);
                 SaveChanges();
             }
         }
@@ -33,7 +27,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
         public void Edit(T item)
         {
             //Вносим изменения в дело
-            var temp = Context.Periods.Attach(item);
+            var temp = Context.ServiceCounters.Attach(item);
             //Применяем изменения
             temp.State = EntityState.Modified;
 
@@ -42,12 +36,13 @@ namespace MyCommunalPayments.Data.Services.Repositories
 
         public void Remove(T item)
         {
-            Context.Periods.Remove(item);
+            Context.ServiceCounters.Remove(item);
             SaveChanges();
         }
 
-        #endregion
+        public T GetById(int id) => (T)Context.ServiceCounters.FirstOrDefault(i => i.IdCounter == id);
 
+        #endregion
 
     }
 }

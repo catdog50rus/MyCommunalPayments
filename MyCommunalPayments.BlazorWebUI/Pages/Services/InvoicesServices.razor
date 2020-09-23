@@ -1,0 +1,338 @@
+﻿@page "/Services/InvoiceServices/{id}"
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> repository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoiceRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository
+@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ServiceCounter> countersRepository
+@inject NavigationManager navi
+
+
+<!-- Форма -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h2 class="text-center">Услуги ЖКХ </h2>
+
+            <!--Добавление новой услуги-->
+            <div class="row mb-3">
+                <div class="col">
+                    <button class="btn btn-success" @onclick="() => OpenModal()">Добавить</button>
+                </div>
+            </div>
+            <!--  Отображение таблицы с услугами  -->
+            <table class="table table-sm table-bordered table-hover ">
+                <!--Заголовок таблицы-->
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="w-50">Услуга</th>
+                        <th scope="col" class="w-25">Показания счетчика</th>
+                        <th class="w-25"></th>
+                    </tr>
+                </thead>
+                <!--Тело таблицы-->
+                @foreach (var item in invoiceServicesList)
+                {
+                    <tbody>
+                        <tr>
+                            <!--Наименование услуги-->
+                            <td>
+                                <div>
+                                    @item.Service.NameService
+                                </div>
+
+                            </td>
+                            <!--Показания счетчика-->
+                            <td>
+                                @if (item.Service.IsCounter)
+                                {
+                                    <div class="text-center">
+                                        @item.Amount
+                                        <button class="ml-5 btn btn-sm btn-success" @onclick="(() => AddCounter(item.Service))">Внести показания</button>
+                                    </div>
+                                }
+
+                            </td>
+                            <!--Блок кнопок-->
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<Modal @ref="modal">
+    <Title>
+        @if (!isCounter)
+        {
+            <p>Добавление новой услуги ЖКХ </p>
+            
+        }
+        else
+        {
+            <p>Внесение показаний счетчика ЖКХ </p>
+        }
+
+        Поставщик: @provider.NameProvider
+    </Title>
+    <CloseButton>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </CloseButton>
+    <Body>
+        @if (!isCounter)
+        {
+            @*Таблица выбора услуг*@
+            <div>
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="w-50"></th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @*Услуга*@
+                                <div>
+                                    <select class="form-control" placeholder="Услуга" @bind="serviceName">
+                                        @foreach (var item in services)
+                                        {
+                                            <option>@item.NameService</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Добавить услугу</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            @*Внесение показаний счетчика*@
+            <div>
+                <p>Услуга: @service.NameService</p>
+                
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="w-25"></th>
+                            <th class="w-25"></th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @*Дата*@
+                                <div class="text-center">
+                                    <input class="form-control text-center" placeholder="Дата передачи" @bind-value="dateCount" />
+                                </div>
+                            </td>
+                            <td>
+                                @*Показания*@
+                                <div class="text-center">
+                                    <input class="form-control text-center" placeholder="Показания" @bind-value="amount" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-sm btn-danger" @onclick="SaveCount">Сохранить</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </Body>
+    @*<Footer>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+    </Footer>*@
+</Modal>
+
+
+@code
+{
+    #region Поля, Инициализация формы, Модальное окно
+
+    [Parameter]
+    public string id { get; set; }
+
+    private int idInvoice;
+
+    private InvoiceServices invoiceService;
+    private IEnumerable<InvoiceServices> invoiceServicesList;
+    private int amount;
+
+    private int idProvider;
+    private Provider provider;
+
+    //private Invoice invoice;
+
+    private Service service;
+    private List<Service> services;
+    private string serviceName;
+
+    private ServiceCounter counter;
+    private List<ServiceCounter> counters;
+    private bool isCounter;
+    private string dateCount;
+
+    //private List<ProvidersServices> providerServicesList;
+
+    //Модальное окно
+    private Modal modal { get; set; }
+
+    private void CloseModal()
+    {
+        modal.Close();
+    }
+
+    private void OpenModal()
+    {
+        modal.Open();
+    }
+
+    protected override void OnInitialized()
+    {
+        idInvoice = int.TryParse(id, out idInvoice) ? idInvoice : 0;
+        if (idInvoice > 0)
+        {
+            //invoice = invoiceRepository.GetById(idInvoice);
+            idProvider = invoiceRepository.GetById(idInvoice).IdProvider;
+            provider = providerRepository.GetById(idProvider);
+            invoiceServicesList = repository.GetAll().Where(p => p.IdInvoice == idInvoice);
+            services = providersServicesRepository.GetAll().Where(p => p.IdProvider == idProvider).Select(s => s.Service).ToList();
+        }
+        else
+        {
+            services = servicesRepository.GetAll().ToList();
+            invoiceServicesList = repository.GetAll();
+        }
+        serviceName = services[0].NameService;
+        counters = countersRepository.GetAll().ToList();
+
+    }
+
+    private Service GetServiceByName(string name) => services.FirstOrDefault(s => s.NameService == serviceName);
+
+    #endregion
+
+    #region Обработка нажатия кнопок
+
+    /// <summary>
+    /// Добавить дело
+    /// </summary>
+    private void Add()
+    {
+        if (!string.IsNullOrWhiteSpace(serviceName))
+        {
+            service = GetServiceByName(serviceName);
+            amount = counters.Where(s => s.Service == service).Max().ValueCounter;
+            if (invoiceService == null)
+            {
+                invoiceService = new InvoiceServices()
+                {
+                    IdInvoice = idInvoice,
+                    Service = service,
+                    Amount = amount
+                };
+
+                repository.Add(invoiceService);
+
+
+
+
+            }
+            else
+            {
+                invoiceService.IdInvoice = idInvoice;
+                invoiceService.Service = service;
+                repository.Edit(invoiceService);
+
+            }
+            invoiceService = default;
+            service = default;
+            amount = default;
+        }
+
+        //CloseModal();
+    }
+
+    /// <summary>
+    /// Изменить запись
+    /// </summary>
+    private void Edit(InvoiceServices item)
+    {
+        invoiceService = item;
+        OpenModal();
+        idInvoice = item.IdInvoice;
+        service = item.Service;
+        serviceName = item.Service.NameService;
+        amount = item.Amount;
+
+    }
+
+    /// <summary>
+    /// Удалить запись
+    /// </summary>
+    private void Remove(InvoiceServices item)
+    {
+        repository.Remove(item);
+    }
+
+
+    private void AddCounter(Service item)
+    {
+        service = item;
+        invoiceService = invoiceServicesList.FirstOrDefault(s => s.Service == item);
+        isCounter = true;
+        amount = invoiceService.Amount;
+
+        dateCount = DateTime.Today.ToString("dd/MM/yyyy");
+
+        modal.ModalSize = "modal-lg";
+        modal.Open();
+        //navi.NavigateTo($"/Services/ServicesCounters/{idInvoice}", true);
+    }
+
+    private void SaveCount()
+    {
+        if(counter == null)
+        {
+            counter = new ServiceCounter()
+            {
+                DateCount = dateCount,
+                ValueCounter = amount,
+                Service = service
+            };
+            invoiceService.Amount = amount;
+            repository.Edit(invoiceService);
+            countersRepository.Add(counter);
+
+        }
+        CloseModal();
+    }
+
+    #endregion
+
+}

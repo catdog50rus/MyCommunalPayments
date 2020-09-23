@@ -21,7 +21,7 @@ namespace MyCommunalPayments.Models.Models
 
         public int ToSort()
         {
-            return int.Parse(Year) + (int)Month;
+            return int.Parse(Year)*100 + (int)Month;
         }
     }
 

@@ -2,9 +2,8 @@
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace MyCommunalPayments.Data.Services.Repositories
 {
@@ -14,13 +13,8 @@ namespace MyCommunalPayments.Data.Services.Repositories
 
         #region Interface
 
-        public IEnumerable<T> GetAll()
-        {
-            IEnumerable<InvoiceServices> result;
-            result = Context.InvoiceServices;
-            return (IEnumerable<T>)result;
-        }
-
+        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.InvoiceServices;
+        
         public void Add(T item)
         {
             if (item != null)
@@ -45,6 +39,8 @@ namespace MyCommunalPayments.Data.Services.Repositories
             Context.InvoiceServices.Remove(item);
             SaveChanges();
         }
+
+        public T GetById(int id) => (T)Context.InvoiceServices.FirstOrDefault(i => i.IdInvoiceServices == id);
 
         #endregion
 

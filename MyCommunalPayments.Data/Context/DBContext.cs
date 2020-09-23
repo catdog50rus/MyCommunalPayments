@@ -15,5 +15,6 @@ namespace MyCommunalPayments.Data.Context
         public DbSet<Period> Periods { get; set; }
         public DbSet<InvoiceServices> InvoiceServices {get; set;}
         public DbSet<ProvidersServices> ProvidersServices { get; set; }
+        public DbSet<ServiceCounter> ServiceCounters { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyCommunalPayments.Data.Services.Repositories
 {
@@ -12,12 +13,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
 
         #region Interface
 
-        public IEnumerable<T> GetAll()
-        {
-            IEnumerable<Payment> result;
-            result = Context.Payments;
-            return (IEnumerable<T>)result;
-        }
+        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.Payments;
 
         public void Add(T item)
         {
@@ -43,6 +39,8 @@ namespace MyCommunalPayments.Data.Services.Repositories
             Context.Payments.Remove(item);
             SaveChanges();
         }
+
+        public T GetById(int id) => (T)Context.Payments.FirstOrDefault(i => i.IdPayment == id);
 
         #endregion
     }

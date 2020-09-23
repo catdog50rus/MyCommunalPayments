@@ -108,15 +108,7 @@
 <!-- Modal -->
 <Modal @ref="modal">
     <Title>
-        @if (!isService)
-        {
-            <p>Добавление нового счета за ЖКХ</p>
-        }
-        else
-        {
-            <p>Добавить услуги</p>
-        }
-
+        <p>Добавление нового счета за ЖКХ</p>
     </Title>
     <CloseButton>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
@@ -124,135 +116,38 @@
         </button>
     </CloseButton>
     <Body>
-        @if (!isService)
+        <!--Период-->
+        <div class="col mb-3">
+            <select class="form-control" placeholder="Период" @bind="periodName">
+                @foreach (var item in periodsList)
+                {
+                    <option>@item.ToString()</option>
+                }
+            </select>
+        </div>
+        <!--Поставщик-->
+        <div class="col mb-3">
+            <select class="form-control" placeholder="Поставщик" @bind="providerName">
+                @foreach (var item in providersList)
+                {
+                    <option>@item.NameProvider</option>
+                }
+            </select>
+        </div>
+        <!--Сумма-->
+        <div class="col mb-3">
+            <input class="form-control" placeholder="Сумма" @bind="summ" />
+        </div>
+        @*Флаг оплаты. Можно только снять оплату*@
+        @if (pay)
         {
-            <!--Период-->
-            <div class="col mb-3">
-                <select class="form-control" placeholder="Период" @bind="periodName">
-                    @foreach (var item in periodsList)
-                    {
-                        <option>@item.ToString()</option>
-                    }
-                </select>
-            </div>
-            <!--Поставщик-->
-            <div class="col mb-3">
-                <select class="form-control" placeholder="Поставщик" @bind="providerName">
-                    @foreach (var item in providersList)
-                    {
-                        <option>@item.NameProvider</option>
-                    }
-                </select>
-            </div>
-            <!--Сумма-->
-            <div class="col mb-3">
-                <input class="form-control" placeholder="Сумма" @bind="summ" />
-            </div>
-            @*Флаг оплаты. Можно только снять оплату*@
-            @if (pay)
-            {
-                <div>
-                    <input @onchange="()=>RePaid()" type="checkbox" checked="checked" value="@pay" />
-                </div>
-            }
-            
-        }
-        else
-        {
-            <!--Таблица выбранных услуг-->
             <div>
-                <table class="table table-sm table-bordered table-hover">
-                    <!--Заголовок таблицы-->
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col" class="w-50">Услуга</th>
-                            <th scope="col" class="w-25">Показания счетчика</th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <!--Тело таблицы-->
-                    @foreach (var item in invoiceServicesCollection)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Услуга-->
-                                <td>
-                                    <div>
-                                        @item.Service.NameService
-                                    </div>
-                                </td>
-
-                                <!--Показание счетчика-->
-                                <td>
-                                    <div class="text-center">
-                                        @item.Amount
-                                    </div>
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-center">
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => RemoveService(item))">Удалить</button>
-                                    </div>
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    }
-                </table>
+                <input @onchange="()=>RePaid()" type="checkbox" checked="checked" value="@pay" />
             </div>
-            <!--Таблица выбора услуг-->
-            <div>
-                <table class="table table-sm table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="w-50"></th>
-                            <th class="w-25"></th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <!--Услуга-->
-                                <div>
-                                    <select class="form-control" placeholder="Услуга" @bind="serviceName">
-                                        @foreach (var item in providersServicesList)
-                                        {
-                                            <option>@item.Service.NameService</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-                            <td>
-                                <!--Показания счетчика-->
-                                <div class="text-center">
-                                    <input class="form-control" placeholder="Показания счетчика" @bind="amount" />
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-sm btn-primary" @onclick="AddService">Добавить</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-
         }
-
     </Body>
     <Footer>
-        @if (!isService)
-        {
-            <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-        }
-        else
-        {
-
-        }
+       <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
 
@@ -270,7 +165,7 @@
     private Provider provider;
     private List<Provider> providersList;
     private string providerName;
-    private List<ProvidersServices> providersServicesList;
+    //private List<ProvidersServices> providersServicesList;
 
     //Periods
     private Period period;
@@ -278,19 +173,19 @@
     private string periodName;
 
     //Services
-    private bool isService;
-    private Service service;
+    //private bool isService;
+    //private Service service;
     private List<Service> servicesList;
-    private string serviceName;
-    private int amount;
+    //private string serviceName;
+    //private int amount;
 
-    private InvoiceServices invoiceServices;
+    //private InvoiceServices invoiceServices;
     private IEnumerable<InvoiceServices> invoiceServicesCollection;
 
 
     //Модальное окно
     private Modal modal { get; set; }
-
+    //private ServicesCounters servicesCounters { get; set; }
 
     private void CloseModal()
     {
@@ -298,10 +193,10 @@
         periodName = default;
         summ = default;
         invoice = default;
-        isService = false;
-        invoiceServices = default;
+        //isService = false;
+        //invoiceServices = default;
         pay = default;
-        providersServicesList = default;
+        //providersServicesList = default;
         modal.ModalSize = "";
 
         modal.Close();
@@ -317,10 +212,10 @@
         providersList = providerRepository.GetAll().ToList();
         periodsList = periodRepository.GetAll().ToList();
         servicesList = servicesRepository.GetAll().ToList();
-        invoices = repository.GetAll().Where(i => i.Pay == false).OrderBy(p => p.Period.ToSort());
+        invoices = repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
         providerName = providersList[0].NameProvider;
         periodName = periodsList[0].ToString();
-        serviceName = servicesList[0].NameService;
+        //serviceName = servicesList[0].NameService;
         pay = default;
         isNotPaided = true;
 
@@ -338,10 +233,10 @@
         return periodsList.SingleOrDefault(n => n.ToString() == name);
     }
 
-    private Service GetServiceByName(string name)
-    {
-        return servicesList.Single(s => s.NameService == name);
-    }
+    //private Service GetServiceByName(string name)
+    //{
+    //    return servicesList.Single(s => s.NameService == name);
+    //}
 
     #endregion
 
@@ -412,29 +307,31 @@
     {
         invoice = item;
         invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
-        providersServicesList = providersServicesRepository.GetAll().Where(p => p.IdProvider == item.IdProvider).ToList();
-        isService = true;
-        modal.ModalSize = "modal-lg";
-        OpenModal();
+        //providersServicesList = providersServicesRepository.GetAll().Where(p => p.IdProvider == item.IdProvider).ToList();
+        //isService = true;
+        navi.NavigateTo($"/Services/InvoiceServices/{item.IdInvoice}");
+        //navi.NavigateTo($"/Services/ServicesCounters/{item.IdInvoice}");
+        //modal.ModalSize = "modal-lg";
+        //OpenModal();
     }
 
-    private void AddService()
-    {
-        service = GetServiceByName(serviceName);
-        invoiceServices = new InvoiceServices()
-        {
-            Invoice = invoice,
-            Service = service,
-            Amount = amount
-        };
-        invoiceServicesRepository.Add(invoiceServices);
+    //private void AddService()
+    //{
+    //    service = GetServiceByName(serviceName);
+    //    invoiceServices = new InvoiceServices()
+    //    {
+    //        Invoice = invoice,
+    //        Service = service,
+    //        Amount = amount
+    //    };
+    //    invoiceServicesRepository.Add(invoiceServices);
 
-    }
+    //}
 
-    private void RemoveService(InvoiceServices item)
-    {
-        invoiceServicesRepository.Remove(item);
-    }
+    //private void RemoveService(InvoiceServices item)
+    //{
+    //    invoiceServicesRepository.Remove(item);
+    //}
 
     private void Pay(Invoice item)
     {
@@ -449,11 +346,11 @@
         isNotPaided = !isNotPaided;
         if (isNotPaided)
         {
-            invoices = repository.GetAll().Where(i => i.Pay == false).OrderBy(p=>p.Period.ToSort());
+            invoices = repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p=>p.Period.ToSort());
         }
         else
         {
-            invoices = repository.GetAll().OrderBy(p=>p.Period.ToSort());
+            invoices = repository.GetAll().OrderByDescending(p=>p.Period.ToSort());
         }
     }
 
