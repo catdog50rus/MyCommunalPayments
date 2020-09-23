@@ -147,7 +147,8 @@
         }
     </Body>
     <Footer>
-       <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+        <a class="btn btn-sm btn-outline-success" role="button" href="@GetProviderByName(providerName).WebSite" target="_blank">Перейти в личный кабинет</a>
+        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
 
@@ -189,8 +190,8 @@
 
     private void CloseModal()
     {
-        providerName = default;
-        periodName = default;
+        //providerName = default;
+        //periodName = default;
         summ = default;
         invoice = default;
         //isService = false;
@@ -212,7 +213,8 @@
         providersList = providerRepository.GetAll().ToList();
         periodsList = periodRepository.GetAll().ToList();
         servicesList = servicesRepository.GetAll().ToList();
-        invoices = repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
+        //invoices = repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
+        ShowPaided(); //1
         providerName = providersList[0].NameProvider;
         periodName = periodsList[0].ToString();
         //serviceName = servicesList[0].NameService;
@@ -249,11 +251,12 @@
     {
         if (!string.IsNullOrWhiteSpace(periodName) && !string.IsNullOrWhiteSpace(providerName))
         {
+            provider = GetProviderByName(providerName);
+            period = GetPeriodByName(periodName);
             //Добавить новый
             if (invoice == null)
             {
-                provider = GetProviderByName(providerName);
-                period = GetPeriodByName(periodName);
+
                 invoice = new Invoice()
                 {
                     Period = period,
@@ -267,8 +270,8 @@
             //Отредактировать
             else
             {
-                invoice.Period = GetPeriodByName(periodName);
-                invoice.Provider = GetProviderByName(providerName);
+                invoice.Period = period;
+                invoice.Provider = provider;
                 invoice.InvoiceSum = summ;
                 invoice.Pay = pay;
                 repository.Edit(invoice);

@@ -247,7 +247,11 @@
         if (!string.IsNullOrWhiteSpace(serviceName))
         {
             service = GetServiceByName(serviceName);
-            amount = counters.Where(s => s.Service == service).Max().ValueCounter;
+            if (service.IsCounter)
+            {
+                amount = counters.Where(s => s.Service == service).Max().ValueCounter;
+            }
+
             if (invoiceService == null)
             {
                 invoiceService = new InvoiceServices()
