@@ -1,10 +1,10 @@
-﻿@page "/Services/InvoiceServices/{id}"
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> repository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoiceRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ServiceCounter> countersRepository
+﻿@page "/Services/InvoiceServices"
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> repository*@
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository*@
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoiceRepository*@
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository*@
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository*@
+@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ServiceCounter> countersRepository*@
 @inject NavigationManager navi
 
 
@@ -17,7 +17,10 @@
             <!--Добавление новой услуги-->
             <div class="row mb-3">
                 <div class="col">
-                    <button class="btn btn-success" @onclick="() => OpenModal()">Добавить</button>
+                    <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
+                </div>
+                <div class="col text-right">
+                    <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
                 </div>
             </div>
             <!--  Отображение таблицы с услугами  -->
@@ -175,7 +178,15 @@
     #region Поля, Инициализация формы, Модальное окно
 
     [Parameter]
-    public string id { get; set; }
+    public Invoice Invoice { get; set; }
+    [Parameter]
+    public IRepository<InvoiceServices> repository { get; set; }
+    [Parameter]
+    public IRepository<ServiceCounter> countersRepository { get; set; }
+    [Parameter]
+    public EventCallback OnClickReturnToInvoces { get; set; }
+    [Parameter]
+    public List<ProvidersServices> ProviderServices { get; set; }
 
     private int idInvoice;
 
@@ -183,10 +194,7 @@
     private IEnumerable<InvoiceServices> invoiceServicesList;
     private int amount;
 
-    private int idProvider;
     private Provider provider;
-
-    //private Invoice invoice;
 
     private Service service;
     private List<Service> services;
@@ -197,13 +205,12 @@
     private bool isCounter;
     private string dateCount;
 
-    //private List<ProvidersServices> providerServicesList;
-
     //Модальное окно
     private Modal modal { get; set; }
 
     private void CloseModal()
     {
+        isCounter = default;
         modal.Close();
     }
 
@@ -214,22 +221,15 @@
 
     protected override void OnInitialized()
     {
-        idInvoice = int.TryParse(id, out idInvoice) ? idInvoice : 0;
-        if (idInvoice > 0)
+        if (Invoice != null)
         {
-            //invoice = invoiceRepository.GetById(idInvoice);
-            idProvider = invoiceRepository.GetById(idInvoice).IdProvider;
-            provider = providerRepository.GetById(idProvider);
-            invoiceServicesList = repository.GetAll().Where(p => p.IdInvoice == idInvoice);
-            services = providersServicesRepository.GetAll().Where(p => p.IdProvider == idProvider).Select(s => s.Service).ToList();
+            provider = Invoice.Provider;
+            invoiceServicesList = repository.GetAll().Where(p => p.Invoice == Invoice);
+            services = ProviderServices.Where(p => p.Provider == provider).Select(s => s.Service).ToList();
+            serviceName = services[0].NameService;
+            counters = countersRepository.GetAll().ToList();
+            isCounter = default;
         }
-        else
-        {
-            services = servicesRepository.GetAll().ToList();
-            invoiceServicesList = repository.GetAll();
-        }
-        serviceName = services[0].NameService;
-        counters = countersRepository.GetAll().ToList();
 
     }
 
@@ -249,27 +249,23 @@
             service = GetServiceByName(serviceName);
             if (service.IsCounter)
             {
-                amount = counters.Where(s => s.Service == service).Max().ValueCounter;
+                amount = counters.Where(s => s.Service == service).Select(c => c.ValueCounter).Max();
             }
 
             if (invoiceService == null)
             {
                 invoiceService = new InvoiceServices()
                 {
-                    IdInvoice = idInvoice,
+                    Invoice = Invoice,
                     Service = service,
                     Amount = amount
                 };
 
                 repository.Add(invoiceService);
 
-
-
-
             }
             else
             {
-                invoiceService.IdInvoice = idInvoice;
                 invoiceService.Service = service;
                 repository.Edit(invoiceService);
 
@@ -336,6 +332,7 @@
         }
         CloseModal();
     }
+
 
     #endregion
 

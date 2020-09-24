@@ -1,10 +1,4 @@
 ﻿@page "/Invoices/invoices"
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> repository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> periodRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> invoiceServicesRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository
 @inject NavigationManager navi
 
 <!-- Форма -->
@@ -156,8 +150,24 @@
 {
 
     #region Поля, Инициализация формы, Модальное окно
-    private Invoice invoice;
+    [Parameter]
+    public IRepository<Invoice> repository { get; set; }
+
+    [Parameter]
+    public List<Provider> Providers { get; set; }
+
+    [Parameter]
+    public List<Period> Periods { get; set; }
+
+    [Parameter]
+    public List<Service> Services { get; set; }
+
+    [Parameter]
+    public EventCallback<Invoice> OnClickSetService { get; set; }
+
+
     private IEnumerable<Invoice> invoices;
+    private Invoice invoice;
     private decimal summ;
     private bool pay;
     private bool isNotPaided;
@@ -166,7 +176,6 @@
     private Provider provider;
     private List<Provider> providersList;
     private string providerName;
-    //private List<ProvidersServices> providersServicesList;
 
     //Periods
     private Period period;
@@ -174,19 +183,11 @@
     private string periodName;
 
     //Services
-    //private bool isService;
-    //private Service service;
     private List<Service> servicesList;
-    //private string serviceName;
-    //private int amount;
-
-    //private InvoiceServices invoiceServices;
-    private IEnumerable<InvoiceServices> invoiceServicesCollection;
 
 
     //Модальное окно
     private Modal modal { get; set; }
-    //private ServicesCounters servicesCounters { get; set; }
 
     private void CloseModal()
     {
@@ -210,18 +211,14 @@
 
     protected override void OnInitialized()
     {
-        providersList = providerRepository.GetAll().ToList();
-        periodsList = periodRepository.GetAll().ToList();
-        servicesList = servicesRepository.GetAll().ToList();
-        //invoices = repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
-        ShowPaided(); //1
+        providersList = Providers;
+        periodsList = Periods;
+        servicesList = Services;
+        ShowPaided();
         providerName = providersList[0].NameProvider;
         periodName = periodsList[0].ToString();
-        //serviceName = servicesList[0].NameService;
         pay = default;
         isNotPaided = true;
-
-
         invoice = default;
     }
 
@@ -308,40 +305,14 @@
 
     private void SetService(Invoice item)
     {
-        invoice = item;
-        invoiceServicesCollection = invoiceServicesRepository.GetAll().Where(i => i.Invoice.IdInvoice == invoice.IdInvoice);
-        //providersServicesList = providersServicesRepository.GetAll().Where(p => p.IdProvider == item.IdProvider).ToList();
-        //isService = true;
-        navi.NavigateTo($"/Services/InvoiceServices/{item.IdInvoice}");
-        //navi.NavigateTo($"/Services/ServicesCounters/{item.IdInvoice}");
-        //modal.ModalSize = "modal-lg";
-        //OpenModal();
+        //navi.NavigateTo($"/Services/InvoiceServices/{item.IdInvoice}");
+        OnClickSetService.InvokeAsync(item);
     }
-
-    //private void AddService()
-    //{
-    //    service = GetServiceByName(serviceName);
-    //    invoiceServices = new InvoiceServices()
-    //    {
-    //        Invoice = invoice,
-    //        Service = service,
-    //        Amount = amount
-    //    };
-    //    invoiceServicesRepository.Add(invoiceServices);
-
-    //}
-
-    //private void RemoveService(InvoiceServices item)
-    //{
-    //    invoiceServicesRepository.Remove(item);
-    //}
 
     private void Pay(Invoice item)
     {
         invoice = item;
         navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
-        //invoice.Pay = true;
-        //repository.Edit(invoice);
     }
 
     private void ShowPaided()
@@ -360,7 +331,6 @@
     private void RePaid()
     {
         pay = !pay;
-
     }
 
     #endregion
