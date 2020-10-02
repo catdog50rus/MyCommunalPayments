@@ -1,0 +1,45 @@
+﻿@page "/inputfile"
+@using System.IO
+@inject IFileLoad fileUpload
+@inject IJSRuntime JSRuntime
+
+<h3>MyFileInput</h3>
+
+<InputFile OnChange="HandleFileSelected"></InputFile>
+
+
+<div>
+    <button class="btn btn-danger" @onclick="()=>DownloadFile(fileid)">Сохранить файл</button>
+</div>
+
+
+@code {
+
+    int fileid = 1;
+    string filename;
+    IFileListEntry file;
+
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UploadAsync(file);
+        }
+    }
+
+    private async void DownloadFile(int id)
+    {
+
+        var content = fileUpload.GetOrder(id);
+        filename = @"2.pdf";
+
+        await JSRuntime.InvokeAsync<object>(
+            "FileSaveAs",
+            filename,
+            Convert.ToBase64String(content)
+        );
+    }
+
+}

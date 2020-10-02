@@ -1,93 +1,113 @@
-﻿@page "/Invoices/Payments/{invoiceId}"
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Payment> repository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoicesRepository
+﻿@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Payment> repository
+@inject IFileLoad fileLoad
+@inject IJSRuntime JSRuntime
 
 
-<!-- Форма -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Платежи за услуги ЖКХ </h2>
-            <!--Добавление нового платежа-->
-            <div class="row mb-3">
-                <div class="col">
-                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+
+@if (isUpload)
+{
+    <InputPDFFile OnUploadReturnToPaiment="SetOrder" />
+
+
+}
+else
+{
+    <!-- Форма -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Платежи за услуги ЖКХ </h2>
+                <!--Добавление нового платежа-->
+                <div class="row mb-3">
+                    <div class="col">
+                        <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
+                    </div>
                 </div>
-            </div>
-            <!--  Таблица с платежами  -->
-            <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col"> Период</th>
-                        <th scope="col" class="w-auto">Наименование поставщика</th>
-                        <th scope="col" class="w-auto">Сумма по квитанции</th>
-                        <th scope="col" class="w-auto">Дата оплаты</th>
-                        <th scope="col" class="w-auto">Сумма платежа</th>
-                        <th scope="col" class="w-auto"></th>
-                    </tr>
-                </thead>
-                <!--Тело таблицы-->
-                @foreach (var item in paymentsList)
-                {
-                    <tbody>
+                <!--  Таблица с платежами  -->
+                <table class="table table-sm table-bordered table-hover ">
+                    <!--Заголовок таблицы-->
+                    <thead class="table-dark">
                         <tr>
-                            <!--Период-->
-                            <td>
-                                <div>
-                                    @item.Invoice.Period
-                                </div>
-
-                            </td>
-                            <!--Наименование поставщика-->
-                            <td>
-                                <div>
-                                    @item.Invoice.Provider.NameProvider
-                                </div>
-
-                            </td>
-                            <!--Сумма счета-->
-                            <td>
-                                <div>
-                                    @item.Invoice.InvoiceSum
-                                </div>
-
-                            </td>
-                            <!--Дата оплаты-->
-                            <td>
-                                <div>
-                                    @item.DatePayment
-                                </div>
-
-                            </td>
-                            <!--Сумма платежа-->
-                            <td>
-                                <div>
-                                    @item.PaymentSum
-                                </div>
-
-                            </td>
-                            <!--Блок кнопок-->
-                            <td>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                </div>
-                            </td>
+                            <th scope="col"> Период</th>
+                            <th scope="col" class="w-auto">Наименование поставщика</th>
+                            <th scope="col" class="w-auto">Сумма по квитанции</th>
+                            <th scope="col" class="w-auto">Дата оплаты</th>
+                            <th scope="col" class="w-auto">Сумма платежа</th>
+                            <th scope="col" class="w-25"></th>
+                            <th scope="col" class="w-auto"></th>
                         </tr>
-                    </tbody>
-                }
-            </table>
+                    </thead>
+                    <!--Тело таблицы-->
+                    @foreach (var item in paymentsList)
+                    {
+                        <tbody>
+                            <tr>
+                                <!--Период-->
+                                <td>
+                                    <div>
+                                        @item.Invoice.Period
+                                    </div>
+
+                                </td>
+                                <!--Наименование поставщика-->
+                                <td>
+                                    <div>
+                                        @item.Invoice.Provider.NameProvider
+                                    </div>
+
+                                </td>
+                                <!--Сумма счета-->
+                                <td>
+                                    <div>
+                                        @item.Invoice.InvoiceSum
+                                    </div>
+
+                                </td>
+                                <!--Дата оплаты-->
+                                <td>
+                                    <div>
+                                        @item.DatePayment
+                                    </div>
+
+                                </td>
+                                <!--Сумма платежа-->
+                                <td>
+                                    <div>
+                                        @item.PaymentSum
+                                    </div>
+
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                    </div>
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-warning " @onclick="(() => DownloadFile(item))">Платежка</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
         </div>
     </div>
-</div>
+}
 
 <!-- Modal -->
 <Modal @ref="modal">
     <Title>
-        Добавление новой оплаты за услуги ЖКХ <br/>
-        Поставщик услуг ЖКХ: @invoice.Provider.NameProvider <br/>
-        Период оплаты: @invoice.Period
+        Добавление новой оплаты за услуги ЖКХ <br />
+        Поставщик услуг ЖКХ: @Invoice.Provider.NameProvider <br />
+        Период оплаты: @Invoice.Period
     </Title>
     <CloseButton>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
@@ -110,19 +130,20 @@
                     <input type="checkbox" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
                 }
             </div>
-            <div class="col-4">
-                <input class="form-control" placeholder="Дата оплаты" @bind-value="datePayment" />
+            <div class="col-3">
+                <input class="form-control text-center" placeholder="Дата оплаты" @bind-value="datePayment" />
             </div>
-            <div class="col-4">
-                <input class="form-control" placeholder="Сумма платежа" @bind-value="paymentSum" />
+            <div class="col-3">
+                <input class="form-control text-right" placeholder="Сумма платежа" @bind-value="paymentSum" />
             </div>
-            <div class="col-2">
-                <a class="btn btn-sm btn-outline-success" role="button" href="@invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
+            <div class="col-5">
+                <a class="btn btn-sm btn-outline-success" role="button" href="@Invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
+                <button class="btn btn-sm btn-info" @onclick="UploadOrder">Загрузить платежку</button>
             </div>
         </div>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-sm btn-danger" @onclick="Add">Сохранить</button>
+        <button class="btn btn-sm btn-danger @buttonOff" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
 
@@ -130,19 +151,21 @@
 @code
 {
     #region Поля, Инициализация формы, Модальное окно
+    [Parameter]
+    public Invoice Invoice { get; set; }
+
+    [Parameter]
+    public EventCallback OnPaimentReturnToInvoices { get; set; }
+
+    private bool isUpload = default;
+    private string buttonOff = "disabled";
 
     private Payment payment = default;
     private IEnumerable<Payment> paymentsList;
     private string datePayment;
     private decimal paymentSum;
-    private string orderPath;
-    private Invoice invoice;
+    private int orderId;
     private bool paid;
-
-    [Parameter]
-    public string invoiceId { get; set; }
-    private int _invoiceId;
-
 
     //Модальное окно
     private Modal modal { get; set; }
@@ -159,20 +182,11 @@
     protected override void OnInitialized()
     {
 
-        if (!string.IsNullOrEmpty(invoiceId))
-        {
-            int result = 0;
-            _invoiceId = int.TryParse(invoiceId, out result) ? result : 0;
-            invoice = invoicesRepository.GetAll().First(i => i.IdInvoice == _invoiceId);
-            paymentsList = repository.GetAll().Where(i => i.Invoice == invoice);
-        }
-        else
-        {
-            paymentsList = repository.GetAll();
-        }
+        paymentsList = repository.GetAll().Where(i => i.Invoice == Invoice);
+
+        paymentSum = Invoice.InvoiceSum;
 
         datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
-        paymentSum = invoice.InvoiceSum;
 
     }
 
@@ -185,35 +199,43 @@
     /// </summary>
     private void Add()
     {
-        if (!string.IsNullOrWhiteSpace(datePayment) && invoice != null && paymentSum > 0)
+        if (buttonOff.Equals("disabled"))
         {
-            if (payment == null)
-            {
-                payment = new Payment()
-                {
-                    DatePayment = datePayment,
-                    Invoice = invoice,
-                    OrderPath = orderPath,
-                    PaymentSum = paymentSum,
-                    Paid = paid
-                   
-                };
-                payment.Invoice.Pay = payment.Paid;
-
-                repository.Add(payment);
-            }
-            else
-            {
-                payment.DatePayment = datePayment;
-                payment.OrderPath = orderPath;
-                payment.Paid = paid;
-                payment.PaymentSum = paymentSum;
-                payment.Invoice.Pay = paid;
-                repository.Edit(payment);
-            }
+            return;
         }
+        else
+        {
 
-        CloseModal();
+
+            if (!string.IsNullOrWhiteSpace(datePayment) && Invoice != null && paymentSum >= 0)
+            {
+                if (payment == null)
+                {
+                    payment = new Payment()
+                    {
+                        DatePayment = datePayment,
+                        Invoice = Invoice,
+                        PaymentSum = paymentSum,
+                        Paid = paid,
+                        IdOrder = orderId
+
+                    };
+                    payment.Invoice.Pay = payment.Paid;
+
+                    repository.Add(payment);
+                }
+                else
+                {
+                    payment.DatePayment = datePayment;
+                    payment.Paid = paid;
+                    payment.PaymentSum = paymentSum;
+                    payment.Invoice.Pay = paid;
+                    repository.Edit(payment);
+                }
+            }
+
+            CloseModal();
+        }
     }
 
     /// <summary>
@@ -225,8 +247,7 @@
         paid = item.Paid;
         datePayment = item.DatePayment;
         paymentSum = item.PaymentSum;
-        orderPath = item.OrderPath;
-        modal.Open();
+        OpenModal();
     }
 
     /// <summary>
@@ -236,6 +257,50 @@
     private void Remove(Payment item)
     {
         repository.Remove(item);
+    }
+
+    private void UploadOrder()
+    {
+
+        modal.Close();
+        isUpload = true;
+    }
+
+    private void SetOrder(int id)
+    {
+        if (id >= 0)
+        {
+            buttonOff = "";
+            if (payment != null)
+            {
+                payment.IdOrder = id;
+                Edit(payment);
+            }
+            else
+            {
+                orderId = id;
+                OpenModal();
+
+            }
+        }
+        isUpload = false;
+    }
+
+    private async void DownloadFile(Payment payment)
+    {
+        Order order = fileLoad.GetOrderById(payment.IdOrder);
+        if(order != null)
+        {
+            var content = order.OrderScreen;
+            var filename = order.FileName;
+
+            await JSRuntime.InvokeAsync<object>(
+                "FileSaveAs",
+                filename,
+                Convert.ToBase64String(content)
+            );
+        }
+
     }
 
     #endregion

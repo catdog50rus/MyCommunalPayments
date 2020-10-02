@@ -1,10 +1,4 @@
 ﻿@page "/Services/InvoiceServices"
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<InvoiceServices> repository*@
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> providerRepository*@
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Invoice> invoiceRepository*@
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> servicesRepository*@
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> providersServicesRepository*@
-@*@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ServiceCounter> countersRepository*@
 @inject NavigationManager navi
 
 
@@ -311,7 +305,7 @@
         dateCount = DateTime.Today.ToString("dd/MM/yyyy");
 
         modal.ModalSize = "modal-lg";
-        modal.Open();
+        OpenModal();
         //navi.NavigateTo($"/Services/ServicesCounters/{idInvoice}", true);
     }
 

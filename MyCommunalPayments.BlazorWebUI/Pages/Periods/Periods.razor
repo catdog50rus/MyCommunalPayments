@@ -110,7 +110,7 @@
     protected override void OnInitialized()
     {
         periods = new List<Period>();
-        periods = repository.GetAll().OrderBy(p=>p.ToSort());
+        periods = repository.GetAll().OrderByDescending(p=>p.ToSort());
 
     }
 

@@ -1,0 +1,38 @@
+﻿@page "/inputfiles"
+@inject IFileLoad fileUpload
+
+
+<div class="container-fluid">
+    <div class="row">
+
+        <h3>Загрузка копии платежки в базу данных</h3>
+        <div class="col">
+            <InputFile OnChange="HandleFileSelected"></InputFile>
+            <button class="btn btn-info btn-sm" @onclick="()=>OnUploadReturnToPaiment.InvokeAsync(orderId)">Вернуться к платежу</button>
+        </div>
+    </div>
+    
+</div>
+
+
+
+@code {
+
+    int orderId = -1;
+
+    [Parameter]
+    public EventCallback<int> OnUploadReturnToPaiment { get; set; }
+
+    IFileListEntry file;
+
+    async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
+        if (file != null)
+        {
+            await fileUpload.UploadAsync(file);
+            orderId = fileUpload.OrderId;
+            
+        }
+    }
+}

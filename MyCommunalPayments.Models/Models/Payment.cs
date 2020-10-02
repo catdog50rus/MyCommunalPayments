@@ -20,10 +20,6 @@ namespace MyCommunalPayments.Models.Models
         /// </summary>
         public decimal PaymentSum { get; set; }
         /// <summary>
-        /// Путь к платежке
-        /// </summary>
-        public string OrderPath { get; set; }
-        /// <summary>
         /// Счет за ЖКХ
         /// </summary>
         public int IdInvoice { get; set; }
@@ -36,5 +32,14 @@ namespace MyCommunalPayments.Models.Models
         /// Флаг была ли произведена оплата
         /// </summary>
         public bool Paid { get; set; }
+        /// <summary>
+        /// Скан платежки
+        /// </summary>
+        public int IdOrder { get; set; }
+        /// <summary>
+        /// Скан платежки
+        /// </summary>
+        [ForeignKey("IdOrder")]
+        public Order Order { get; set; }
     }
 }

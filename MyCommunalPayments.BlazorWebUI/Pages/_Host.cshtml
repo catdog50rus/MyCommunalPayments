@@ -14,7 +14,7 @@
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
-
+    
 </head>
 <body>
     <app>
@@ -32,9 +32,11 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="_framework/blazor.server.js"></script>
 
+    <script src="_framework/blazor.server.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="_content/BlazorInputFile/inputfile.js"></script>
+    <script src="js/SaveFile.js"></script>
     <!--// переопределение валидации на стороне клиента-->
     <script>
         $.validator.range = function (value, element, param) {

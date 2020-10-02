@@ -2,7 +2,9 @@
 @inject NavigationManager navi
 
 <!-- Форма -->
-<div class="container-fluid">
+@if (!isPay)
+{
+    <div class="container-fluid">
     <div class="row">
         <div class="col">
             <h2 class="text-center">Квитанции ЖКХ </h2>
@@ -14,10 +16,10 @@
             @*Добавление нового счета*@
             <div class="row mb-3">
                 <div class="col">
-                    <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
+                    <button class="btn btn-success " @onclick="()=>OpenModal()">Добавить</button>
                 </div>
             </div>
-            @*  Отображение таблицы со счетами  *@ 
+            @*  Отображение таблицы со счетами  *@
             <table class="table table-sm table-bordered table-hover ">
                 @*Заголовок таблицы*@
                 <thead class="table-dark ">
@@ -81,14 +83,12 @@
                                 <div class="text-center">
                                     @if (item.Pay)
                                     {
-                                        <span class="text-center" style="color:green">Оплачено!</span>
+                                        <button class="btn btn-sm btn-success" @onclick="()=>Pay(item)">Оплачено!</button>
                                     }
                                     else
                                     {
                                         <button class="btn btn-sm btn-outline-success" @onclick="()=>Pay(item)">Оплатить</button>
                                     }
-
-                                    
                                 </div>
                             </td>
                         </tr>
@@ -98,6 +98,15 @@
         </div>
     </div>
 </div>
+}
+else
+{
+    <Payments
+            Invoice="invoice"
+              OnPaimentReturnToInvoices="ReturnToPayment"
+              />
+}
+
 
 <!-- Modal -->
 <Modal @ref="modal">
@@ -165,12 +174,14 @@
     [Parameter]
     public EventCallback<Invoice> OnClickSetService { get; set; }
 
+    
 
     private IEnumerable<Invoice> invoices;
     private Invoice invoice;
     private decimal summ;
     private bool pay;
     private bool isNotPaided;
+    private bool isPay;
 
     //Providers
     private Provider provider;
@@ -206,7 +217,9 @@
 
     private void OpenModal()
     {
-        modal.Open();
+
+            modal.Open();
+
     }
 
     protected override void OnInitialized()
@@ -220,6 +233,7 @@
         pay = default;
         isNotPaided = true;
         invoice = default;
+        isPay = default;
     }
 
     private Provider GetProviderByName(string name)
@@ -305,14 +319,16 @@
 
     private void SetService(Invoice item)
     {
-        //navi.NavigateTo($"/Services/InvoiceServices/{item.IdInvoice}");
         OnClickSetService.InvokeAsync(item);
     }
 
     private void Pay(Invoice item)
     {
         invoice = item;
-        navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
+        //navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
+        isPay = true;
+
+
     }
 
     private void ShowPaided()
@@ -331,6 +347,11 @@
     private void RePaid()
     {
         pay = !pay;
+    }
+
+    private void ReturnToPayment()
+    {
+        isPay = false;
     }
 
     #endregion

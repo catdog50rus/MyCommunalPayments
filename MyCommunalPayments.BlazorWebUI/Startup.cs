@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyCommunalPayments.Data.Context;
-using MyCommunalPayments.BlazorWebUI.Pages.Providers;
-using MyCommunalPayments.Models.Models;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Repositories;
+using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Data.Services.Upload;
+using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
@@ -45,6 +40,7 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
             services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
             services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
+            services.AddScoped<IFileLoad, SQLFileLoad>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
