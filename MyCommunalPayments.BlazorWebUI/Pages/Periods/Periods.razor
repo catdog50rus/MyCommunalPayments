@@ -57,13 +57,8 @@
 </div>
 
 <!-- Modal -->
-<Modal @ref="modal">
-    <Title>Добавление нового поставщика услуг ЖКХ</Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
+<Modal @ref="modal" CloseWindow="CloseModal">
+    <Title>Добавление нового расчетного периода</Title>
     <Body>
         <div class="col mb-3">
             <input class="form-control" placeholder="Расчетный год" @bind-value="@year" />

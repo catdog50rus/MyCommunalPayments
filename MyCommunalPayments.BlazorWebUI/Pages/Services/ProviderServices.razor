@@ -53,13 +53,8 @@
 </div>
 
 <!-- Modal -->
-<Modal @ref="modal">
-    <Title>Добавление нового поставщика услуг ЖКХ</Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
+<Modal @ref="modal" CloseWindow="CloseModal">
+    <Title>Добавление услуг ЖКХ поставщику</Title>
     <Body>
         <div>
             <table class="table table-sm table-bordered table-hover">
@@ -92,9 +87,7 @@
             </table>
         </div>
     </Body>
-    <Footer>
-        @*<button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>*@
-    </Footer>
+    <Footer></Footer>
 </Modal>
 
 
@@ -191,7 +184,6 @@
     {
         repository.Remove(item);
     }
-
 
     #endregion
 

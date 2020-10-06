@@ -71,13 +71,8 @@
 </div>
 
 <!-- Modal -->
-<Modal @ref="modal">
+<Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление нового поставщика услуг ЖКХ</Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
     <Body>
         <div>
             <table class="table table-sm table-bordered table-hover">

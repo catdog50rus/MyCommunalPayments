@@ -1,5 +1,5 @@
 ﻿@page "/Invoices/invoices"
-@inject NavigationManager navi
+@*@inject NavigationManager navi*@
 
 <!-- Форма -->
 @if (!isPay)
@@ -109,15 +109,10 @@ else
 
 
 <!-- Modal -->
-<Modal @ref="modal">
+<Modal @ref="modal" CloseWindow="CloseModal">
     <Title>
         <p>Добавление нового счета за ЖКХ</p>
     </Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
     <Body>
         <!--Период-->
         <div class="col mb-3">
@@ -173,8 +168,6 @@ else
 
     [Parameter]
     public EventCallback<Invoice> OnClickSetService { get; set; }
-
-    
 
     private IEnumerable<Invoice> invoices;
     private Invoice invoice;

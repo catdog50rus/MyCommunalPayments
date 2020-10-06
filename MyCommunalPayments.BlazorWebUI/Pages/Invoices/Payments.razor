@@ -103,17 +103,12 @@ else
 }
 
 <!-- Modal -->
-<Modal @ref="modal">
+<Modal @ref="modal" CloseWindow="CloseModal">
     <Title>
         Добавление новой оплаты за услуги ЖКХ <br />
         Поставщик услуг ЖКХ: @Invoice.Provider.NameProvider <br />
         Период оплаты: @Invoice.Period
     </Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
     <Body>
         <div class="row mb-3 text-center">
             <div class="col-1 text-center align-content-center">

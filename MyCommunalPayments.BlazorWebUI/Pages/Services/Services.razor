@@ -59,13 +59,8 @@
 </div>
 
 <!-- Modal -->
-<Modal @ref="modal">
+<Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление новой услуги ЖКХ</Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
     <Body>
         <div class="col mb-2">
             <input class="form-control" placeholder="Наименование услуги" @bind-value="serviceName" />

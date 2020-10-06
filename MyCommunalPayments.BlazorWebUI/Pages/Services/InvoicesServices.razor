@@ -1,7 +1,4 @@
-﻿@page "/Services/InvoiceServices"
-@inject NavigationManager navi
-
-
+﻿
 <!-- Форма -->
 <div class="container-fluid">
     <div class="row">
@@ -67,7 +64,7 @@
 </div>
 
 <!-- Modal -->
-<Modal @ref="modal">
+<Modal @ref="modal" CloseWindow="CloseModal">
     <Title>
         @if (!isCounter)
         {
@@ -81,11 +78,6 @@
 
         Поставщик: @provider.NameProvider
     </Title>
-    <CloseButton>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </CloseButton>
     <Body>
         @if (!isCounter)
         {
@@ -161,9 +153,6 @@
         }
 
     </Body>
-    @*<Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-    </Footer>*@
 </Modal>
 
 
@@ -307,7 +296,6 @@
 
         modal.ModalSize = "modal-lg";
         OpenModal();
-        //navi.NavigateTo($"/Services/ServicesCounters/{idInvoice}", true);
     }
 
     private void SaveCount()
