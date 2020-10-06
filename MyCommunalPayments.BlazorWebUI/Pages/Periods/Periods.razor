@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h2 class="text-center">Поставщики услуг ЖКХ </h2>
+            <h2 class="text-center"> Расчетные периоды </h2>
             <!--Добавление нового периода-->
             <div class="row mb-3">
                 <div class="col">
@@ -17,9 +17,9 @@
                 <!--Заголовок таблицы-->
                 <thead class="table-dark text-center">
                     <tr>
-                        <th scope="col" class="w-auto">Год</th>
+                        <th scope="col" class="w-auto text-center">Год</th>
                         <th scope="col" class="w-auto">Расчетный период</th>
-                        <th scope="col" class="w-auto text-center"></th>
+                        <th scope="col" class="w-auto text-right"></th>
                     </tr>
                 </thead>
                 <!--Тело таблицы-->
@@ -29,7 +29,7 @@
                         <tr>
                             <!--Год-->
                             <td>
-                                <div>
+                                <div class="text-center">
                                     @item.Year
                                 </div>
 
@@ -43,7 +43,7 @@
                             </td>
                             <!--Блок кнопок-->
                             <td>
-                                <div class="text-center">
+                                <div class="text-right">
                                     <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
                                     <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
                                 </div>
@@ -111,7 +111,7 @@
     {
         periods = new List<Period>();
         periods = repository.GetAll().OrderByDescending(p=>p.ToSort());
-
+        NavMenu.SetSubMenu(true);
     }
 
     #endregion

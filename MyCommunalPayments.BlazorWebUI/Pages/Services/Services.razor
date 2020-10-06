@@ -121,8 +121,9 @@
 
     protected override void OnInitialized()
     {
-        services = new List<Service>();
-        services = repository.GetAll();
+        //services = new List<Service>();
+        services = repository.GetAll().ToList();
+        NavMenu.SetSubMenu(true);
     }
 
     #endregion

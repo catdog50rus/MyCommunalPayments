@@ -1,60 +1,72 @@
 ﻿@page "/Providers/providers"
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> repository
 
-<!-- Форма -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Поставщики услуг ЖКХ </h2>
-            <!--Добавление нового поставщика-->
-            <div class="row mb-3">
-                <div class="col">
-                    <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
+@if (isProvider)
+{
+    <!-- Форма -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Поставщики услуг ЖКХ </h2>
+                <!--Добавление нового поставщика-->
+                <div class="row mb-3">
+                    <div class="col">
+                        <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    </div>
                 </div>
-            </div>
-            <!--  Таблица с услугами  -->
-            <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col" class="w-50">Наименование поставщика</th>
-                        <th scope="col">Web site</th>
-                        <th scope="col" class="w-auto text-center"></th>
-                    </tr>
-                </thead>
-                <!--Тело таблицы-->
-                @foreach (var item in providers)
-                {
-                    <tbody>
+                <!--  Таблица с услугами  -->
+                <table class="table table-sm table-bordered table-hover ">
+                    <!--Заголовок таблицы-->
+                    <thead class="table-dark">
                         <tr>
-                            <!--Наименование услуги-->
-                            <td>
-                                <div>
-                                    @item.NameProvider
-                                </div>
-
-                            </td>
-                            <!--Количество-->
-                            <td>
-                                <div>
-                                    @item.WebSite
-                                </div>
-
-                            </td>
-                            <!--Блок кнопок-->
-                            <td>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                </div>
-                            </td>
+                            <th scope="col" class="w-50">Наименование поставщика</th>
+                            <th scope="col">Web site</th>
+                            <th scope="col" class="w-auto text-center"></th>
                         </tr>
-                    </tbody>
-                }
-            </table>
+                    </thead>
+                    <!--Тело таблицы-->
+                    @foreach (var item in providers)
+                    {
+                        <tbody>
+                            <tr>
+                                <!--Наименование услуги-->
+                                <td>
+                                    <div>
+                                        @item.NameProvider
+                                    </div>
+
+                                </td>
+                                <!--Количество-->
+                                <td>
+                                    <div>
+                                        @item.WebSite
+                                    </div>
+
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                        <button class="btn btn-sm btn-warning" @onclick="(() => SetServices(item))">Услуги</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <ProviderServices
+                      Provider="provider"
+                      OnClickReturnToProviders="ReturnFromService"
+                      />
+}
+
 
 <!-- Modal -->
 <Modal @ref="modal">
@@ -78,6 +90,7 @@
 </Modal>
 
 
+
 @code
 {
     #region Поля, Инициализация формы, Модальное окно
@@ -86,6 +99,9 @@
     private IEnumerable<Provider> providers;
     private string provideName;
     private string webSite;
+
+    private bool isProvider = true;
+
 
     //Модальное окно
     private Modal modal { get; set; }
@@ -100,10 +116,13 @@
         modal.Open();
     }
 
+    private Modal setServicesModal { get; set; }
+
     protected override void OnInitialized()
     {
-        providers = new List<Provider>();
-        providers = repository.GetAll();
+        //providers = new List<Provider>();
+        providers = repository.GetAll().ToList();
+        NavMenu.SetSubMenu(true);
     }
 
     #endregion
@@ -158,6 +177,16 @@
     {
         repository.Remove(item);
     }
+
+    private void SetServices(Provider item)
+    {
+        provider = item;
+        isProvider = false;
+
+
+    }
+
+    private void ReturnFromService() => isProvider = true;
 
     #endregion
 

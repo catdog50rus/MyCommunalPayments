@@ -1,17 +1,19 @@
-﻿@page "/Services/ProvidersServices"
-@using MyCommunalPayments.BlazorWebUI.Pages
+﻿
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<ProvidersServices> repository
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> repositoryProviders
 @inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> repositoryServices
 <!-- Форма -->
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h2 class="text-center">Услуги ЖКХ по Поставщикам </h2>
+            <h2 class="text-center">Услуги ЖКХ предоставляемые Поставщиками </h2>
+            <h4>Поставщик: @Provider.NameProvider</h4>
             <!--Добавление услуг поставщику-->
             <div class="row mb-3">
                 <div class="col">
-                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить услугу</button>
+                </div>
+                <div class="col text-right">
+                    <button class="btn btn-danger" @onclick="OnClickReturnToProviders">Вернуться к списку поставщиков</button>
                 </div>
             </div>
             <!--  Таблица с периодами  -->
@@ -19,8 +21,7 @@
                 <!--Заголовок таблицы-->
                 <thead class="table-dark text-center">
                     <tr>
-                        <th scope="col" class="w-auto">Поставщик</th>
-                        <th scope="col" class="w-auto">Услуга</th>
+                        <th scope="col" class="w-75">Услуга</th>
                         <th scope="col" class="w-auto text-center"></th>
                     </tr>
                 </thead>
@@ -29,13 +30,6 @@
                 {
                     <tbody>
                         <tr>
-                            <!--Поставщик-->
-                            <td>
-                                <div>
-                                    @item.Provider.NameProvider
-                                </div>
-
-                            </td>
                             <!--Услуга-->
                             <td>
                                 <div>
@@ -73,22 +67,10 @@
                     <tr>
                         <th class="w-50"></th>
                         <th class="w-25"></th>
-                        <th class="w-25"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <!--Поставщик-->
-                            <div>
-                                <select class="form-control" placeholder="Поставщик" @bind="providerName">
-                                    @foreach (var item in providers)
-                                    {
-                                        <option>@item.NameProvider</option>
-                                    }
-                                </select>
-                            </div>
-                        </td>
                         <td>
                             <!--Услуга-->
                             <div>
@@ -120,12 +102,17 @@
 {
     #region Поля, Инициализация формы, Модальное окно
 
+    [Parameter]
+    public Provider Provider { get; set; }
+    [Parameter]
+    public EventCallback OnClickReturnToProviders { get; set; }
+
     private ProvidersServices providersServices = default;
     private IEnumerable<ProvidersServices> ProvidersServicesCollection;
-    private string providerName;
+    
+    private Provider provider;
     private string serviceName;
 
-    private List<Provider> providers;
     private List<Service> services;
 
     //Модальное окно
@@ -133,37 +120,26 @@
 
     private void CloseModal()
     {
-        providerName = default;
         serviceName = default;
         providersServices = default;
         modal.Close();
     }
     private void OpenModal()
     {
-        modal.ModalSize = "modal-lg";
         modal.Open();
     }
 
     protected override void OnInitialized()
     {
-        ProvidersServicesCollection = repository.GetAll();
+        ProvidersServicesCollection = repository.GetAll().Where(p=>p.Provider.IdProvider == Provider.IdProvider);
 
-        providers = repositoryProviders.GetAll().ToList();
+        provider = Provider;
         services = repositoryServices.GetAll().ToList();
-
-        providerName = providers[0].NameProvider;
         serviceName = services[0].NameService;
     }
 
-    Provider GetProviderByName(string name)
-    {
-        return providers.Single(i => i.NameProvider == name);
-    }
+    private Service GetServiceByName(string name) => services.Single(i => i.NameService == name);
 
-    Service GetServiceByName(string name)
-    {
-        return services.Single(i => i.NameService == name);
-    }
 
 
     #endregion
@@ -175,14 +151,14 @@
     /// </summary>
     private void Add()
     {
-        if (!string.IsNullOrWhiteSpace(providerName) && !string.IsNullOrWhiteSpace(serviceName))
+        if (provider != null && !string.IsNullOrWhiteSpace(serviceName))
         {
 
             if (providersServices == null)
             {
                 providersServices = new ProvidersServices()
                 {
-                    Provider = GetProviderByName(providerName),
+                    Provider = provider,
                     Service = GetServiceByName(serviceName)
                 };
 
@@ -190,13 +166,11 @@
             }
             else
             {
-                providersServices.Provider = GetProviderByName(providerName);
                 providersServices.Service = GetServiceByName(serviceName);
                 repository.Edit(providersServices);
             }
         }
-
-        CloseModal();
+        providersServices = default;
     }
 
     /// <summary>
@@ -206,7 +180,6 @@
     {
         providersServices = item;
         modal.Open();
-        providerName = item.Provider.NameProvider;
         serviceName = item.Service.NameService;
     }
 

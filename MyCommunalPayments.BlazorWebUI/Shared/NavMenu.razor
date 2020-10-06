@@ -8,35 +8,57 @@
 <div class="@NavMenuCssClass mt-3" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="()=>subMenu=false">
+                <span class="oi oi-home" aria-hidden="true"></span> 
+                Квитанции
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Services/services">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Услуги ЖКХ
+            <NavLink class="nav-link" href="" @onclick="()=>subMenu = !subMenu">
+                <span class="oi oi-wrench" aria-hidden="true"></span> 
+                Администрирование
             </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Providers/providers">
-                <span class="oi oi-list-rich" aria-hidden="true"></span>Поставщики услуг
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="inputfile">
-                <span class="oi oi-list-rich" aria-hidden="true"></span>Загрузить файл
-            </NavLink>
+
+            @if (subMenu)
+            {
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Services/services">
+                            <span class="oi oi-spreadsheet" aria-hidden="true"></span>
+                            Услуги ЖКХ
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Providers/providers">
+                            <span class="oi oi-people" aria-hidden="true"></span>
+                            Поставщики услуг
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="/Periods/periods">
+                            <span class="oi oi-calendar" aria-hidden="true"></span>
+                            Расчетный период
+                        </NavLink>
+                    </li>
+                </ul>
+            }
         </li>
     </ul>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
+    private static bool subMenu = false;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    public static void SetSubMenu(bool value)
+    {
+        subMenu = value;
     }
 }

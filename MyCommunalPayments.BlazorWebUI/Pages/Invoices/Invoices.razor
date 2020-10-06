@@ -8,15 +8,15 @@
     <div class="row">
         <div class="col">
             <h2 class="text-center">Квитанции ЖКХ </h2>
-            @*Флаг отображения оплаченных/неоплаченных квитанций*@
-            <div class="text-left align-content-center">
-                <label>Показывать только неоплаченные квитанции</label>
-                <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
-            </div>
-            @*Добавление нового счета*@
             <div class="row mb-3">
+                @*Добавление нового счета*@
                 <div class="col">
                     <button class="btn btn-success " @onclick="()=>OpenModal()">Добавить</button>
+                </div>
+                @*Флаг отображения оплаченных/неоплаченных квитанций*@
+                <div class="col text-right align-content-center">
+                    <label>Показывать только неоплаченные квитанции</label>
+                    <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
                 </div>
             </div>
             @*  Отображение таблицы со счетами  *@
@@ -202,14 +202,9 @@ else
 
     private void CloseModal()
     {
-        //providerName = default;
-        //periodName = default;
         summ = default;
         invoice = default;
-        //isService = false;
-        //invoiceServices = default;
         pay = default;
-        //providersServicesList = default;
         modal.ModalSize = "";
 
         modal.Close();
@@ -217,15 +212,13 @@ else
 
     private void OpenModal()
     {
-
-            modal.Open();
-
+        modal.Open();
     }
 
     protected override void OnInitialized()
     {
         providersList = Providers;
-        periodsList = Periods;
+        periodsList = Periods.OrderByDescending(p=>p.ToSort()).ToList();
         servicesList = Services;
         ShowPaided();
         providerName = providersList[0].NameProvider;
@@ -236,21 +229,10 @@ else
         isPay = default;
     }
 
-    private Provider GetProviderByName(string name)
-    {
-        return providersList.SingleOrDefault(n => n.NameProvider == name);
-    }
+    private Provider GetProviderByName(string name) => providersList.SingleOrDefault(n => n.NameProvider == name);
 
-    private Period GetPeriodByName(string name)
-    {
-        return periodsList.SingleOrDefault(n => n.ToString() == name);
-    }
-
-    //private Service GetServiceByName(string name)
-    //{
-    //    return servicesList.Single(s => s.NameService == name);
-    //}
-
+    private Period GetPeriodByName(string name) => periodsList.SingleOrDefault(n => n.ToString() == name);
+ 
     #endregion
 
     #region Обработка нажатия кнопок
@@ -325,10 +307,7 @@ else
     private void Pay(Invoice item)
     {
         invoice = item;
-        //navi.NavigateTo($"/Invoices/Payments/{item.IdInvoice}");
         isPay = true;
-
-
     }
 
     private void ShowPaided()
