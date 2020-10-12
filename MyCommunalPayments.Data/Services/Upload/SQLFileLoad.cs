@@ -36,7 +36,7 @@ namespace MyCommunalPayments.Data.Services.Upload
             return OrderId;
         }
         public Order GetOrderById(int id) => Context.Orders.FirstOrDefault(i => i.IdOrder == id);
-
+        public IEnumerable<Order> GetAll() => Context.Orders;
  
 
         public byte[] GetOrder(int id)

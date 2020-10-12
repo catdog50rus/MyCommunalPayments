@@ -1,5 +1,6 @@
 ﻿@page "/Services/Services"
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Service> repository
+
+@inherits ServicesBase
 
 <!-- Форма -->
 <div class="container-fluid">
@@ -83,105 +84,4 @@
         <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
-
-
-@code
-{
-    #region Поля, Инициализация формы, Модальное окно
-
-    private Service service;
-    private IEnumerable<Service> services;
-    private string serviceName;
-    private bool count;
-
-    //Модальное окно
-    private Modal modal { get; set; }
-
-    private void CloseModal()
-    {
-        count = default;
-        serviceName = default;
-        modal.Close();
-    }
-
-    private void OpenModal()
-    {
-        Message = default;
-        modal.Open();
-    }
-
-    //Уведомление об операции
-    private string Message { get; set; }
-
-
-    protected override void OnInitialized()
-    {
-        //services = new List<Service>();
-        services = repository.GetAll().ToList();
-        NavMenu.SetSubMenu(true);
-    }
-
-    #endregion
-
-    #region Обработка нажатия кнопок
-
-    /// <summary>
-    /// Добавить дело
-    /// </summary>
-    private void Add()
-    {
-        string message = default;
-        if (!string.IsNullOrWhiteSpace(serviceName))
-        {
-
-            if (service == null)
-            {
-                service = new Service()
-                {
-                    NameService = serviceName,
-                    IsCounter = count
-                };
-
-                repository.Add(service);
-
-                message = $"Услуга добавлена!";
-
-
-            }
-            else
-            {
-                service.NameService = serviceName;
-                service.IsCounter = count;
-                repository.Edit(service);
-                message = $"Услуга обновлена!";
-            }
-        }
-
-        Message = message;
-        CloseModal();
-    }
-
-    /// <summary>
-    /// Изменить запись
-    /// </summary>
-    private void Edit(Service item)
-    {
-        service = item;
-        OpenModal();
-        serviceName = service.NameService;
-        count = service.IsCounter;
-
-    }
-
-    /// <summary>
-    /// Удалить запись
-    /// </summary>
-    private void Remove(Service item)
-    {
-        repository.Remove(item);
-    }
-
-    #endregion
-
-}
 

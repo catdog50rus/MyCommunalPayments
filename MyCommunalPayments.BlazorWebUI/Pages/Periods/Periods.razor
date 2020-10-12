@@ -1,6 +1,6 @@
 ﻿@page "/Periods/periods"
-@using MyCommunalPayments.BlazorWebUI.Pages
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Period> repository
+
+@inherits PeriodsBase
 <!-- Форма -->
 <div class="container-fluid">
     <div class="row">
@@ -78,90 +78,3 @@
     </Footer>
 </Modal>
 
-
-@code
-{
-    #region Поля, Инициализация формы, Модальное окно
-
-    private Period period = default;
-    private IEnumerable<Period> periods;
-    private string year;
-    private PeriodsName month;
-
-    //Модальное окно
-    private Modal modal { get; set; }
-    private void CloseModal()
-    {
-        year = default;
-        month = default;
-        period = default;
-        modal.Close();
-    }
-    private void OpenModal()
-    {
-        modal.Open();
-    }
-
-    protected override void OnInitialized()
-    {
-        periods = new List<Period>();
-        periods = repository.GetAll().OrderByDescending(p=>p.ToSort());
-        NavMenu.SetSubMenu(true);
-    }
-
-    #endregion
-
-    #region Обработка нажатия кнопок
-
-    /// <summary>
-    /// Добавить или отредактировать
-    /// </summary>
-    private void Add()
-    {
-        if (!string.IsNullOrWhiteSpace(year))
-        {
-
-            if (period == null)
-            {
-                period = new Period()
-                {
-                    Year = year,
-                    Month = month
-                };
-
-                repository.Add(period);
-            }
-            else
-            {
-                period.Year = year;
-                period.Month = month;
-                repository.Edit(period);
-            }
-        }
-
-        CloseModal();
-    }
-
-    /// <summary>
-    /// Изменить запись
-    /// </summary>
-    private void Edit(Period item)
-    {
-        period = item;
-        modal.Open();
-        year = item.Year;
-        month = item.Month;
-    }
-
-    /// <summary>
-    /// Удалить запись
-    /// </summary>
-    /// <param name="item"></param>
-    private void Remove(Period item)
-    {
-        repository.Remove(item);
-    }
-
-    #endregion
-
-}

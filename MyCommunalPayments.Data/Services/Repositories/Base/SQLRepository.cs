@@ -10,7 +10,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
     public abstract class SQLRepository
     {
 
-        public DBContext Context { get; set; }
+        public readonly DBContext Context;
 
         public SQLRepository(DBContext context)
         {
@@ -26,9 +26,9 @@ namespace MyCommunalPayments.Data.Services.Repositories
             {
                 Context.SaveChanges();
             }
-            finally
+            catch
             {
-                Context.Dispose();
+                Console.WriteLine("Ошибка БД!");
             }
         }
 

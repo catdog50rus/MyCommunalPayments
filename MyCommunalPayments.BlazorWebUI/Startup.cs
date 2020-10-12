@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories;
 using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -41,6 +42,7 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
             services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
             services.AddScoped<IFileLoad, SQLFileLoad>();
+            services.AddScoped<IToast, ToastService>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();

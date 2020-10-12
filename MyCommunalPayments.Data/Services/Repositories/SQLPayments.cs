@@ -14,6 +14,9 @@ namespace MyCommunalPayments.Data.Services.Repositories
         #region Interface
 
         public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.Payments;
+        //{
+        //    return (IEnumerable<T>)Context.Payments.FromSqlRaw<Payment>("returnAllPayments_procedure");
+        //}
 
         public void Add(T item)
         {

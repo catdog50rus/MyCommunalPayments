@@ -1,9 +1,6 @@
 ﻿using BlazorInputFile;
-using Microsoft.JSInterop;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Data.Services.Upload
@@ -14,5 +11,6 @@ namespace MyCommunalPayments.Data.Services.Upload
         Task<int> UploadAsync(IFileListEntry file);
         byte[] GetOrder(int id);
         Order GetOrderById(int id);
+        IEnumerable<Order> GetAll();
     }
 }

@@ -1,6 +1,6 @@
-﻿@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Payment> repository
-@inject IFileLoad fileLoad
-@inject IJSRuntime JSRuntime
+﻿@page "/Services/Payments/"
+
+@inherits PaymentsBase
 
 
 
@@ -43,6 +43,7 @@ else
                     <!--Тело таблицы-->
                     @foreach (var item in paymentsList)
                     {
+                        //@if(item.Invoice == null) item.Invoice = invocesList.FirstOrDefault(i=>i.IdInvoice == item.IdInvoice);
                         <tbody>
                             <tr>
                                 <!--Период-->
@@ -142,163 +143,3 @@ else
     </Footer>
 </Modal>
 
-
-@code
-{
-    #region Поля, Инициализация формы, Модальное окно
-    [Parameter]
-    public Invoice Invoice { get; set; }
-
-    [Parameter]
-    public EventCallback OnPaimentReturnToInvoices { get; set; }
-
-    private bool isUpload = default;
-    private string buttonOff = "disabled";
-
-    private Payment payment = default;
-    private IEnumerable<Payment> paymentsList;
-    private string datePayment;
-    private decimal paymentSum;
-    private int orderId;
-    private bool paid;
-
-    //Модальное окно
-    private Modal modal { get; set; }
-    private void CloseModal()
-    {
-        modal.Close();
-    }
-    private void OpenModal()
-    {
-        modal.ModalSize = "modal-lg";
-        modal.Open();
-    }
-
-    protected override void OnInitialized()
-    {
-
-        paymentsList = repository.GetAll().Where(i => i.Invoice == Invoice);
-
-        paymentSum = Invoice.InvoiceSum;
-
-        datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
-
-    }
-
-    #endregion
-
-    #region Обработка нажатия кнопок
-
-    /// <summary>
-    /// Добавить или отредактировать
-    /// </summary>
-    private void Add()
-    {
-        if (buttonOff.Equals("disabled"))
-        {
-            return;
-        }
-        else
-        {
-
-
-            if (!string.IsNullOrWhiteSpace(datePayment) && Invoice != null && paymentSum >= 0)
-            {
-                if (payment == null)
-                {
-                    payment = new Payment()
-                    {
-                        DatePayment = datePayment,
-                        Invoice = Invoice,
-                        PaymentSum = paymentSum,
-                        Paid = paid,
-                        IdOrder = orderId
-
-                    };
-                    payment.Invoice.Pay = payment.Paid;
-
-                    repository.Add(payment);
-                }
-                else
-                {
-                    payment.DatePayment = datePayment;
-                    payment.Paid = paid;
-                    payment.PaymentSum = paymentSum;
-                    payment.Invoice.Pay = paid;
-                    repository.Edit(payment);
-                }
-            }
-
-            CloseModal();
-        }
-    }
-
-    /// <summary>
-    /// Изменить запись
-    /// </summary>
-    private void Edit(Payment item)
-    {
-        payment = item;
-        paid = item.Paid;
-        datePayment = item.DatePayment;
-        paymentSum = item.PaymentSum;
-        OpenModal();
-    }
-
-    /// <summary>
-    /// Удалить запись
-    /// </summary>
-    /// <param name="item"></param>
-    private void Remove(Payment item)
-    {
-        repository.Remove(item);
-    }
-
-    private void UploadOrder()
-    {
-
-        modal.Close();
-        isUpload = true;
-    }
-
-    private void SetOrder(int id)
-    {
-        if (id >= 0)
-        {
-            buttonOff = "";
-            if (payment != null)
-            {
-                payment.IdOrder = id;
-                Edit(payment);
-            }
-            else
-            {
-                orderId = id;
-                OpenModal();
-
-            }
-        }
-        isUpload = false;
-    }
-
-    private async void DownloadFile(Payment payment)
-    {
-        Order order = fileLoad.GetOrderById(payment.IdOrder);
-        if(order != null)
-        {
-            var content = order.OrderScreen;
-            var filename = order.FileName;
-
-            await JSRuntime.InvokeAsync<object>(
-                "FileSaveAs",
-                filename,
-                Convert.ToBase64String(content)
-            );
-        }
-
-    }
-
-    #endregion
-
-
-}

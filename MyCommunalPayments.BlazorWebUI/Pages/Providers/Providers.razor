@@ -1,5 +1,11 @@
 ﻿@page "/Providers/providers"
-@inject MyCommunalPayments.Data.Services.Repositories.Base.IRepository<Provider> repository
+@inherits ProvidersBase
+
+
+<Toast @ref="toast" OnClickConfirm="Confirm">
+    <Message>@message</Message>
+    
+</Toast>
 
 @if (isProvider)
 {
@@ -61,10 +67,8 @@
 }
 else
 {
-    <ProviderServices
-                      Provider="provider"
-                      OnClickReturnToProviders="ReturnFromService"
-                      />
+    <ProviderServices Provider="provider"
+                      OnClickReturnToProviders="ReturnFromService" />
 }
 
 
@@ -85,104 +89,3 @@ else
 </Modal>
 
 
-
-@code
-{
-    #region Поля, Инициализация формы, Модальное окно
-
-    private Provider provider = default;
-    private IEnumerable<Provider> providers;
-    private string provideName;
-    private string webSite;
-
-    private bool isProvider = true;
-
-
-    //Модальное окно
-    private Modal modal { get; set; }
-    private void CloseModal()
-    {
-        provideName = default;
-        webSite = default;
-        modal.Close();
-    }
-    private void OpenModal()
-    {
-        modal.Open();
-    }
-
-    private Modal setServicesModal { get; set; }
-
-    protected override void OnInitialized()
-    {
-        //providers = new List<Provider>();
-        providers = repository.GetAll().ToList();
-        NavMenu.SetSubMenu(true);
-    }
-
-    #endregion
-
-    #region Обработка нажатия кнопок
-
-    /// <summary>
-    /// Добавить или отредактировать
-    /// </summary>
-    private void Add()
-    {
-        if (!string.IsNullOrWhiteSpace(provideName) || !string.IsNullOrWhiteSpace(provider.NameProvider))
-        {
-
-            if (provider == null)
-            {
-                provider = new Provider()
-                {
-                    NameProvider = provideName,
-                    WebSite = webSite
-                };
-
-                repository.Add(provider);
-            }
-            else
-            {
-                provider.NameProvider = provideName;
-                provider.WebSite = webSite;
-                repository.Edit(provider);
-            }
-        }
-
-        CloseModal();
-    }
-
-    /// <summary>
-    /// Изменить запись
-    /// </summary>
-    private void Edit(Provider item)
-    {
-        provider = item;
-        modal.Open();
-        provideName = item.NameProvider;
-        webSite = item.WebSite;
-    }
-
-    /// <summary>
-    /// Удалить запись
-    /// </summary>
-    /// <param name="item"></param>
-    private void Remove(Provider item)
-    {
-        repository.Remove(item);
-    }
-
-    private void SetServices(Provider item)
-    {
-        provider = item;
-        isProvider = false;
-
-
-    }
-
-    private void ReturnFromService() => isProvider = true;
-
-    #endregion
-
-}

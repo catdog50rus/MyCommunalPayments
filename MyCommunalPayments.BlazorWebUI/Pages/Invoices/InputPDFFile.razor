@@ -1,5 +1,5 @@
 ﻿@page "/inputfiles"
-@inject IFileLoad fileUpload
+@inherits InputPDFFileBase
 
 
 <div class="container-fluid">
@@ -14,25 +14,3 @@
     
 </div>
 
-
-
-@code {
-
-    int orderId = -1;
-
-    [Parameter]
-    public EventCallback<int> OnUploadReturnToPaiment { get; set; }
-
-    IFileListEntry file;
-
-    async Task HandleFileSelected(IFileListEntry[] files)
-    {
-        file = files.FirstOrDefault();
-        if (file != null)
-        {
-            await fileUpload.UploadAsync(file);
-            orderId = fileUpload.OrderId;
-            
-        }
-    }
-}
