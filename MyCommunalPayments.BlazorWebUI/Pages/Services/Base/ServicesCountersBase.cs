@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System;
@@ -12,21 +13,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     {
         #region Поля, Инициализация формы, Модальное окно
 
-        [Parameter]
-        public string IdInvoice { get; set; }
         [Inject]
-        public IRepository<ServiceCounter> Repository { get; set; }
-        [Inject]
-        public IRepository<Service> RepositoryServices { get; set; }
-        [Inject]
-        public IRepository<Invoice> RepositoryInvoices { get; set; }
-        [Inject]
-        public IRepository<ProvidersServices> RepositoryProviders { get; set; }
-        [Inject]
-        public IRepository<Provider> RepositoryProvider { get; set; }
+        public IApiRepository<ServiceCounter> Repository { get; set; }
 
-        protected Invoice invoice;
-        protected List<Invoice> invoices;
+        [Inject]
+        public IApiRepository<Service> ServiceRepository { get; set; }
 
         protected IEnumerable<ServiceCounter> serviceCounters;
         protected ServiceCounter serviceCounter;
@@ -34,15 +25,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected int valueCounter;
 
         protected List<Service> services;
-        protected Service service;
-
-        protected List<ProvidersServices> providers;
-        protected Provider provider;
-        protected string serviceName;
-        protected List<Provider> providerss;
+        private int serviceId;
+        protected string serviceName = "";
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
 
         protected void CloseModal()
         {
@@ -58,33 +45,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             modal.Open();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-
-            if (!string.IsNullOrEmpty(IdInvoice))
-            {
-                int.TryParse(IdInvoice, out int invoiceId);
-                if (invoiceId > 0)
-                {
-                    invoice = RepositoryInvoices.GetById(invoiceId);
-                    providerss = RepositoryProvider.GetAll().ToList();
-                    provider = RepositoryProviders.GetAll().FirstOrDefault(p => p.Provider == invoice.Provider).Provider;
-                    services = RepositoryProviders.GetAll().Where(p => p.IdProvider == provider.IdProvider).Select(s => s.Service).ToList();
-                }
-            }
-            else
-            {
-
-            }
-            serviceCounters = Repository.GetAll().OrderByDescending(d => d.ToSort()).ThenBy(s => s.Service.NameService);
-
-            providers = RepositoryProviders.GetAll().ToList();
-            invoices = RepositoryInvoices.GetAll().ToList();
-            services = RepositoryServices.GetAll().Where(i => i.IsCounter).ToList();
-            serviceName = services[0].NameService;
-
-
-
+            await StateUpdate();
         }
 
         protected Service GetServiceByName(string name)
@@ -100,10 +63,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
             if (!string.IsNullOrWhiteSpace(dateCount) && !string.IsNullOrWhiteSpace(serviceName) && valueCounter >= 0)
             {
+                serviceId = GetServiceByName(serviceName).IdService;
 
                 if (serviceCounter == null)
                 {
@@ -111,21 +75,22 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                     {
                         DateCount = dateCount,
                         ValueCounter = valueCounter,
-                        Service = GetServiceByName(serviceName)
+                        IdService = serviceId
                     };
 
-                    Repository.Add(serviceCounter);
+                    await Repository.AddAsync(serviceCounter);
                 }
                 else
                 {
                     serviceCounter.DateCount = dateCount;
-                    serviceCounter.Service = GetServiceByName(serviceName);
+                    serviceCounter.IdService = serviceId;
                     serviceCounter.ValueCounter = valueCounter;
-                    Repository.Edit(serviceCounter);
+                    await Repository.EditAsync(serviceCounter);
                 }
             }
 
             CloseModal();
+            await StateUpdate();
         }
 
         /// <summary>
@@ -134,21 +99,29 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected void Edit(ServiceCounter item)
         {
             serviceCounter = item;
-            modal.Open();
+            serviceName = item.Service.NameService;
             dateCount = item.DateCount;
             valueCounter = item.ValueCounter;
-            service = item.Service;
+            OpenModal();
         }
 
         /// <summary>
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected void Remove(ServiceCounter item)
+        protected async Task Remove(ServiceCounter item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdCounter);
+            await StateUpdate();
         }
 
+        private async Task StateUpdate()
+        {
+            serviceCounters = await Repository.GetAllAsync();
+            serviceCounters.OrderByDescending(d => d.ToSort());//.ThenBy(s => s.Service.NameService);
+            services = (await ServiceRepository.GetAllAsync()).ToList();
+            services = services.Where(c => c.IsCounter == true).ToList();
+        }
 
         #endregion
     }

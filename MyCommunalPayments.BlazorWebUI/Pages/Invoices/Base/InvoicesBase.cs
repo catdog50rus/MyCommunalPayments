@@ -77,11 +77,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             isNotPaided = true;
             invoice = default;
             isPay = default;
+
         }
 
         protected Provider GetProviderByName(string name) => providersList.SingleOrDefault(n => n.NameProvider == name);
 
         protected Period GetPeriodByName(string name) => periodsList.SingleOrDefault(n => n.ToString() == name);
+        
 
         #endregion
 

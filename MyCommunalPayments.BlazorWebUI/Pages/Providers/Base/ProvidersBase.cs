@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Models.Models;
@@ -16,7 +17,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
 
 
         [Inject]
-        public IRepository<Provider> Repository { get; set; }
+        public IApiRepository<Provider> Repository { get; set; }
 
         protected Provider provider = default;
         protected IEnumerable<Provider> providers;
@@ -47,12 +48,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
 
         protected Modal setServicesModal;// { get; set; }
 
-        protected override void OnInitialized()
+
+        protected override async Task OnInitializedAsync()
         {
-            providers = new List<Provider>();
-            providers = Repository.GetAll();
+            await StateUpdate();
             NavMenu.SetSubMenu(true);
         }
+ 
 
         #endregion
 
@@ -61,7 +63,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
             if (!string.IsNullOrWhiteSpace(provideName) || !string.IsNullOrWhiteSpace(provider.NameProvider))
             {
@@ -74,17 +76,18 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
                         WebSite = webSite
                     };
 
-                    Repository.Add(provider);
+                    await Repository.AddAsync(provider);
                 }
                 else
                 {
                     provider.NameProvider = provideName;
                     provider.WebSite = webSite;
-                    Repository.Edit(provider);
+                    await Repository.EditAsync(provider);
                 }
             }
 
             CloseModal();
+            await StateUpdate();
             ToastShow("Данные обновлены", ToastLevel.Success);
         }
 
@@ -126,24 +129,30 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             toast.ShowToast(level);
         }
 
-        protected void Confirm()
+        protected async Task Confirm()
         {
             confirm = true;
 
-            DeleteData();
+            await DeleteData();
         }
 
-        protected void DeleteData()
+        protected async Task DeleteData()
         {
 
             if (confirm && provider != null)
             {
-                Repository.Remove(provider);
+                await Repository.RemoveAsync(provider.IdProvider);
+                await StateUpdate();
             }
             confirm = false;
 
         }
 
         #endregion
+
+        private async Task StateUpdate()
+        {
+            providers = await Repository.GetAllAsync();
+        }
     }
 }

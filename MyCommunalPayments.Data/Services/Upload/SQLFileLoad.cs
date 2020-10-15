@@ -1,13 +1,11 @@
 ﻿using BlazorInputFile;
-using Microsoft.JSInterop;
+using Microsoft.EntityFrameworkCore;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Data.Services.Upload
@@ -35,13 +33,21 @@ namespace MyCommunalPayments.Data.Services.Upload
             OrderId = order.IdOrder;
             return OrderId;
         }
-        public Order GetOrderById(int id) => Context.Orders.FirstOrDefault(i => i.IdOrder == id);
-        public IEnumerable<Order> GetAll() => Context.Orders;
+        public async Task<Order> GetOrderById(int id)
+        {
+            return await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
+        }
+
+        public async Task<IEnumerable<Order>> GetAll()
+        {
+           return await Context.Orders.ToListAsync();
+        }
  
 
-        public byte[] GetOrder(int id)
+        public async Task<byte[]> GetOrder(int id)
         {
-            byte[] content = Context.Orders.FirstOrDefault(i => i.IdOrder == id).OrderScreen;
+            var order = await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
+            var content = order.OrderScreen;
 
             return content;
         }

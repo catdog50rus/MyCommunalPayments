@@ -9,8 +9,8 @@ namespace MyCommunalPayments.Data.Services.Upload
     {
         int OrderId { get; }
         Task<int> UploadAsync(IFileListEntry file);
-        byte[] GetOrder(int id);
-        Order GetOrderById(int id);
-        IEnumerable<Order> GetAll();
+        Task<byte[]> GetOrder(int id);
+        Task<Order> GetOrderById(int id);
+        Task<IEnumerable<Order>> GetAll();
     }
 }

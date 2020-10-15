@@ -117,8 +117,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                 service = default;
                 amount = default;
             }
-
-            //CloseModal();
         }
 
         /// <summary>
@@ -149,6 +147,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             service = item;
             invoiceService = invoiceServicesList.FirstOrDefault(s => s.Service == item);
             isCounter = true;
+            
             amount = invoiceService.Amount;
 
             dateCount = DateTime.Today.ToString("dd/MM/yyyy");
@@ -174,6 +173,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             }
             CloseModal();
         }
+
 
 
         #endregion

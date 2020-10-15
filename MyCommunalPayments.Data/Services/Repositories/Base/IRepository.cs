@@ -3,6 +3,7 @@ using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Data.Services.Repositories.Base
 {
@@ -25,6 +26,13 @@ namespace MyCommunalPayments.Data.Services.Repositories.Base
         /// </summary>
         void Remove(T item);
         T GetById(int id);
+
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> AddAsync(T item);
+        Task<T> EditAsync(T item);
+        Task<T> RemoveAsync(int id);
+        Task<T> GetByIdAsync(int id);
+        Task<IEnumerable<T>> Search(string name);
 
 
     }

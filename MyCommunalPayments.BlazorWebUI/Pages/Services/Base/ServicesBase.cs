@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
-using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
@@ -13,38 +13,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     {
         #region Поля, Инициализация формы, Модальное окно
         [Inject]
-        public IRepository<Service> Repository { get; set; }
+        public IApiRepository<Service> Repository { get; set; }
 
         protected Service service;
-        protected IEnumerable<Service> services;
+        protected IEnumerable<Service> Services { get; set; } = new List<Service>();
+
         protected string serviceName;
         protected bool count;
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
+        protected string modalTitle = "Добавление новой услуги ЖКХ";
 
         protected void CloseModal()
         {
             count = default;
             serviceName = default;
+            service = default;
             modal.Close();
+            
         }
 
         protected void OpenModal()
         {
-            Message = default;
             modal.Open();
         }
 
-        //Уведомление об операции
-        protected string Message { get; set; }
-
-
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            //services = new List<Service>();
-            services = Repository.GetAll().ToList();
+            await StateUpdate();
             NavMenu.SetSubMenu(true);
+            service = default;
+            
         }
 
         #endregion
@@ -54,9 +54,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Добавить дело
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
-            string message = default;
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
 
@@ -68,23 +67,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                         IsCounter = count
                     };
 
-                    Repository.Add(service);
-
-                    message = $"Услуга добавлена!";
-
-
+                    //Repository.Add(service);
+                    await Repository.AddAsync(service);
                 }
                 else
                 {
                     service.NameService = serviceName;
                     service.IsCounter = count;
-                    Repository.Edit(service);
-                    message = $"Услуга обновлена!";
+                    await Repository.EditAsync(service);
                 }
             }
-
-            Message = message;
+            
             CloseModal();
+            await StateUpdate();
         }
 
         /// <summary>
@@ -93,20 +88,25 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected void Edit(Service item)
         {
             service = item;
-            OpenModal();
             serviceName = service.NameService;
             count = service.IsCounter;
-
+            OpenModal();
         }
 
         /// <summary>
         /// Удалить запись
         /// </summary>
-        protected void Remove(Service item)
+        protected async Task Remove(Service item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdService);
+            await StateUpdate();
         }
 
         #endregion
+
+        private async Task StateUpdate()
+        {
+            Services = await Repository.GetAllAsync();
+        }
     }
 }

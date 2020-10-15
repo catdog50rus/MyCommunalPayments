@@ -177,7 +177,6 @@ app {
 .toast.show{
     display: flex;
 }
-
 @keyframes fadein {
     from {
         opacity: 0;
@@ -187,6 +186,29 @@ app {
         opacity: 1;
     }
 }
+
+.spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #337AB7;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+    top: 40%;
+    left: 55%;
+    position: absolute;
+    display:block;
+}
+
+@keyframes spin{
+    0%{
+        transform: rotate(0deg)
+    }
+    100%{
+        transform: rotate(360deg)
+    }
+}
+
 
 
 @media (max-width: 767.98px) {

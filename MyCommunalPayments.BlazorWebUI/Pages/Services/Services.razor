@@ -2,86 +2,80 @@
 
 @inherits ServicesBase
 
-<!-- Форма -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Услуги ЖКХ </h2>
+@if (Services == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
+    <!-- Форма -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Услуги ЖКХ </h2>
 
-            <!--Уведомление  результате операции-->
-            @if (!string.IsNullOrWhiteSpace(Message))
-            {
-                <div class="alert alert-success text-center p-3 mb-2">
-                    @Message
+                <!--Добавление новой услуги-->
+                <div class="row mb-3">
+                    <div class="col">
+                        <button class="btn btn-success" @onclick="() => OpenModal()">Добавить</button>
+                    </div>
                 </div>
-            }
-
-            <!--Добавление новой услуги-->
-            <div class="row mb-3">
-                <div class="col">
-                    <button class="btn btn-success" @onclick="() => OpenModal()">Добавить</button>
-                </div>
-            </div>
-            <!--  Отображение таблицы с услугами  -->
-            <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col" class="w-75">Наименование услуги</th>
-                        <th scope="col" class="w-auto"></th>
-                    </tr>
-                </thead>
-                <!--Тело таблицы-->
-                @foreach (var item in services)
-                {
-                    <tbody>
+                <!--  Отображение таблицы с услугами  -->
+                <table class="table table-sm table-bordered table-hover ">
+                    <!--Заголовок таблицы-->
+                    <thead class="table-dark">
                         <tr>
-                            <!--Наименование услуги-->
-                            <td>
-                                <div>
-                                    @item.NameService
-                                </div>
-
-                            </td>
-                            <!--Блок кнопок-->
-                            <td>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                </div>
-                            </td>
+                            <th scope="col" class="w-75">Наименование услуги</th>
+                            <th scope="col" class="w-auto"></th>
                         </tr>
-                    </tbody>
-                }
-            </table>
+                    </thead>
+                    <!--Тело таблицы-->
+                    @foreach (var item in Services)
+                    {
+                        <tbody>
+                            <tr>
+                                <!--Наименование услуги-->
+                                <td>
+                                    <div>
+                                        @item.NameService
+                                    </div>
 
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+
+            </div>
         </div>
     </div>
-</div>
+}
+
+
 
 <!-- Modal -->
 <Modal @ref="modal" CloseWindow="CloseModal">
-    <Title>Добавление новой услуги ЖКХ</Title>
+    <Title>@modalTitle</Title>
     <Body>
         <div class="col mb-2">
             <input class="form-control" placeholder="Наименование услуги" @bind-value="serviceName" />
         </div>
         <!--Чек-бокс-->
         <div class="col">
-            @if (count)//Проверяем, был ли флажек в БД
-            {
-                //Если был ставим атрибут checked
-                <input type="checkbox" checked="checked" @bind-value="count" class="align-content-center" />
-            }
-            else
-            {
-                <input type="checkbox" @bind-value="count" class="align-content-center" />
-            }
+            @* Проверяем, был ли флажок в БД, если был ставим атрибут checked*@
+            <input type="checkbox" checked=@(count? "checked": null ) @bind-value="count" class="align-content-center" />
             <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
         </div>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+        <button type="submit" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
 

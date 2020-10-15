@@ -9,6 +9,7 @@ using MyCommunalPayments.Data.Services.Repositories;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Data.Services.Upload;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
@@ -28,11 +29,39 @@ namespace MyCommunalPayments.BlazorWebUI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
+            services.AddServerSideBlazor();
             services.AddDbContextPool<DBContext>(options =>
             {
                 //options.UseSqlite(Configuration.GetConnectionString("MySQLLiteDB"));
                 options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
             });
+
+            services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+            services.AddHttpClient<IApiRepository<Period>, PeriodsService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+            services.AddHttpClient<IApiRepository<Provider>, ProvidersService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+            services.AddHttpClient<IApiRepository<ProvidersServices>, ProviderServicesService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+            services.AddHttpClient<IApiRepository<ServiceCounter>, ServiceCounterService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+            services.AddHttpClient<IApiRepository<Payment>, PaymentsService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44390/");
+            });
+
             services.AddScoped<IRepository<Service>, SQLService<Service>>();
             services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
             services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
@@ -44,8 +73,7 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -21,8 +21,8 @@ else
 {
     <InvoicesServices
                       Invoice="_invoice"
-                      repository="repositoryInvoiceServices"
-                      countersRepository="repositoryServiceCounter"
+                      Repository="repositoryInvoiceServices"
+                      CountersRepository="repositoryServiceCounter"
                       ProviderServices="_providerServices.ToList()"
                       OnClickReturnToInvoces="CloseInvoiceServices"
                       />
@@ -64,7 +64,6 @@ else
     private void OpenInvoceServices(Invoice invoice)
     {
         _isServices = true;
-        //_idInvoice = id;
         _invoice = invoice;
 
     }

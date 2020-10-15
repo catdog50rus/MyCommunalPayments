@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System;
@@ -13,7 +14,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
     {
         #region Поля, Инициализация формы, Модальное окно
         [Inject]
-        public IRepository<Period> Repository { get; set; }
+        public IApiRepository<Period> Repository { get; set; }
 
         protected Period period = default;
         protected IEnumerable<Period> periods;
@@ -34,10 +35,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             modal.Open();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            periods = new List<Period>();
-            periods = Repository.GetAll().OrderByDescending(p => p.ToSort());
+            await StateUpdate();
             NavMenu.SetSubMenu(true);
         }
 
@@ -48,7 +48,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
             if (!string.IsNullOrWhiteSpace(year))
             {
@@ -61,17 +61,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
                         Month = month
                     };
 
-                    Repository.Add(period);
+                    await Repository.AddAsync(period);
                 }
                 else
                 {
                     period.Year = year;
                     period.Month = month;
-                    Repository.Edit(period);
+                    await Repository.EditAsync(period);
+                    period = default;
                 }
             }
 
             CloseModal();
+            await StateUpdate();
         }
 
         /// <summary>
@@ -89,11 +91,18 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected void Remove(Period item)
+        protected async Task Remove(Period item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdKey);
+            await StateUpdate();
         }
 
         #endregion
+
+        private async Task StateUpdate()
+        {
+            periods = await Repository.GetAllAsync();
+            periods = periods.OrderByDescending(p => p.ToSort());
+        }
     }
 }

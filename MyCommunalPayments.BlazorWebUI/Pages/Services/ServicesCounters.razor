@@ -1,9 +1,13 @@
 ﻿@page "/Services/ServicesCounters/"
-@page "/Services/ServicesCounters/{IdInvoice}"
 
-@using MyCommunalPayments.BlazorWebUI.Pages
 @inherits ServicesCountersBase
 
+@if(serviceCounters == null && services == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
 <!-- Форма -->
 <div class="container-fluid">
     <div class="row">
@@ -115,4 +119,7 @@
         <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
     </Footer>
 </Modal>
+
+
+}
 

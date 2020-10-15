@@ -4,72 +4,81 @@
 
 <Toast @ref="toast" OnClickConfirm="Confirm">
     <Message>@message</Message>
-    
+
 </Toast>
 
-@if (isProvider)
+@if (providers == null)
 {
-    <!-- Форма -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h2 class="text-center">Поставщики услуг ЖКХ </h2>
-                <!--Добавление нового поставщика-->
-                <div class="row mb-3">
-                    <div class="col">
-                        <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
-                    </div>
-                </div>
-                <!--  Таблица с услугами  -->
-                <table class="table table-sm table-bordered table-hover ">
-                    <!--Заголовок таблицы-->
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col" class="w-50">Наименование поставщика</th>
-                            <th scope="col">Web site</th>
-                            <th scope="col" class="w-auto text-center"></th>
-                        </tr>
-                    </thead>
-                    <!--Тело таблицы-->
-                    @foreach (var item in providers)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Наименование услуги-->
-                                <td>
-                                    <div>
-                                        @item.NameProvider
-                                    </div>
-
-                                </td>
-                                <!--Количество-->
-                                <td>
-                                    <div>
-                                        @item.WebSite
-                                    </div>
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-center">
-                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                        <button class="btn btn-sm btn-warning" @onclick="(() => SetServices(item))">Услуги</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                </table>
-            </div>
-        </div>
-    </div>
+    <Spinner></Spinner>
 }
 else
 {
-    <ProviderServices Provider="provider"
-                      OnClickReturnToProviders="ReturnFromService" />
+    @if (isProvider)
+    {
+        <!-- Форма -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h2 class="text-center">Поставщики услуг ЖКХ </h2>
+                    <!--Добавление нового поставщика-->
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                        </div>
+                    </div>
+                    <!--  Таблица с услугами  -->
+                    <table class="table table-sm table-bordered table-hover ">
+                        <!--Заголовок таблицы-->
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col" class="w-50">Наименование поставщика</th>
+                                <th scope="col">Web site</th>
+                                <th scope="col" class="w-auto text-center"></th>
+                            </tr>
+                        </thead>
+                        <!--Тело таблицы-->
+                        @foreach (var item in providers)
+                        {
+                            <tbody>
+                                <tr>
+                                    <!--Наименование услуги-->
+                                    <td>
+                                        <div>
+                                            @item.NameProvider
+                                        </div>
+
+                                    </td>
+                                    <!--Количество-->
+                                    <td>
+                                        <div>
+                                            @item.WebSite
+                                        </div>
+
+                                    </td>
+                                    <!--Блок кнопок-->
+                                    <td>
+                                        <div class="text-center">
+                                            <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                            <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                            <button class="btn btn-sm btn-warning" @onclick="(() => SetServices(item))">Услуги</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <ProviderServices Provider="provider"
+                          OnClickReturnToProviders="ReturnFromService" />
+    }
 }
+
+
 
 
 <!-- Modal -->

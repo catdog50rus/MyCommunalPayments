@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
@@ -20,7 +21,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         public EventCallback OnPaimentReturnToInvoices { get; set; }
 
         [Inject] 
-        public IRepository<Payment> Repository { get; set; }
+        public IApiRepository<Payment> Repository { get; set; }
         [Inject]
         public IFileLoad FileLoad { get; set; }
         [Inject]
@@ -28,7 +29,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
 
         protected bool isUpload = default;
-        protected string buttonOff = "disabled";
+        //protected string buttonOff = "disabled";
 
         protected Payment payment = default;
         protected IEnumerable<Payment> paymentsList;
@@ -38,7 +39,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected bool paid;
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
         protected void CloseModal()
         {
             modal.Close();
@@ -49,16 +50,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             modal.Open();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            paymentsList = new List<Payment>();
-
-            paymentsList = Repository.GetAll().Where(i => i.Invoice == Invoice);
+            await StateUpdate();
 
             paymentSum = Invoice.InvoiceSum;
-
             datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
-
         }
 
         #endregion
@@ -68,45 +65,40 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
-            if (buttonOff.Equals("disabled"))
-            {
-                return;
-            }
-            else
-            {
 
-
-                if (!string.IsNullOrWhiteSpace(datePayment) && Invoice != null && paymentSum >= 0)
+            if (!string.IsNullOrWhiteSpace(datePayment) && paymentSum >= 0)
+            {
+                if (orderId == 0) orderId = 1;
+                if (payment == null)
                 {
-                    if (payment == null)
+                    
+                    payment = new Payment()
                     {
-                        payment = new Payment()
-                        {
-                            DatePayment = datePayment,
-                            Invoice = Invoice,
-                            PaymentSum = paymentSum,
-                            Paid = paid,
-                            IdOrder = orderId
+                        DatePayment = datePayment,
+                        IdInvoice = Invoice.IdInvoice,
+                        PaymentSum = paymentSum,
+                        Paid = paid,
+                        IdOrder = orderId
 
-                        };
-                        payment.Invoice.Pay = payment.Paid;
+                    };
+                    Invoice.Pay = payment.Paid;
 
-                        Repository.Add(payment);
-                    }
-                    else
-                    {
-                        payment.DatePayment = datePayment;
-                        payment.Paid = paid;
-                        payment.PaymentSum = paymentSum;
-                        payment.Invoice.Pay = paid;
-                        Repository.Edit(payment);
-                    }
+                    await Repository.AddAsync(payment);
                 }
-
-                CloseModal();
+                else
+                {
+                    payment.DatePayment = datePayment;
+                    payment.Paid = paid;
+                    payment.PaymentSum = paymentSum;
+                    payment.Invoice.Pay = paid;
+                    await Repository.EditAsync(payment);
+                }
             }
+
+            CloseModal();
+            await StateUpdate();
         }
 
         /// <summary>
@@ -125,9 +117,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected void Remove(Payment item)
+        protected async Task Remove(Payment item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdPayment);
+            await StateUpdate();
+            Invoice.Pay = false;
         }
 
         protected void UploadOrder()
@@ -141,7 +135,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             if (id >= 0)
             {
-                buttonOff = "";
                 if (payment != null)
                 {
                     payment.IdOrder = id;
@@ -159,7 +152,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         protected async void DownloadFile(Payment payment)
         {
-            Order order = FileLoad.GetOrderById(payment.IdOrder);
+            Order order = await FileLoad.GetOrderById(payment.IdOrder);
             if (order != null)
             {
                 var content = order.OrderScreen;
@@ -175,5 +168,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         }
 
         #endregion
+
+        private async Task StateUpdate()
+        {
+            paymentsList = await Repository.GetAllAsync();
+            paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice);
+        }
     }
 }

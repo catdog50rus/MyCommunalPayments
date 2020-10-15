@@ -114,7 +114,7 @@ else
     <Body>
         <!--Период-->
         <div class="col mb-3">
-            <select class="form-control" placeholder="Период" @bind="periodName">
+            <select @bind="periodName" class="form-control">
                 @foreach (var item in periodsList)
                 {
                     <option>@item.ToString()</option>
