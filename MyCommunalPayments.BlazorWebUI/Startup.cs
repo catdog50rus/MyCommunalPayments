@@ -18,6 +18,12 @@ namespace MyCommunalPayments.BlazorWebUI
 {
     public class Startup
     {
+        
+        private const string _apiPathIIS = @"http://localhost:8080/";
+        private const string _apiPathExpress = @"https://localhost:44390";
+
+        private string _apiPath;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -37,39 +43,40 @@ namespace MyCommunalPayments.BlazorWebUI
                 options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
             });
 
+
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<Period>, PeriodsService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<Provider>, ProvidersService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<ProvidersServices>, ProviderServicesService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<ServiceCounter>, ServiceCounterService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<Payment>, PaymentsService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44390/");
+                client.BaseAddress = new Uri(_apiPath);
+            });
+            services.AddHttpClient<IApiRepository<InvoiceServices>, InvoiceServicesService>(client =>
+            {
+                client.BaseAddress = new Uri(_apiPath);
+            });
+            services.AddHttpClient<IApiRepository<Invoice>, InvoiceService>(client =>
+            {
+                client.BaseAddress = new Uri(_apiPath);
             });
 
-            services.AddScoped<IRepository<Service>, SQLService<Service>>();
-            services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
-            services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
-            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
-            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
-            services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
             services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
@@ -82,12 +89,14 @@ namespace MyCommunalPayments.BlazorWebUI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                _apiPath = _apiPathExpress;
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                _apiPath = _apiPathIIS;
             }
 
             app.UseHttpsRedirection();

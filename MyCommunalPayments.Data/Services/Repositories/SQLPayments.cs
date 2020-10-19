@@ -12,44 +12,6 @@ namespace MyCommunalPayments.Data.Services.Repositories
     {
         public SQLPayments(DBContext context) : base(context) { }
 
-        #region Interface
-
-        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.Payments
-            .Include(i => i.Invoice)
-                .ThenInclude(p => p.Period)
-            .Include(i => i.Invoice)
-                .ThenInclude(pr => pr.Provider)
-            .Include(o => o.Order);
-
-        public void Add(T item)
-        {
-            if (item != null)
-            {
-                Context.Payments.Add(item);
-                SaveChanges();
-            }
-        }
-
-        public void Edit(T item)
-        {
-            //Вносим изменения в дело
-            var temp = Context.Payments.Attach(item);
-            //Применяем изменения
-            temp.State = EntityState.Modified;
-
-            SaveChanges();
-        }
-
-        public void Remove(T item)
-        {
-            Context.Payments.Remove(item);
-            SaveChanges();
-        }
-
-        public T GetById(int id) => (T)Context.Payments.FirstOrDefault(i => i.IdPayment == id);
-
-        #endregion
-
         #region AsyncInterface
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -59,7 +21,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
                     .ThenInclude(p=>p.Provider)
                 .Include(i => i.Invoice)
                     .ThenInclude(p => p.Period)
-                .Include(o => o.Order)
+                //.Include(o => o.Order)
                 .ToListAsync();
             return (IEnumerable<T>)result;
         }
@@ -70,7 +32,21 @@ namespace MyCommunalPayments.Data.Services.Repositories
             {
                 await Context.Payments.AddAsync(item);
                 await Context.SaveChangesAsync();
-                return await GetByIdAsync(item.IdPayment);
+                if(item.IdOrder == 0)
+                {
+                    var result = await Context.Payments
+                    .Include(i => i.Invoice)
+                        .ThenInclude(p => p.Provider)
+                    .Include(i => i.Invoice)
+                        .ThenInclude(p => p.Period)
+                    .FirstOrDefaultAsync(s => s.IdPayment == item.IdPayment); 
+                    return (T)result;
+                }
+                else
+                {
+                    return await GetByIdAsync(item.IdPayment);
+                }
+ 
             }
             else return null;
         }
@@ -105,7 +81,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
                     .ThenInclude(p => p.Provider)
                 .Include(i => i.Invoice)
                     .ThenInclude(p => p.Period)
-                .Include(o => o.Order)
+                //.Include(o => o.Order)
                 .FirstOrDefaultAsync(s => s.IdPayment == id);
 
             return (T)res;
@@ -132,7 +108,7 @@ namespace MyCommunalPayments.Data.Services.Repositories
                     .ThenInclude(p=>p.Provider)
                 .Include(i => i.Invoice)
                     .ThenInclude(p => p.Period)
-                .Include(o => o.Order);
+                /*.Include(o => o.Order)*/;
             if (!string.IsNullOrEmpty(name))
             {
                 query = query

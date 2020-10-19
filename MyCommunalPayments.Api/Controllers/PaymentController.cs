@@ -35,7 +35,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
 
@@ -48,7 +48,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
 
         }
@@ -65,7 +65,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
 
 
@@ -83,7 +83,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
 
@@ -102,7 +102,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
 
@@ -122,7 +122,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
 
@@ -140,7 +140,7 @@ namespace MyCommunalPayments.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка доступа {ex.Message}");
+                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
     }

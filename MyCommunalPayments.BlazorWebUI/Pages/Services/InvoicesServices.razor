@@ -1,159 +1,167 @@
 ﻿
 @inherits InvoicesServicesBase
 
-<!-- Форма -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Услуги ЖКХ </h2>
+@if (invoiceServicesList == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
+    <!-- Форма -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Услуги ЖКХ </h2>
 
-            <!--Добавление новой услуги-->
-            <div class="row mb-3">
-                <div class="col">
-                    <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
+                <!--Добавление новой услуги-->
+                <div class="row mb-3">
+                    <div class="col">
+                        <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
+                    </div>
+                    <div class="col text-right">
+                        <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
+                    </div>
                 </div>
-                <div class="col text-right">
-                    <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
-                </div>
-            </div>
-            <!--  Отображение таблицы с услугами  -->
-            <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col" class="w-50">Услуга</th>
-                        <th scope="col" class="w-25">Показания счетчика</th>
-                        <th class="w-25"></th>
-                    </tr>
-                </thead>
-                <!--Тело таблицы-->
-                @foreach (var item in invoiceServicesList)
-                {
-                    <tbody>
+                <!--  Отображение таблицы с услугами  -->
+                <table class="table table-sm table-bordered table-hover ">
+                    <!--Заголовок таблицы-->
+                    <thead class="table-dark">
                         <tr>
-                            <!--Наименование услуги-->
-                            <td>
-                                <div>
-                                    @item.Service.NameService
-                                </div>
-
-                            </td>
-                            <!--Показания счетчика-->
-                            <td>
-                                @if (item.Service.IsCounter)
-                                {
-                                    <div class="text-center">
-                                        @item.Amount
-                                        <button class="ml-5 btn btn-sm btn-success" @onclick="(() => AddCounter(item.Service))">Внести показания</button>
-                                    </div>
-                                }
-
-                            </td>
-                            <!--Блок кнопок-->
-                            <td>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                </div>
-                            </td>
+                            <th scope="col" class="w-50">Услуга</th>
+                            <th scope="col" class="w-25">Показания счетчика</th>
+                            <th class="w-25"></th>
                         </tr>
-                    </tbody>
-                }
-            </table>
+                    </thead>
+                    <!--Тело таблицы-->
+                    @foreach (var item in invoiceServicesList)
+                    {
+                        <tbody>
+                            <tr>
+                                <!--Наименование услуги-->
+                                <td>
+                                    <div>
+                                        @item.Service.NameService
+                                    </div>
 
+                                </td>
+                                <!--Показания счетчика-->
+                                <td>
+                                    @if (item.Service.IsCounter)
+                                    {
+                                        <div class="text-center">
+                                            @item.Amount
+                                            <button class="ml-5 btn btn-sm btn-success" @onclick="(() => AddCounter(item.Service))">Внести показания</button>
+                                        </div>
+                                    }
+
+                                </td>
+                                <!--Блок кнопок-->
+                                <td>
+                                    <div class="text-center">
+                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<Modal @ref="modal" CloseWindow="CloseModal">
-    <Title>
-        @if (!isCounter)
-        {
-            <p>Добавление новой услуги ЖКХ </p>
-            
-        }
-        else
-        {
-            <p>Внесение показаний счетчика ЖКХ </p>
-        }
-        Поставщик: @provider.NameProvider
-    </Title>
-    <Body>
-        @if (!isCounter)
-        {
-            @*Таблица выбора услуг*@
-            <div>
-                <table class="table table-sm table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="w-75"></th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                @*Услуга*@
-                                <div>
-                                    <select class="form-control" placeholder="Услуга" @bind="serviceName">
-                                        @foreach (var item in services)
-                                        {
-                                            <option>@item.NameService</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Добавить услугу</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            @*Внесение показаний счетчика*@
-            <div>
-                <p>Услуга: @service.NameService</p>
-                
-                <table class="table table-sm table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="w-25"></th>
-                            <th class="w-25"></th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                @*Дата*@
-                                <div class="text-center">
-                                    <input class="form-control text-center" placeholder="Дата передачи" @bind-value="dateCount" />
-                                </div>
-                            </td>
-                            <td>
-                                @*Показания*@
-                                <div class="text-center">
-                                    <input class="form-control text-center" placeholder="Показания" @bind-value="amount" />
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-sm btn-danger" @onclick="SaveCount">Сохранить</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
+    <!-- Modal -->
+    <Modal @ref="modal" CloseWindow="CloseModal">
+        <Title>
+            @if (!isCounter)
+            {
+                <p>Добавление новой услуги ЖКХ </p>
 
-    </Body>
-</Modal>
+            }
+            else
+            {
+                <p>Внесение показаний счетчика ЖКХ </p>
+            }
+            Поставщик: @provider.NameProvider
+        </Title>
+        <Body>
+            @if (!isCounter)
+            {
+                @*Таблица выбора услуг*@
+                <div>
+                    <table class="table table-sm table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="w-75"></th>
+                                <th class="w-25"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @*Услуга*@
+                                    <div>
+                                        <select class="form-control" placeholder="Услуга" @bind="serviceName">
+                                            @foreach (var item in services)
+                                            {
+                                                <option>@item.NameService</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Добавить услугу</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                @*Внесение показаний счетчика*@
+                <div>
+                    <p>Услуга: @service.NameService</p>
+
+                    <table class="table table-sm table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="w-25"></th>
+                                <th class="w-25"></th>
+                                <th class="w-25"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @*Дата*@
+                                    <div class="text-center">
+                                        <input class="form-control text-center" placeholder="Дата передачи" @bind-value="dateCount" />
+                                    </div>
+                                </td>
+                                <td>
+                                    @*Показания*@
+                                    <div class="text-center">
+                                        <input class="form-control text-center" placeholder="Показания" @bind-value="amount" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-sm btn-danger" @onclick="SaveCount">Сохранить</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+        </Body>
+    </Modal>
+}
+
 
 

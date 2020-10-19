@@ -1,4 +1,5 @@
-﻿
+﻿@page "/Services/Payments"
+
 @inherits PaymentsBase
 
 
@@ -22,20 +23,19 @@ else
             <div class="row">
                 <div class="col">
                     <h2 class="text-center">Платежи за услуги ЖКХ </h2>
-                    <!--Добавление нового платежа-->
-                    <div class="row mb-3">
-                        <div class="col">
-                            <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
-                        </div>
-                        @if (Invoice != null)
-                        {
+                    @if (Invoice != null)
+                    {
+                        <!--Добавление нового платежа-->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                            </div>
+
                             <div>
                                 <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
                             </div>
-                        }
-
-                    </div>
-
+                        </div>
+                    }
 
                     <!--  Таблица с платежами  -->
                     <table class="table table-sm table-bordered table-hover ">
@@ -95,14 +95,18 @@ else
                                     <!--Блок кнопок-->
                                     <td>
                                         <div class="text-center">
-                                            <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
+                                            @if(Invoice != null)
+                                            {
+
+                                            }
+                                            <button class="btn btn-sm btn-info" disabled="@(Invoice == null? "disabled" : null)"  @onclick="(() => Edit(item))">Изменить</button>
                                             <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
                                         </div>
                                     </td>
                                     <!--Блок кнопок-->
                                     <td>
                                         <div class="text-center">
-                                            <button class="btn btn-sm btn-warning " @onclick="(() => DownloadFile(item))">Платежка</button>
+                                            <button class="btn btn-sm btn-warning" disabled="@(item.IdOrder == 0? "disabled" : null)"  @onclick="(() => DownloadFile(item))">Платежка</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -117,43 +121,47 @@ else
 
 }
 
-<!-- Modal -->
-<Modal @ref="modal" CloseWindow="CloseModal">
-    <Title>
-        Добавление новой оплаты за услуги ЖКХ <br />
-        Поставщик услуг ЖКХ: @Invoice.Provider.NameProvider <br />
-        Период оплаты: @Invoice.Period
-    </Title>
-    <Body>
-        <div class="row mb-3 text-center">
-            <div class="col-1 text-center align-content-center">
-                <!--Чек-бокс-->
-                @if (paid)//Проверяем, был ли флажек в БД
-                {
-                    //Если был ставим атрибут checked
+@if (invoice != null)
+{
+    <!-- Modal -->
+    <Modal @ref="modal" CloseWindow="CloseModal">
+        <Title>
+            Добавление новой оплаты за услуги ЖКХ <br />
+            Поставщик услуг ЖКХ: @invoice.Provider.NameProvider <br />
+            Период оплаты: @invoice.Period
+        </Title>
+        <Body>
+            <div class="row mb-3 text-center">
+                <div class="col-1 text-center align-content-center">
+                    <!--Чек-бокс-->
+                    @if (paid)//Проверяем, был ли флажек в БД
+                    {
+                        //Если был ставим атрибут checked
 
-                    <input type="checkbox" checked="checked" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
+                        <input type="checkbox" checked="checked" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
 
-                }
-                else
-                {
-                    <input type="checkbox" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
-                }
+                    }
+                    else
+                    {
+                        <input type="checkbox" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
+                    }
+                </div>
+                <div class="col-3">
+                    <input class="form-control text-center" placeholder="Дата оплаты" @bind-value="datePayment" />
+                </div>
+                <div class="col-3">
+                    <input class="form-control text-right" placeholder="Сумма платежа" @bind-value="paymentSum" />
+                </div>
+                <div class="col-5">
+                    <a class="btn btn-sm btn-outline-success" role="button" href="@invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
+                    <button class="btn btn-sm btn-info" @onclick="UploadOrder">Загрузить платежку</button>
+                </div>
             </div>
-            <div class="col-3">
-                <input class="form-control text-center" placeholder="Дата оплаты" @bind-value="datePayment" />
-            </div>
-            <div class="col-3">
-                <input class="form-control text-right" placeholder="Сумма платежа" @bind-value="paymentSum" />
-            </div>
-            <div class="col-5">
-                <a class="btn btn-sm btn-outline-success" role="button" href="@Invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
-                <button class="btn btn-sm btn-info" @onclick="UploadOrder">Загрузить платежку</button>
-            </div>
-        </div>
-    </Body>
-    <Footer>
-        <button class="btn btn-sm btn-danger " @onclick="Add">Сохранить</button>
-    </Footer>
-</Modal>
+        </Body>
+        <Footer>
+            <button class="btn btn-sm btn-danger " @onclick="Add">Сохранить</button>
+        </Footer>
+    </Modal>
+}
+
 

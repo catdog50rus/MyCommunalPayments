@@ -11,7 +11,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         [Inject]
         public IFileLoad FileUpload { get; set; }
 
-        protected int orderId = -1;
+        protected int orderId;
 
         [Parameter]
         public EventCallback<int> OnUploadReturnToPaiment { get; set; }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 {
@@ -13,14 +14,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         [Parameter]
         public Invoice Invoice { get; set; }
-        [Parameter]
-        public IRepository<InvoiceServices> Repository { get; set; }
-        [Parameter]
-        public IRepository<ServiceCounter> CountersRepository { get; set; }
+        [Inject]
+        public IApiRepository<InvoiceServices> Repository { get; set; }
+        [Inject]
+        public IApiRepository<ServiceCounter> CountersRepository { get; set; }
         [Parameter]
         public EventCallback OnClickReturnToInvoces { get; set; }
-        [Parameter]
-        public List<ProvidersServices> ProviderServices { get; set; }
+        [Inject]
+        public IApiRepository<ProvidersServices> ProviderServicesRepository { get; set; }
 
         protected int idInvoice;
 
@@ -42,9 +43,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         //Модальное окно
         protected Modal modal;// { get; set; }
 
-        protected void CloseModal()
+        protected async Task CloseModal()
         {
             isCounter = default;
+            await StateUpdate();
             modal.Close();
         }
 
@@ -54,29 +56,23 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             modal.Open();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            if (Invoice != null)
+            
+            if (Invoice != null) 
             {
+                await StateUpdate();
                 provider = Invoice.Provider;
-                invoiceServicesList = Repository.GetAll().Where(p => p.Invoice == Invoice);
-                services = ProviderServices.Where(p => p.Provider == provider).Select(s => s.Service).ToList();
+                var pservices = await ProviderServicesRepository.GetAllAsync();
+                services = pservices.Where(p => p.Provider.IdProvider == provider.IdProvider).Select(s => s.Service).ToList();
                 serviceName = services[0].NameService;
-                counters = CountersRepository.GetAll().ToList();
-                isCounter = default;
             }
+            counters = (await CountersRepository.GetAllAsync()).ToList();
 
+            isCounter = default;
         }
 
-        protected Service GetServiceByName(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException($"{nameof(name)} не может быть пустым или иметь значение null", nameof(name));
-            }
-
-            return services.FirstOrDefault(s => s.NameService == serviceName);
-        }
+        
 
         #endregion
 
@@ -85,37 +81,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Добавить дело
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
             if (!string.IsNullOrWhiteSpace(serviceName))
             {
                 service = GetServiceByName(serviceName);
                 if (service.IsCounter)
                 {
-                    amount = counters.Where(s => s.Service == service).Select(c => c.ValueCounter).Max();
+                    amount = counters.Where(s => s.IdService == service.IdService).Select(c => c.ValueCounter).Max();
                 }
 
                 if (invoiceService == null)
                 {
                     invoiceService = new InvoiceServices()
                     {
-                        Invoice = Invoice,
-                        Service = service,
+                        IdInvoice = Invoice.IdInvoice,
+                        IdService = service.IdService,
                         Amount = amount
                     };
 
-                    Repository.Add(invoiceService);
+                    await Repository.AddAsync(invoiceService);
 
                 }
                 else
                 {
-                    invoiceService.Service = service;
-                    Repository.Edit(invoiceService);
+                    invoiceService.IdService = service.IdService;
+                    await Repository.EditAsync(invoiceService);
 
                 }
                 invoiceService = default;
                 service = default;
                 amount = default;
+
             }
         }
 
@@ -126,19 +123,16 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         {
             invoiceService = item;
             OpenModal();
-            idInvoice = item.IdInvoice;
-            service = item.Service;
             serviceName = item.Service.NameService;
-            amount = item.Amount;
-
         }
 
         /// <summary>
         /// Удалить запись
         /// </summary>
-        protected void Remove(InvoiceServices item)
+        protected async Task Remove(InvoiceServices item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdInvoiceServices);
+            await StateUpdate();
         }
 
 
@@ -156,7 +150,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             OpenModal();
         }
 
-        protected void SaveCount()
+        protected async Task SaveCount()
         {
             if (counter == null)
             {
@@ -164,18 +158,27 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                 {
                     DateCount = dateCount,
                     ValueCounter = amount,
-                    Service = service
+                    IdService = service.IdService
                 };
                 invoiceService.Amount = amount;
-                Repository.Edit(invoiceService);
-                CountersRepository.Add(counter);
+                await Repository.EditAsync(invoiceService);
+                await CountersRepository.AddAsync(counter);
 
             }
-            CloseModal();
+            await CloseModal();
         }
 
 
 
         #endregion
+
+        private async Task StateUpdate()
+        {
+            invoiceServicesList = await Repository.GetAllAsync();
+            invoiceServicesList = invoiceServicesList
+                .Where(p => p.Invoice.IdInvoice == Invoice.IdInvoice);
+        }
+
+        private Service GetServiceByName(string name) => services.FirstOrDefault(s => s.NameService == name);
     }
 }

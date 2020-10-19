@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
     {
         #region Поля, Инициализация формы, Модальное окно
         [Parameter]
-        public IRepository<Invoice> Repository { get; set; }
+        public IApiRepository<Invoice> Repository { get; set; }
 
         [Parameter]
         public List<Provider> Providers { get; set; }
@@ -21,16 +20,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         public List<Period> Periods { get; set; }
 
         [Parameter]
-        public List<Service> Services { get; set; }
-
-        [Parameter]
         public EventCallback<Invoice> OnClickSetService { get; set; }
 
         protected IEnumerable<Invoice> invoices;
         protected Invoice invoice;
         protected decimal summ;
         protected bool pay;
-        protected bool isNotPaided;
+        protected bool isNotPaided = true;
         protected bool isPay;
 
         //Providers
@@ -43,14 +39,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected List<Period> periodsList;
         protected string periodName;
 
-        //Services
-        protected List<Service> servicesList;
-
-
         //Модальное окно
         protected Modal modal;// { get; set; }
 
-        protected void CloseModal()
+        protected async Task CloseModal()
         {
             summ = default;
             invoice = default;
@@ -58,6 +50,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             modal.ModalSize = "";
 
             modal.Close();
+            await StateUpdate(isNotPaided);
         }
 
         protected void OpenModal()
@@ -65,24 +58,20 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             modal.Open();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            await StateUpdate(isNotPaided);
             providersList = Providers;
             periodsList = Periods.OrderByDescending(p => p.ToSort()).ToList();
-            servicesList = Services;
-            ShowPaided();
             providerName = providersList[0].NameProvider;
             periodName = periodsList[0].ToString();
             pay = default;
-            isNotPaided = true;
+            
             invoice = default;
             isPay = default;
-
         }
 
-        protected Provider GetProviderByName(string name) => providersList.SingleOrDefault(n => n.NameProvider == name);
 
-        protected Period GetPeriodByName(string name) => periodsList.SingleOrDefault(n => n.ToString() == name);
         
 
         #endregion
@@ -92,7 +81,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected void Add()
+        protected async Task Add()
         {
             if (!string.IsNullOrWhiteSpace(periodName) && !string.IsNullOrWhiteSpace(providerName))
             {
@@ -104,27 +93,27 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
                     invoice = new Invoice()
                     {
-                        Period = period,
-                        Provider = provider,
+                        IdPeriod = period.IdKey,
+                        IdProvider = provider.IdProvider,
                         InvoiceSum = summ,
                         Pay = false
                     };
-                    Repository.Add(invoice);
+                    await Repository.AddAsync(invoice);
 
                 }
                 //Отредактировать
                 else
                 {
-                    invoice.Period = period;
-                    invoice.Provider = provider;
+                    invoice.IdPeriod = period.IdKey;
+                    invoice.IdProvider = provider.IdProvider;
                     invoice.InvoiceSum = summ;
                     invoice.Pay = pay;
-                    Repository.Edit(invoice);
+                    await Repository.EditAsync(invoice);
                 }
 
             }
 
-            CloseModal();
+            await CloseModal();
         }
 
         /// <summary>
@@ -146,9 +135,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected void Remove(Invoice item)
+        protected async Task Remove(Invoice item)
         {
-            Repository.Remove(item);
+            await Repository.RemoveAsync(item.IdInvoice);
+            await StateUpdate(isNotPaided);
         }
 
         protected void SetService(Invoice item)
@@ -162,17 +152,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             isPay = true;
         }
 
-        protected void ShowPaided()
+        protected async Task ShowPaided()
         {
             isNotPaided = !isNotPaided;
-            if (isNotPaided)
-            {
-                invoices = Repository.GetAll().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
-            }
-            else
-            {
-                invoices = Repository.GetAll().OrderByDescending(p => p.Period.ToSort());
-            }
+            await StateUpdate(isNotPaided);
         }
 
         protected void RePaid()
@@ -186,5 +169,21 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         }
 
         #endregion
+
+        private async Task StateUpdate(bool show)
+        {
+            if (show)
+            {
+                invoices = (await Repository.GetAllAsync()).ToList().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
+            }
+            else
+            {
+                invoices = (await Repository.GetAllAsync()).ToList().OrderByDescending(p => p.Period.ToSort());
+            }
+        }
+
+        protected Provider GetProviderByName(string name) => providersList.SingleOrDefault(n => n.NameProvider == name);
+
+        private Period GetPeriodByName(string name) => periodsList.SingleOrDefault(n => n.ToString() == name);
     }
 }

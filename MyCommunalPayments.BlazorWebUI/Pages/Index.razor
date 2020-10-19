@@ -1,63 +1,54 @@
 ﻿@page "/"
-@inject IRepository<Invoice> repositoryInvoice
-@inject IRepository<InvoiceServices> repositoryInvoiceServices
-@inject IRepository<Payment> repositoryPayment
-@inject IRepository<Period> repositoryPeriod
-@inject IRepository<Provider> repositoryProvider
-@inject IRepository<ProvidersServices> repositoryProvidersServices
-@inject IRepository<Service> repositoryService
-@inject IRepository<ServiceCounter> repositoryServiceCounter
+@inject IApiRepository<Invoice> repositoryInvoice
+@inject IApiRepository<Period> repositoryPeriod
+@inject IApiRepository<Provider> repositoryProvider
 
-
-@if (!_isServices)
+@if (
+     _invoices == null
+    && _periods == null
+    && _providers == null
+  )
 {
-<MyCommunalPayments.BlazorWebUI.Pages.Invoices.Invoices Repository="repositoryInvoice"
-                                                        Providers="_providers.ToList()"
-                                                        Periods="_periods.ToList()"
-                                                        Services="_services.ToList()"
-                                                        OnClickSetService="OpenInvoceServices" />
+    <Spinner></Spinner>
 }
 else
 {
-    <InvoicesServices
-                      Invoice="_invoice"
-                      Repository="repositoryInvoiceServices"
-                      CountersRepository="repositoryServiceCounter"
-                      ProviderServices="_providerServices.ToList()"
-                      OnClickReturnToInvoces="CloseInvoiceServices"
-                      />
+    @if (!_isServices)
+    {
+        <MyCommunalPayments.BlazorWebUI.Pages.Invoices.Invoices Repository="repositoryInvoice"
+                                                                Providers="_providers.ToList()"
+                                                                Periods="_periods.ToList()"
+                                                                
+                                                                OnClickSetService="OpenInvoceServices" />
+    }
+    else
+    {
+        <InvoicesServices Invoice="_invoice"
+                          OnClickReturnToInvoces="CloseInvoiceServices" />
 
 
+    }
 }
+
+
 
 
 
 @code{
 
     private IEnumerable<Invoice> _invoices;
-    private IEnumerable<InvoiceServices> _invoiceServices;
-    private IEnumerable<Payment> _payments;
     private IEnumerable<Period> _periods;
     private IEnumerable<Provider> _providers;
-    private IEnumerable<ProvidersServices> _providerServices;
-    private IEnumerable<Service> _services;
-    private IEnumerable<ServiceCounter> _serviceCounters;
-
-
 
     private bool _isServices;
     private Invoice _invoice;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _invoices = repositoryInvoice.GetAll();
-        _invoiceServices = repositoryInvoiceServices.GetAll();
-        _payments = repositoryPayment.GetAll();
-        _periods = repositoryPeriod.GetAll();
-        _providers = repositoryProvider.GetAll();
-        _providerServices = repositoryProvidersServices.GetAll();
-        _services = repositoryService.GetAll();
-        _serviceCounters = repositoryServiceCounter.GetAll();
+        _periods = await repositoryPeriod.GetAllAsync();
+        _providers = await repositoryProvider.GetAllAsync();
+        _invoices = await repositoryInvoice.GetAllAsync();
+
         _isServices = default;
     }
 

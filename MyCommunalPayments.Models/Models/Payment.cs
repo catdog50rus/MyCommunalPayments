@@ -36,10 +36,10 @@ namespace MyCommunalPayments.Models.Models
         /// Скан платежки
         /// </summary>
         public int IdOrder { get; set; }
-        /// <summary>
-        /// Скан платежки
-        /// </summary>
-        [ForeignKey("IdOrder")]
-        public Order Order { get; set; }
+        ///// <summary>
+        ///// Скан платежки
+        ///// </summary>
+        //[ForeignKey("IdOrder")]
+        //public Order Order { get; set; }
     }
 }

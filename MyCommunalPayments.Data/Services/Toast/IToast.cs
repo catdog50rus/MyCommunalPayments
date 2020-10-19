@@ -6,6 +6,5 @@ namespace MyCommunalPayments.Data.Services.Toast
     {
         (string, string, string) ShowToast(ToastLevel level);
     }
-
-    
+ 
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Timers;
-
-namespace MyCommunalPayments.Data.Services.Toast
+﻿namespace MyCommunalPayments.Data.Services.Toast
 {
     public class ToastService : IToast
     {
@@ -41,7 +38,6 @@ namespace MyCommunalPayments.Data.Services.Toast
                     break;
             }
         }
-
     }
 
     public enum ToastLevel

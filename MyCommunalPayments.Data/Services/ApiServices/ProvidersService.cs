@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Data.Services.ApiServices

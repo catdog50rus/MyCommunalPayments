@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.Data.Services.ApiServices;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
@@ -48,6 +47,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected override async Task OnInitializedAsync()
         {
             await StateUpdate();
+            services = (await ServiceRepository.GetAllAsync()).ToList();
+            services = services.Where(c => c.IsCounter == true).ToList();
         }
 
         protected Service GetServiceByName(string name)
@@ -119,8 +120,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         {
             serviceCounters = await Repository.GetAllAsync();
             serviceCounters.OrderByDescending(d => d.ToSort());//.ThenBy(s => s.Service.NameService);
-            services = (await ServiceRepository.GetAllAsync()).ToList();
-            services = services.Where(c => c.IsCounter == true).ToList();
+            
         }
 
         #endregion

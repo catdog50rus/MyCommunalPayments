@@ -12,85 +12,91 @@ namespace MyCommunalPayments.Data.Services.Repositories
     {
         public SQLInvoiceServises(DBContext context) : base(context) { }
 
-        #region Interface
+        #region AsyncInterface
 
-        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.InvoiceServices;
-        
-        public void Add(T item)
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            var result = await Context.InvoiceServices
+                .Include(i=>i.Invoice)
+                    .ThenInclude(p=>p.Provider)
+                .Include(s=>s.Service)
+                .ToListAsync();
+            return (IEnumerable<T>)result;
+        }
+
+        public async Task<T> AddAsync(T item)
         {
             if (item != null)
             {
-                Context.InvoiceServices.Add(item);
-                SaveChanges();
+                await Context.InvoiceServices.AddAsync(item);
+                await Context.SaveChangesAsync();
+                return await GetByIdAsync(item.IdInvoiceServices);
             }
+            else return null;
         }
 
-        public void Edit(T item)
+        public async Task<T> EditAsync(T item)
         {
-            //Вносим изменения в дело
-            var temp = Context.InvoiceServices.Attach(item);
-            //Применяем изменения
-            temp.State = EntityState.Modified;
+            if (item != null)
+            {
+                var updateContent = await GetByIdAsync(item.IdInvoiceServices);
+                if (updateContent != null)
+                {
+                    //updateContent.IdInvoice = item.IdInvoice;
+                    updateContent.IdService = item.IdService;
+                    updateContent.Amount = item.Amount;
 
-            SaveChanges();
+                    await Context.SaveChangesAsync();
+
+                    return updateContent;
+                }
+                return null;
+            }
+            return null;
+
         }
 
-        public void Remove(T item)
+        public async Task<T> GetByIdAsync(int id)
         {
-            Context.InvoiceServices.Remove(item);
-            SaveChanges();
+            var res = await Context.InvoiceServices
+                .Include(i=>i.Invoice)
+                    .ThenInclude(p=>p.Provider)
+                .Include(s=>s.Service)
+                .FirstOrDefaultAsync(s => s.IdInvoiceServices == id);
+
+            return (T)res;
         }
 
-        public T GetById(int id) => (T)Context.InvoiceServices.FirstOrDefault(i => i.IdInvoiceServices == id);
-
-        public Task<IEnumerable<T>> GetAllAsync()
+        public async Task<T> RemoveAsync(int id)
         {
-            throw new System.NotImplementedException();
+            var deleteContent = await GetByIdAsync(id);
+            if (deleteContent != null)
+            {
+                Context.InvoiceServices.Remove(deleteContent);
+                await Context.SaveChangesAsync();
+                return deleteContent;
+            }
+            return null;
+
         }
 
-        public Task AddAsync(T item)
+        public async Task<IEnumerable<T>> Search(string name)
         {
-            throw new System.NotImplementedException();
-        }
+            IQueryable<T> query = (IQueryable<T>)Context.InvoiceServices
+                .Include(i => i.Invoice)
+                    .ThenInclude(p => p.Provider)
+                .Include(s => s.Service);
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query
+                    .Where(
+                        n => n.Invoice.Provider.NameProvider.Contains(name) 
+                        || 
+                        n.Service.NameService.Contains(name)
+                    );
 
-        public Task EditAsync(T item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task RemoveAsync(T item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<T> GetByIdAsync(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        Task<T> IRepository<T>.AddAsync(T item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        Task<T> IRepository<T>.EditAsync(T item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<T> RemoveAsync(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<IEnumerable<T>> Search(string serviceName, bool isCounter)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<IEnumerable<T>> Search(string name)
-        {
-            throw new System.NotImplementedException();
+            }
+            return await query.ToListAsync();
         }
 
         #endregion

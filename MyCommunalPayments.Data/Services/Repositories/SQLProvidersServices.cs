@@ -12,46 +12,6 @@ namespace MyCommunalPayments.Data.Services.Repositories
     {
         public SQLProvidersServices(DBContext context) : base(context) { }
 
-        #region Interface
-
-        public IEnumerable<T> GetAll() => (IEnumerable<T>)Context.ProvidersServices
-            .Include(p=>p.Provider)
-            .Include(s=>s.Service)
-            .ToList();
-
-        public void Add(T item)
-        {
-            if (item != null)
-            {
-                //Context.ProvidersServices.Add(item);
-                var temp = Context.ProvidersServices.Attach(item);
-                temp.State = EntityState.Added;
-                SaveChanges();
-            }
-        }
-
-        public void Edit(T item)
-        {
-            //Вносим изменения в дело
-            var temp = Context.ProvidersServices.Attach(item);
-            //Применяем изменения
-            temp.State = EntityState.Modified;
-
-            SaveChanges();
-        }
-
-        public void Remove(T item)
-        {
-            Context.ProvidersServices.Remove(item);
-            SaveChanges();
-        }
-
-        public T GetById(int id) => (T)Context.ProvidersServices.FirstOrDefault(i => i.Id == id);
-
-
-        #endregion
-
-
         #region AsyncInterface
 
         public async Task<IEnumerable<T>> GetAllAsync()

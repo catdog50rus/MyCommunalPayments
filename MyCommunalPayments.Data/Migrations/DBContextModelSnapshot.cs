@@ -110,7 +110,7 @@ namespace MyCommunalPayments.Data.Migrations
 
                     b.HasIndex("IdInvoice");
 
-                    b.HasIndex("IdOrder");
+                    //b.HasIndex("IdOrder");
 
                     b.ToTable("Payments");
                 });
@@ -267,11 +267,11 @@ namespace MyCommunalPayments.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyCommunalPayments.Models.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("IdOrder")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    //b.HasOne("MyCommunalPayments.Models.Models.Order", "Order")
+                    //    .WithMany()
+                    //    .HasForeignKey("IdOrder")
+                    //    .OnDelete(DeleteBehavior.Cascade)
+                    //    .IsRequired();
                 });
 
             modelBuilder.Entity("MyCommunalPayments.Models.Models.ProvidersServices", b =>

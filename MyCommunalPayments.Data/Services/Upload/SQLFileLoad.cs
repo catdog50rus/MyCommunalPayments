@@ -29,10 +29,11 @@ namespace MyCommunalPayments.Data.Services.Upload
                 FileName = filename
             };
             Context.Orders.Add(order);
-            SaveChanges();
+            await Context.SaveChangesAsync();
             OrderId = order.IdOrder;
             return OrderId;
         }
+
         public async Task<Order> GetOrderById(int id)
         {
             return await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);

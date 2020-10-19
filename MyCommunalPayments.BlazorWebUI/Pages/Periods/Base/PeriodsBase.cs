@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
 using MyCommunalPayments.Data.Services.ApiServices;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +20,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         protected PeriodsName month;
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
         protected void CloseModal()
         {
             year = default;

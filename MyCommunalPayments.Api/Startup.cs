@@ -43,6 +43,8 @@ namespace MyCommunalPayments.Api
             services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
             services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
             services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
+            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
 
             services.AddControllers();
         }

@@ -14,15 +14,15 @@ namespace MyCommunalPayments.Api.Controllers
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public class ProviderServicesController : ControllerBase
+    public class InvoiceController : ControllerBase
     {
-        private readonly IRepository<ProvidersServices> repository;
+        private readonly IRepository<Invoice> repository;
 
-        public ProviderServicesController(IRepository<ProvidersServices> repository) =>this.repository = repository;
+        public InvoiceController(IRepository<Invoice> repository) => this.repository = repository;
 
 
         [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<ProvidersServices>>> Search(string name)
+        public async Task<ActionResult<IEnumerable<Invoice>>> Search(string name)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ProvidersServices>> GetById(int id)
+        public async Task<ActionResult<Invoice>> GetById(int id)
         {
             try
             {
@@ -72,14 +72,14 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProvidersServices>> CreateNew(ProvidersServices item)
+        public async Task<ActionResult<Invoice>> CreateNew(Invoice item)
         {
             try
             {
                 if (item == null) return BadRequest($"Запрос пустой");
 
                 var result = await repository.AddAsync(item);
-                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+                return CreatedAtAction(nameof(GetById), new { id = result.IdInvoice }, result);
             }
             catch (Exception ex)
             {
@@ -88,11 +88,11 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ProvidersServices>> Update(int id, ProvidersServices item)
+        public async Task<ActionResult<Invoice>> Update(int id, Invoice item)
         {
             try
             {
-                if (item == null || id != item.Id) return BadRequest($"ID: {id} не соответствует запросу");
+                if (item == null || id != item.IdInvoice) return BadRequest($"ID: {id} не соответствует запросу");
                 var updateContent = await repository.GetByIdAsync(id);
 
                 if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
@@ -107,12 +107,12 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ProvidersServices>> Update(ProvidersServices item)
+        public async Task<ActionResult<Invoice>> Update(Invoice item)
         {
             try
             {
                 if (item == null) return BadRequest();
-                int id = item.Id;
+                int id = item.IdInvoice;
                 var updateContent = await repository.GetByIdAsync(id);
 
                 if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
@@ -127,7 +127,7 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<ProvidersServices>> Delete(int id)
+        public async Task<ActionResult<Invoice>> Delete(int id)
         {
             try
             {
@@ -143,7 +143,5 @@ namespace MyCommunalPayments.Api.Controllers
                 return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
         }
-
-
     }
 }

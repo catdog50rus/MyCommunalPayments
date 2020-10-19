@@ -3,8 +3,6 @@ using MyCommunalPayments.BlazorWebUI.Shared;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
@@ -44,7 +42,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             await StateUpdate();
             NavMenu.SetSubMenu(true);
             service = default;
-            
         }
 
         #endregion
@@ -66,8 +63,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                         NameService = serviceName,
                         IsCounter = count
                     };
-
-                    //Repository.Add(service);
                     await Repository.AddAsync(service);
                 }
                 else
