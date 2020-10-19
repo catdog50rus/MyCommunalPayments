@@ -13,16 +13,18 @@ using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
     public class Startup
     {
-        
+        [SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
         private const string _apiPathIIS = @"http://localhost:8080/";
+        [SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
         private const string _apiPathExpress = @"https://localhost:44390";
 
-        private string _apiPath;
+        
 
         public Startup(IConfiguration configuration)
         {
@@ -43,7 +45,7 @@ namespace MyCommunalPayments.BlazorWebUI
                 options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
             });
 
-
+            string _apiPath = _apiPathIIS;
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
             {
                 client.BaseAddress = new Uri(_apiPath);
@@ -89,14 +91,12 @@ namespace MyCommunalPayments.BlazorWebUI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                _apiPath = _apiPathExpress;
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                _apiPath = _apiPathIIS;
             }
 
             app.UseHttpsRedirection();
