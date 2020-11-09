@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MatBlazor;
+using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         [Parameter]
         public EventCallback<Invoice> OnClickSetService { get; set; }
+
+        [Inject]
+        protected IMatToaster Toaster { get; set; }
 
         protected IEnumerable<Invoice> invoices;
         protected Invoice invoice;
@@ -139,6 +143,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             await Repository.RemoveAsync(item.IdInvoice);
             await StateUpdate(isNotPaided);
+            Toaster.Add("Элемент удален!", MatToastType.Danger,"Удаление");
         }
 
         protected void SetService(Invoice item)

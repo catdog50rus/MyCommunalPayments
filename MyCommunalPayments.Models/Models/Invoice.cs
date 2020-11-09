@@ -32,6 +32,8 @@ namespace MyCommunalPayments.Models.Models
         /// <summary>
         /// Сумма счета
         /// </summary>
+        [Required]
+        [DataType(DataType.Currency)]
         public decimal InvoiceSum { get; set; }
 
         public bool Pay { get; set; }

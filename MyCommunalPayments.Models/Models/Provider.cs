@@ -18,6 +18,7 @@ namespace MyCommunalPayments.Models.Models
         /// <summary>
         /// Наименование поставщика услуги ЖКХ
         /// </summary>
+        [Required]
         public string NameProvider { get; set; }
         /// <summary>
         /// Путь к личному кабинету поставщика

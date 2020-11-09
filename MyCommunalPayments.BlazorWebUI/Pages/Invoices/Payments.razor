@@ -47,7 +47,11 @@ else
                                 <th scope="col" class="w-auto">Сумма по квитанции</th>
                                 <th scope="col" class="w-auto">Дата оплаты</th>
                                 <th scope="col" class="w-auto">Сумма платежа</th>
-                                <th scope="col" class="w-25"></th>
+                                @if (Invoice != null)
+                                {
+                                    <th scope="col" class="w-25"></th>
+                                }
+
                                 <th scope="col" class="w-auto"></th>
                             </tr>
                         </thead>
@@ -93,20 +97,19 @@ else
 
                                     </td>
                                     <!--Блок кнопок-->
-                                    <td>
-                                        <div class="text-center">
-                                            @if(Invoice != null)
-                                            {
-
-                                            }
-                                            <button class="btn btn-sm btn-info" disabled="@(Invoice == null? "disabled" : null)"  @onclick="(() => Edit(item))">Изменить</button>
-                                            <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                        </div>
-                                    </td>
+                                    @if (Invoice != null)
+                                    {
+                                        <td>
+                                            <div class="text-center">
+                                                <button class="btn btn-sm btn-info" disabled="@(Invoice == null ? "disabled" : null)" @onclick="(() => Edit(item))">Изменить</button>
+                                                <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
+                                            </div>
+                                        </td>
+                                    }
                                     <!--Блок кнопок-->
                                     <td>
                                         <div class="text-center">
-                                            <button class="btn btn-sm btn-warning" disabled="@(item.IdOrder == 0? "disabled" : null)"  @onclick="(() => DownloadFile(item))">Платежка</button>
+                                            <button class="btn btn-sm btn-warning" disabled="@(item.IdOrder == 0? "disabled" : null)" @onclick="(() => DownloadFile(item))">Платежка</button>
                                         </div>
                                     </td>
                                 </tr>

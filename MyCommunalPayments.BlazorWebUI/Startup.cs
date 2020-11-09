@@ -14,6 +14,7 @@ using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using MatBlazor;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
@@ -82,6 +83,16 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
+
+            services.AddMatToaster(config =>
+            {
+                config.Position = MatToastPosition.BottomRight;
+                config.PreventDuplicates = true;
+                config.NewestOnTop = true;
+                config.ShowCloseButton = true;
+                config.MaximumOpacity = 95;
+                config.VisibleStateDuration = 3000;
+            });
 
         }
 
