@@ -137,17 +137,7 @@ else
             <div class="row mb-3 text-center">
                 <div class="col-1 text-center align-content-center">
                     <!--Чек-бокс-->
-                    @if (paid)//Проверяем, был ли флажек в БД
-                    {
-                        //Если был ставим атрибут checked
-
-                        <input type="checkbox" checked="checked" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
-
-                    }
-                    else
-                    {
-                        <input type="checkbox" value="paid" @onchange="(()=> paid = !paid)" class="align-content-center" />
-                    }
+                    <input type="checkbox" @bind ="paid" class="align-content-center" />
                 </div>
                 <div class="col-3">
                     <input class="form-control text-center" placeholder="Дата оплаты" @bind-value="datePayment" />

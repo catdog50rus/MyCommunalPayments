@@ -5,8 +5,8 @@
 
 @if (
      _invoices == null
-    && _periods == null
-    && _providers == null
+    || _periods == null
+    || _providers == null
   )
 {
     <Spinner></Spinner>

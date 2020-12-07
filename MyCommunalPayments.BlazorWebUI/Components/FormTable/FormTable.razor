@@ -1,0 +1,13 @@
+﻿@typeparam TItem
+
+
+@foreach (var item in ItemsList)
+{
+    @ItemFragment(item)
+}
+
+
+@code{
+    [Parameter] public RenderFragment<TItem> ItemFragment { get; set; }
+    [Parameter] public IEnumerable<TItem> ItemsList { get; set; }
+}

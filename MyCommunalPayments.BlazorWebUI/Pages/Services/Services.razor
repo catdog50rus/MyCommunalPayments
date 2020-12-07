@@ -30,27 +30,14 @@ else
                         </tr>
                     </thead>
                     <!--Тело таблицы-->
-                    @foreach (var item in Services)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Наименование услуги-->
-                                <td>
-                                    <div>
-                                        @item.NameService
-                                    </div>
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-center">
-                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
+                    <tbody>
+                        <FormTable ItemsList="@Services">
+                            <ItemFragment Context="service">
+                                <RowServicesTable Service="service" EditEvent="Edit" RemoveEvent="Remove"/>
+                            </ItemFragment>
+                        </FormTable>
+                    </tbody>
+                    
                 </table>
 
             </div>
@@ -69,8 +56,7 @@ else
         </div>
         <!--Чек-бокс-->
         <div class="col">
-            @* Проверяем, был ли флажок в БД, если был ставим атрибут checked*@
-            <input type="checkbox" checked=@(count? "checked": null ) @bind-value="count" class="align-content-center" />
+            <input type="checkbox" @bind="count" class="align-content-center" />
             <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
         </div>
     </Body>

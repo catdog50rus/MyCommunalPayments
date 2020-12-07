@@ -4,10 +4,10 @@
 
 @if (periods == null)
 {
-    <Spinner></Spinner>
+    <Spinner/>
 }
 else
-{
+{ 
     <!-- Форма -->
     <div class="container-fluid">
         <div class="row">
@@ -30,34 +30,13 @@ else
                         </tr>
                     </thead>
                     <!--Тело таблицы-->
-                    @foreach (var item in periods)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Год-->
-                                <td>
-                                    <div class="text-center">
-                                        @item.Year
-                                    </div>
-
-                                </td>
-                                <!--Количество-->
-                                <td>
-                                    <div>
-                                        @item.Month
-                                    </div>
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-right">
-                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
+                    <tbody>
+                        <FormTable ItemsList="@periods">
+                            <ItemFragment Context="period">
+                                <RowPeriodsTable Period="period" EditEvent="Edit" RemoveEvent="Remove" />
+                            </ItemFragment>
+                        </FormTable>
+                    </tbody>
                 </table>
             </div>
         </div>

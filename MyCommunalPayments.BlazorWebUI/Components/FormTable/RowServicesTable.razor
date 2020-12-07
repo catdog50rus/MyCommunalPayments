@@ -1,0 +1,18 @@
+﻿@inherits RowServicesTableBase
+
+<tr>
+    <!--Наименование услуги-->
+    <td>
+        <div>
+            @Service.NameService
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Service))">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Service))">Удалить</button>
+        </div>
+    </td>
+</tr>

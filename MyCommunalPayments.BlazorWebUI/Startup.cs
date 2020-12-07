@@ -5,8 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyCommunalPayments.Data.Context;
-using MyCommunalPayments.Data.Services.Repositories;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Data.Services.ApiServices;
@@ -14,13 +12,12 @@ using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using MatBlazor;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
     public class Startup
     {
-        [SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
+        //[SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
         private const string _apiPathIIS = @"http://localhost:8080/";
         [SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
         private const string _apiPathExpress = @"https://localhost:44390";
@@ -83,16 +80,6 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
-
-            services.AddMatToaster(config =>
-            {
-                config.Position = MatToastPosition.BottomRight;
-                config.PreventDuplicates = true;
-                config.NewestOnTop = true;
-                config.ShowCloseButton = true;
-                config.MaximumOpacity = 95;
-                config.VisibleStateDuration = 3000;
-            });
 
         }
 

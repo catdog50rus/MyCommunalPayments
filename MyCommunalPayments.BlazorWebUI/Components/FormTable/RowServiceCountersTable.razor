@@ -1,0 +1,32 @@
+﻿@inherits RowServiceCountersTableBase
+
+<tr>
+    <!--Дата передачи-->
+    <td>
+        <div class="text-center">
+            @ServicesCounter.DateCount
+        </div>
+
+    </td>
+    <!--Услуга-->
+    <td>
+        <div>
+            @ServicesCounter.Service.ToString()
+        </div>
+
+    </td>
+    <!--Показания счетчика-->
+    <td>
+        <div class="text-center">
+            @ServicesCounter.ValueCounter
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(ServicesCounter))">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(ServicesCounter))">Удалить</button>
+        </div>
+    </td>
+</tr>

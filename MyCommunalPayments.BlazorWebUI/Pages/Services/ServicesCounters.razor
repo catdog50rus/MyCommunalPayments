@@ -31,41 +31,13 @@ else
                     </tr>
                 </thead>
                 <!--Тело таблицы-->
-                @foreach (var item in serviceCounters)
-                {
-                    <tbody>
-                        <tr>
-                            <!--Дата передачи-->
-                            <td>
-                                <div class="text-center">
-                                    @item.DateCount
-                                </div>
-
-                            </td>
-                            <!--Услуга-->
-                            <td>
-                                <div>
-                                    @item.Service.ToString()
-                                </div>
-
-                            </td>
-                            <!--Показания счетчика-->
-                            <td>
-                                <div class="text-center">
-                                    @item.ValueCounter
-                                </div>
-
-                            </td>
-                            <!--Блок кнопок-->
-                            <td>
-                                <div class="text-center">
-                                    <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                    <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                }
+                <tbody>
+                    <FormTable ItemsList="@serviceCounters">
+                        <ItemFragment Context="context">
+                            <RowServiceCountersTable ServicesCounter="context" EditEvent="Edit" RemoveEvent="Remove"/>
+                        </ItemFragment>
+                    </FormTable>
+                </tbody>
             </table>
         </div>
     </div>

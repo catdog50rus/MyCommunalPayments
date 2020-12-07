@@ -45,15 +45,8 @@ else
                                     <!--Чек-бокс-->
                                     <td>
                                         <div class="text-center align-content-center">
-                                            @if (item.Pay)//Проверяем, был ли флажек в БД
-                                            {
-                                                //Если был ставим атрибут checked
-                                                <input onclick="return false;" type="checkbox" checked="checked" />
-                                            }
-                                            else
-                                            {
-                                                <input onclick="return false;" type="checkbox" />
-                                            }
+                                            <input onclick="return false;" type="checkbox" @bind="item.Pay" />
+
                                         </div>
                                     </td>
                                     <!--Период-->
@@ -140,12 +133,9 @@ else
                 <input class="form-control" placeholder="Сумма" @bind="summ" />
             </div>
             @*Флаг оплаты. Можно только снять оплату*@
-            @if (pay)
-            {
                 <div>
-                    <input @onchange="()=>RePaid()" type="checkbox" checked="checked" value="@pay" />
+                    <input type="checkbox" @bind="@pay" />
                 </div>
-            }
         </Body>
         <Footer>
             <a class="btn btn-sm btn-outline-success" role="button" href="@GetProviderByName(providerName).WebSite" target="_blank">Перейти в личный кабинет</a>

@@ -1,0 +1,25 @@
+﻿@inherits RowPeriodsTableBase
+
+<tr>
+    @*Год*@
+    <td>
+        <div class="text-center">
+            @Period.Year
+        </div>
+
+    </td>
+    @*Количество*@
+    <td>
+        <div>
+            @Period.Month
+        </div>
+
+    </td>
+    @*Блок кнопок*@
+    <td>
+        <div class="text-right">
+            <button class="btn btn-sm btn-info" @onclick="()=>EditEvent.InvokeAsync(Period)">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="()=>RemoveEvent.InvokeAsync(Period)">Удалить</button>
+        </div>
+    </td>
+</tr>
