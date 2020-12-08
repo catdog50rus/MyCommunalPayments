@@ -1,0 +1,61 @@
+﻿<tr>
+    <!--Период-->
+    <td>
+        <div>
+            @Payment.Invoice.Period
+        </div>
+
+    </td>
+    <!--Наименование поставщика-->
+    <td>
+        <div>
+            @Payment.Invoice.Provider.NameProvider
+        </div>
+
+    </td>
+    <!--Сумма счета-->
+    <td>
+        <div>
+            @Payment.Invoice.InvoiceSum
+        </div>
+
+    </td>
+    <!--Дата оплаты-->
+    <td>
+        <div>
+            @Payment.DatePayment
+        </div>
+
+    </td>
+    <!--Сумма платежа-->
+    <td>
+        <div>
+            @Payment.PaymentSum
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    @if (Invoice != null)
+    {
+        <td>
+            <div class="text-center">
+                <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Payment))">Изменить</button>
+                <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Payment))">Удалить</button>
+            </div>
+        </td>
+    }
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-warning" disabled="@(Payment.IdOrder == 0? "disabled" : null)" @onclick="(() => DownloadFileEvent.InvokeAsync(Payment))">Платежка</button>
+        </div>
+    </td>
+</tr>
+
+@code {
+    [Parameter] public Payment Payment { get; set; }
+    [Parameter] public EventCallback<Payment> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<Payment> EditEvent { get; set; }
+    [Parameter] public EventCallback<Payment> DownloadFileEvent { get; set; }
+    [Parameter] public Invoice Invoice { get; set; }
+}

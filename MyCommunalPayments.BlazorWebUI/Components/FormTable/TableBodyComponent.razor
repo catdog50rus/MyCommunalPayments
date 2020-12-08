@@ -1,7 +1,8 @@
 ﻿@typeparam TItem
 
 
-@foreach (var item in ItemsList)
+
+@foreach (var item in ItemsCollection)
 {
     @ItemFragment(item)
 }
@@ -9,5 +10,5 @@
 
 @code{
     [Parameter] public RenderFragment<TItem> ItemFragment { get; set; }
-    [Parameter] public IEnumerable<TItem> ItemsList { get; set; }
+    [Parameter] public IEnumerable<TItem> ItemsCollection { get; set; }
 }

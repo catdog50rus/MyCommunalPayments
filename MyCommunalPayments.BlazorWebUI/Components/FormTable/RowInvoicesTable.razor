@@ -1,0 +1,57 @@
+﻿<tr>
+    <!--Чек-бокс-->
+    <td>
+        <div class="text-center align-content-center">
+            <input onclick="return false;" type="checkbox" @bind="Invoice.Pay" />
+
+        </div>
+    </td>
+    <!--Период-->
+    <td>
+        <div>
+            @Invoice.Period
+        </div>
+    </td>
+    <!--Поставщик-->
+    <td>
+        <div>
+            @Invoice.Provider.NameProvider
+        </div>
+    </td>
+    <!--Сумма-->
+    <td>
+        <div class="text-right">
+            @Invoice.InvoiceSum
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Invoice))">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Invoice))">Удалить</button>
+            <button class="btn btn-sm btn-warning" @onclick="(()=>SetServiceEvent.InvokeAsync(Invoice))">Услуги</button>
+        </div>
+    </td>
+    @*Блок оплаты*@
+    <td>
+        <div class="text-center">
+            @if (Invoice.Pay)
+            {
+                <button class="btn btn-sm btn-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплачено!</button>
+            }
+            else
+            {
+                <button class="btn btn-sm btn-outline-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплатить</button>
+            }
+        </div>
+    </td>
+</tr>
+
+@code {
+    [Parameter] public Invoice Invoice { get; set; }
+    [Parameter] public EventCallback<Invoice> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<Invoice> EditEvent { get; set; }
+    [Parameter] public EventCallback<Invoice> SetServiceEvent { get; set; }
+    [Parameter] public EventCallback<Invoice> PayEvent { get; set; }
+}

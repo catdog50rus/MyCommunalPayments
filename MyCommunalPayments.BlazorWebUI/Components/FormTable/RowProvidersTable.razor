@@ -1,0 +1,31 @@
+﻿<tr>
+    <!--Наименование услуги-->
+    <td>
+        <div>
+            @Provider.NameProvider
+        </div>
+
+    </td>
+    <!--Количество-->
+    <td>
+        <div>
+            @Provider.WebSite
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Provider))">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Provider))">Удалить</button>
+            <button class="btn btn-sm btn-warning" @onclick="(() => SetServicesEvent.InvokeAsync(Provider))">Услуги</button>
+        </div>
+    </td>
+</tr>
+
+@code {
+    [Parameter] public Provider Provider { get; set; }
+    [Parameter] public EventCallback<Provider> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<Provider> EditEvent { get; set; }
+    [Parameter] public EventCallback<Provider> SetServicesEvent { get; set; }
+}

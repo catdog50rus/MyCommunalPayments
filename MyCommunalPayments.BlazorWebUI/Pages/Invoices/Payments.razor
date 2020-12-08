@@ -7,121 +7,46 @@
 @if (isUpload)
 {
     <InputPDFFile OnUploadReturnToPaiment="SetOrder" />
-
-
 }
 else
 {
-    @if (paymentsList == null)
-    {
-        <Spinner></Spinner>
-    }
-    else
-    {
         <!-- Форма -->
-        <div class="container-fluid">
-            <div class="row">
+    <FormTableComponent ItemsCollection="@paymentsList">
+        <TableTitleFragment>
+            Платежи за услуги ЖКХ
+        </TableTitleFragment>
+        <TableTitleButtonFragment>
+            <!--Добавление нового платежа-->
+            @if (Invoice != null)
+            { 
                 <div class="col">
-                    <h2 class="text-center">Платежи за услуги ЖКХ </h2>
-                    @if (Invoice != null)
-                    {
-                        <!--Добавление нового платежа-->
-                        <div class="row mb-3">
-                            <div class="col">
-                                <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
-                            </div>
-
-                            <div>
-                                <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
-                            </div>
-                        </div>
-                    }
-
-                    <!--  Таблица с платежами  -->
-                    <table class="table table-sm table-bordered table-hover ">
-                        <!--Заголовок таблицы-->
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col"> Период</th>
-                                <th scope="col" class="w-auto">Наименование поставщика</th>
-                                <th scope="col" class="w-auto">Сумма по квитанции</th>
-                                <th scope="col" class="w-auto">Дата оплаты</th>
-                                <th scope="col" class="w-auto">Сумма платежа</th>
-                                @if (Invoice != null)
-                                {
-                                    <th scope="col" class="w-25"></th>
-                                }
-
-                                <th scope="col" class="w-auto"></th>
-                            </tr>
-                        </thead>
-                        <!--Тело таблицы-->
-
-                        @foreach (var item in paymentsList)
-                        {
-                            <tbody>
-                                <tr>
-                                    <!--Период-->
-                                    <td>
-                                        <div>
-                                            @item.Invoice.Period
-                                        </div>
-
-                                    </td>
-                                    <!--Наименование поставщика-->
-                                    <td>
-                                        <div>
-                                            @item.Invoice.Provider.NameProvider
-                                        </div>
-
-                                    </td>
-                                    <!--Сумма счета-->
-                                    <td>
-                                        <div>
-                                            @item.Invoice.InvoiceSum
-                                        </div>
-
-                                    </td>
-                                    <!--Дата оплаты-->
-                                    <td>
-                                        <div>
-                                            @item.DatePayment
-                                        </div>
-
-                                    </td>
-                                    <!--Сумма платежа-->
-                                    <td>
-                                        <div>
-                                            @item.PaymentSum
-                                        </div>
-
-                                    </td>
-                                    <!--Блок кнопок-->
-                                    @if (Invoice != null)
-                                    {
-                                        <td>
-                                            <div class="text-center">
-                                                <button class="btn btn-sm btn-info" disabled="@(Invoice == null ? "disabled" : null)" @onclick="(() => Edit(item))">Изменить</button>
-                                                <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                            </div>
-                                        </td>
-                                    }
-                                    <!--Блок кнопок-->
-                                    <td>
-                                        <div class="text-center">
-                                            <button class="btn btn-sm btn-warning" disabled="@(item.IdOrder == 0? "disabled" : null)" @onclick="(() => DownloadFile(item))">Платежка</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        }
-                    </table>
-
+                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
                 </div>
-            </div>
-        </div>
-    }
-
+                <div>
+                    <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
+                 </div>
+            }
+        </TableTitleButtonFragment>
+        <TableHeaderFragment>
+            <th scope="col"> Период</th>
+            <th scope="col" class="w-auto">Наименование поставщика</th>
+            <th scope="col" class="w-auto">Сумма по квитанции</th>
+            <th scope="col" class="w-auto">Дата оплаты</th>
+            <th scope="col" class="w-auto">Сумма платежа</th>
+            @if (Invoice != null)
+            {
+                <th scope="col" class="w-25"></th>
+            }
+            <th scope="col" class="w-auto"></th>
+        </TableHeaderFragment>
+        <TableBodyFragment>
+            <TableBodyComponent ItemsCollection="@paymentsList">
+                <ItemFragment Context="context">
+                    <RowPaymentsTable Payment="context" EditEvent="Edit" RemoveEvent="Remove" DownloadFileEvent="DownloadFile" Invoice="Invoice"/>
+                </ItemFragment>            
+            </TableBodyComponent>
+        </TableBodyFragment>
+    </FormTableComponent>
 }
 
 @if (invoice != null)

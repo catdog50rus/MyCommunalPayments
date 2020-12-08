@@ -1,6 +1,4 @@
-﻿@inherits RowServicesTableBase
-
-<tr>
+﻿<tr>
     <!--Наименование услуги-->
     <td>
         <div>
@@ -16,3 +14,9 @@
         </div>
     </td>
 </tr>
+
+@code{
+    [Parameter] public Service Service { get; set; }
+    [Parameter] public EventCallback<Service> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<Service> EditEvent { get; set; }
+}

@@ -1,0 +1,46 @@
+﻿@typeparam TItem
+
+@if (ItemsCollection == null)
+{
+    <Spinner />
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">@TableTitleFragment</h2>
+                @TableOtherTitleFragment
+                @*Кнопки у заголовка таблицы*@
+                <div class="row mb-3">
+                    @TableTitleButtonFragment
+                </div>
+                <table class="table table-sm table-bordered table-hover ">
+                    @*Шапка таблицы*@
+                    <thead class="table-dark text-center">
+                        <tr>
+                            @TableHeaderFragment
+                        </tr>
+                    </thead>
+                    @*Тело таблицы*@
+                    <tbody>
+                        @TableBodyFragment
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code{
+    [Parameter] public RenderFragment TableTitleFragment { get; set; }
+    [Parameter] public RenderFragment TableOtherTitleFragment { get; set; }
+    [Parameter] public RenderFragment TableTitleButtonFragment { get; set; }
+
+    [Parameter] public RenderFragment TableHeaderFragment { get; set; }
+    [Parameter] public RenderFragment TableBodyFragment { get; set; }
+    [Parameter] public IEnumerable<TItem> ItemsCollection { get; set; }
+
+}

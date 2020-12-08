@@ -1,0 +1,36 @@
+﻿<tr>
+    <!--Наименование услуги-->
+    <td>
+        <div>
+            @InvoiceServices.Service.NameService
+        </div>
+
+    </td>
+    <!--Показания счетчика-->
+    <td>
+        @if (InvoiceServices.Service.IsCounter)
+        {
+            <div class="text-center">
+                @InvoiceServices.Amount
+                <button class="ml-5 btn btn-sm btn-success" @onclick="(() => AddCounterEvent.InvokeAsync(InvoiceServices))">Внести показания</button>
+            </div>
+        }
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(InvoiceServices))">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(InvoiceServices))">Удалить</button>
+        </div>
+    </td>
+</tr>
+
+@code {
+
+    [Parameter] public InvoiceServices InvoiceServices { get; set; }
+    [Parameter] public EventCallback<InvoiceServices> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<InvoiceServices> EditEvent { get; set; }
+    [Parameter] public EventCallback<InvoiceServices> AddCounterEvent { get; set; }
+
+}

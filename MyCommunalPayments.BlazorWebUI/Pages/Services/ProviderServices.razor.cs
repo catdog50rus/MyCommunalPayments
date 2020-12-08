@@ -129,7 +129,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         {
             providersServicesCollection = await Repository.GetAllAsync();
             providersServicesCollection = providersServicesCollection
-                .Where(p => p.Provider.IdProvider == Provider.IdProvider);
+                .Where(p => p.Provider.IdProvider == Provider.IdProvider).ToList();
         }
 
         private Service GetServiceByName(string name) => services.Single(i => i.NameService == name);

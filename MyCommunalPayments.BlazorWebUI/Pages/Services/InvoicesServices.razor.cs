@@ -136,10 +136,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         }
 
 
-        protected void AddCounter(Service item)
+        protected void AddCounter(InvoiceServices item)
         {
-            service = item;
-            invoiceService = invoiceServicesList.FirstOrDefault(s => s.Service == item);
+            service = item.Service;
+            invoiceService = invoiceServicesList.FirstOrDefault(s => s.Service == item.Service);
             isCounter = true;
             
             amount = invoiceService.Amount;

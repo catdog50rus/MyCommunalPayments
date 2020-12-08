@@ -22,6 +22,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         [Inject] 
         public IApiRepository<Payment> Repository { get; set; }
         [Inject]
+        public IApiRepository<Invoice> InvoiceRepository { get; set; }
+        [Inject]
         public IFileLoad FileLoad { get; set; }
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
@@ -103,6 +105,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             }
 
             CloseModal();
+            await InvoiceRepository.EditAsync(Invoice);
             await StateUpdate();
         }
 

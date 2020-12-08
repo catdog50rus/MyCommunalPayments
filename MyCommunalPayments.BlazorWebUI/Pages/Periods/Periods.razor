@@ -2,46 +2,30 @@
 
 @inherits PeriodsBase
 
-@if (periods == null)
-{
-    <Spinner/>
-}
-else
-{ 
-    <!-- Форма -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h2 class="text-center"> Расчетные периоды </h2>
-                <!--Добавление нового периода-->
-                <div class="row mb-3">
-                    <div class="col">
-                        <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
-                    </div>
-                </div>
-                <!--  Таблица с периодами  -->
-                <table class="table table-sm table-bordered table-hover ">
-                    <!--Заголовок таблицы-->
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th scope="col" class="w-auto text-center">Год</th>
-                            <th scope="col" class="w-auto">Расчетный период</th>
-                            <th scope="col" class="w-auto text-right"></th>
-                        </tr>
-                    </thead>
-                    <!--Тело таблицы-->
-                    <tbody>
-                        <FormTable ItemsList="@periods">
-                            <ItemFragment Context="period">
-                                <RowPeriodsTable Period="period" EditEvent="Edit" RemoveEvent="Remove" />
-                            </ItemFragment>
-                        </FormTable>
-                    </tbody>
-                </table>
-            </div>
+<!-- Форма -->
+ <FormTableComponent ItemsCollection="@periods">
+    <TableTitleFragment>
+        Расчетные периоды
+    </TableTitleFragment>
+    <TableTitleButtonFragment>
+        <div class="col">
+            <button class="btn btn-success" @onclick="()=>modal.Open()">Добавить</button>
         </div>
-    </div>
-}
+    </TableTitleButtonFragment>
+    <TableHeaderFragment>
+        <th scope="col" class="w-auto text-center">Год</th>
+        <th scope="col" class="w-auto">Расчетный период</th>
+        <th scope="col" class="w-auto text-right"></th>
+    </TableHeaderFragment>
+    <TableBodyFragment>
+        <TableBodyComponent ItemsCollection="@periods">
+            <ItemFragment Context="period">
+                <RowPeriodsTable Period="period" EditEvent="Edit" RemoveEvent="Remove" />
+            </ItemFragment>
+        </TableBodyComponent>
+    </TableBodyFragment>
+
+</FormTableComponent>
 
 
 <!-- Modal -->

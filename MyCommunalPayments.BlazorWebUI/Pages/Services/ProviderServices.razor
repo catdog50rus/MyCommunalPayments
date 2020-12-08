@@ -1,66 +1,38 @@
 ﻿
 @inherits ProviderServicesBase
 
-@if (services == null && providersServicesCollection == null)
-{
-    <Spinner></Spinner>
-}
-else
-{
-    <!-- Форма -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <h2 class="text-center">Услуги ЖКХ предоставляемые Поставщиками </h2>
-                <h4>Поставщик: @Provider.NameProvider</h4>
-                <!--Добавление услуг поставщику-->
-                <div class="row mb-3">
-                    <div class="col">
-                        <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить услугу</button>
-                    </div>
-                    <div class="col text-right">
-                        <button class="btn btn-danger" @onclick="OnClickReturnToProviders">Вернуться к списку поставщиков</button>
-                    </div>
-                </div>
-                <!--  Таблица с периодами  -->
-                <table class="table table-sm table-bordered table-hover ">
-                    <!--Заголовок таблицы-->
-                    <thead class="table-dark text-center">
-                        <tr>
-                            <th scope="col" class="w-75">Услуга</th>
-                            <th scope="col" class="w-auto text-center"></th>
-                        </tr>
-                    </thead>
-                    <!--Тело таблицы-->
-                    <tbody>
 
-                    </tbody>
-                    @foreach (var item in providersServicesCollection)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Услуга-->
-                                <td>
-                                    <div>
-                                        @item.Service.NameService
-                                    </div>
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-center">
-                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                </table>
-            </div>
+<!-- Форма -->
+<FormTableComponent ItemsCollection="providersServicesCollection">
+    <TableTitleFragment>
+        Услуги ЖКХ предоставляемые Поставщиками
+    </TableTitleFragment>
+    <TableOtherTitleFragment>
+        <h4>Поставщик: @Provider.NameProvider</h4>
+    </TableOtherTitleFragment>
+    <TableTitleButtonFragment>
+        <div class="col">
+            <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить услугу</button>
         </div>
-    </div>
+        <div class="col text-right">
+            <button class="btn btn-danger" @onclick="OnClickReturnToProviders">Вернуться к списку поставщиков</button>
+        </div>
+    </TableTitleButtonFragment>
+    <TableHeaderFragment>
+        <th scope="col" class="w-75">Услуга</th>
+        <th scope="col" class="w-auto text-center"></th>
+    </TableHeaderFragment>
+    <TableBodyFragment>
+        <TableBodyComponent ItemsCollection="@providersServicesCollection">
+            <ItemFragment Context="context">
+                <RowProviderServicesTable ProviderServices="context" EditEvent="Edit" RemoveEvent="Remove" />
+            </ItemFragment>
+        </TableBodyComponent>
+    </TableBodyFragment>
+</FormTableComponent>
 
+@if (services != null)
+{
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>@modalLabel</Title>
@@ -99,4 +71,3 @@ else
         <Footer></Footer>
     </Modal>
 }
-

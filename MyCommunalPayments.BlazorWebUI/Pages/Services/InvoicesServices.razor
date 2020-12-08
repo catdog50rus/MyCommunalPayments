@@ -1,76 +1,36 @@
 ﻿
 @inherits InvoicesServicesBase
 
-@if (invoiceServicesList == null)
-{
-    <Spinner></Spinner>
-}
-else
-{
-    <!-- Форма -->
-    <div class="container-fluid">
-        <div class="row">
+    <!-- Форма -->  
+    <FormTableComponent ItemsCollection="@invoiceServicesList">
+        <TableTitleFragment>
+            Услуги ЖКХ
+        </TableTitleFragment>
+        <TableTitleButtonFragment>
             <div class="col">
-                <h2 class="text-center">Услуги ЖКХ </h2>
-
-                <!--Добавление новой услуги-->
-                <div class="row mb-3">
-                    <div class="col">
-                        <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
-                    </div>
-                    <div class="col text-right">
-                        <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
-                    </div>
-                </div>
-                <!--  Отображение таблицы с услугами  -->
-                <table class="table table-sm table-bordered table-hover ">
-                    <!--Заголовок таблицы-->
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col" class="w-50">Услуга</th>
-                            <th scope="col" class="w-25">Показания счетчика</th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <!--Тело таблицы-->
-                    @foreach (var item in invoiceServicesList)
-                    {
-                        <tbody>
-                            <tr>
-                                <!--Наименование услуги-->
-                                <td>
-                                    <div>
-                                        @item.Service.NameService
-                                    </div>
-
-                                </td>
-                                <!--Показания счетчика-->
-                                <td>
-                                    @if (item.Service.IsCounter)
-                                    {
-                                        <div class="text-center">
-                                            @item.Amount
-                                            <button class="ml-5 btn btn-sm btn-success" @onclick="(() => AddCounter(item.Service))">Внести показания</button>
-                                        </div>
-                                    }
-
-                                </td>
-                                <!--Блок кнопок-->
-                                <td>
-                                    <div class="text-center">
-                                        <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                        <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    }
-                </table>
-
+                <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
             </div>
-        </div>
-    </div>
+            <div class="col text-right">
+                <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
+            </div>
+        </TableTitleButtonFragment>
+        <TableHeaderFragment>
+            <th scope="col" class="w-50">Услуга</th>
+            <th scope="col" class="w-25">Показания счетчика</th>
+            <th class="w-25"></th>
+        </TableHeaderFragment>
+        <TableBodyFragment>
+            <TableBodyComponent ItemsCollection="@invoiceServicesList">
+                <ItemFragment Context="context">
+                    <RowInvoiceServicesTable InvoiceServices="context" EditEvent="Edit" RemoveEvent="Remove" AddCounterEvent="AddCounter"/>
+                </ItemFragment>
+            </TableBodyComponent>
+        </TableBodyFragment>
+    </FormTableComponent>
 
+
+@if(services != null)
+{ 
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>

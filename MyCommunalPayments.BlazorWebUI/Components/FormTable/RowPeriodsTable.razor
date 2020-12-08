@@ -1,5 +1,4 @@
-﻿@inherits RowPeriodsTableBase
-
+﻿
 <tr>
     @*Год*@
     <td>
@@ -23,3 +22,9 @@
         </div>
     </td>
 </tr>
+
+@code{
+    [Parameter] public Period Period { get; set; }
+    [Parameter] public EventCallback<Period> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<Period> EditEvent { get; set; }
+}

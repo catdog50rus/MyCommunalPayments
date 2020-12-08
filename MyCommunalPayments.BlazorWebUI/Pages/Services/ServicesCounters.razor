@@ -2,96 +2,81 @@
 
 @inherits ServicesCountersBase
 
-@if(serviceCounters == null && services == null)
+@if (services != null)
 {
-    <Spinner></Spinner>
-}
-else
-{
-<!-- Форма -->
-<div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <h2 class="text-center">Показания счетчиков услуг ЖКХ</h2>
-            <!--Добавление показаний счетчика-->
-            <div class="row mb-3">
-                <div class="col">
-                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
-                </div>
+    <!-- Форма -->
+    <FormTableComponent ItemsCollection="@serviceCounters">
+        <TableTitleFragment>
+            Показания счетчиков услуг ЖКХ
+        </TableTitleFragment>
+        <TableTitleButtonFragment>
+            <div class="col">
+                <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
             </div>
-            <!--  Таблица с периодами  -->
-            <table class="table table-sm table-bordered table-hover ">
-                <!--Заголовок таблицы-->
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th scope="col" class="w-auto">Дата передачи</th>
-                        <th scope="col" class="w-auto">Услуга</th>
-                        <th scope="col" class="w-auto">Показания счетчика</th>
-                        <th scope="col" class="w-auto text-center"></th>
-                    </tr>
-                </thead>
-                <!--Тело таблицы-->
-                <tbody>
-                    <FormTable ItemsList="@serviceCounters">
-                        <ItemFragment Context="context">
-                            <RowServiceCountersTable ServicesCounter="context" EditEvent="Edit" RemoveEvent="Remove"/>
-                        </ItemFragment>
-                    </FormTable>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+        </TableTitleButtonFragment>
+        <TableHeaderFragment>
+            <th scope="col" class="w-auto">Дата передачи</th>
+            <th scope="col" class="w-auto">Услуга</th>
+            <th scope="col" class="w-auto">Показания счетчика</th>
+            <th scope="col" class="w-auto text-center"></th>
+        </TableHeaderFragment>
+        <TableBodyFragment>
+            <TableBodyComponent ItemsCollection="@serviceCounters">
+                <ItemFragment Context="context">
+                    <RowServiceCountersTable ServicesCounter="context" EditEvent="Edit" RemoveEvent="Remove" />
+                </ItemFragment>
+            </TableBodyComponent>
+        </TableBodyFragment>
+    </FormTableComponent>
 
-<!-- Modal -->
-<Modal @ref="modal" CloseWindow="CloseModal">
-    <Title>Добавление нового поставщика услуг ЖКХ</Title>
-    <Body>
-        <div>
-            <table class="table table-sm table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th class="w-25"></th>
-                        <th class="w-50"></th>
-                        <th class="w-25"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <!--Дата-->
-                            <div>
-                                <input class="form-control" placeholder="Дата передачи" @bind="dateCount" />
-                            </div>
-                        </td>
-                        <td>
-                            <!--Услуга-->
-                            <div>
-                                <select class="form-control" placeholder="Услуга" @bind="@serviceName">
-                                    @foreach (var item in services)
-                                    {
-                                        <option>@item.ToString()</option>
-                                    }
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <!--Показания счетчика-->
-                            <div>
-                                <input class="form-control" placeholder="Показания счетчика" @bind="valueCounter" />
-                            </div>
-                        </td>
+    <!-- Modal -->
+    <Modal @ref="modal" CloseWindow="CloseModal">
+        <Title>Добавление нового поставщика услуг ЖКХ</Title>
+        <Body>
+            <div>
+                <table class="table table-sm table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="w-25"></th>
+                            <th class="w-50"></th>
+                            <th class="w-25"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <!--Дата-->
+                                <div>
+                                    <input class="form-control" placeholder="Дата передачи" @bind="dateCount" />
+                                </div>
+                            </td>
+                            <td>
+                                <!--Услуга-->
+                                <div>
+                                    <select class="form-control" placeholder="Услуга" @bind="@serviceName">
+                                        @foreach (var item in services)
+                                        {
+                                            <option>@item.ToString()</option>
+                                        }
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <!--Показания счетчика-->
+                                <div>
+                                    <input class="form-control" placeholder="Показания счетчика" @bind="valueCounter" />
+                                </div>
+                            </td>
 
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-    </Footer>
-</Modal>
-
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
+        </Footer>
+    </Modal>
 
 }
 

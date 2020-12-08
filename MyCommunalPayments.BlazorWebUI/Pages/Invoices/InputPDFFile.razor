@@ -8,6 +8,9 @@
         <h3>Загрузка копии платежки в базу данных</h3>
         <div class="col">
             <InputFile OnChange="HandleFileSelected"></InputFile>
+            @*<button class="btn btn-info btn-sm" @onclick="()=>OnUploadReturnToPaiment.InvokeAsync(orderId)">Вернуться к платежу</button>*@
+        </div>
+        <div class="col">
             <button class="btn btn-info btn-sm" @onclick="()=>OnUploadReturnToPaiment.InvokeAsync(orderId)">Вернуться к платежу</button>
         </div>
     </div>

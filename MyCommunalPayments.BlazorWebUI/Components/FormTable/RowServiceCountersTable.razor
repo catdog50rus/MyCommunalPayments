@@ -1,5 +1,4 @@
-﻿@inherits RowServiceCountersTableBase
-
+﻿
 <tr>
     <!--Дата передачи-->
     <td>
@@ -30,3 +29,9 @@
         </div>
     </td>
 </tr>
+
+@code{
+    [Parameter] public ServiceCounter ServicesCounter { get; set; }
+    [Parameter] public EventCallback<ServiceCounter> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<ServiceCounter> EditEvent { get; set; }
+}

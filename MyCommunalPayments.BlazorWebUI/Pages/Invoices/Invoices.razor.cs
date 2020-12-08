@@ -146,11 +146,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             OnClickSetService.InvokeAsync(item);
         }
 
-        protected async Task Pay(Invoice item)
+        protected void Pay(Invoice item)
         {
             invoice = item;
             isPay = true;
-            await Repository.EditAsync(invoice);
         }
 
         protected async Task ShowPaided()

@@ -1,0 +1,24 @@
+﻿<tr>
+    <!--Услуга-->
+    <td>
+        <div>
+            @ProviderServices.Service.NameService
+        </div>
+
+    </td>
+    <!--Блок кнопок-->
+    <td>
+        <div class="text-center">
+            <button class="btn btn-sm btn-info" @onclick="()=>EditEvent.InvokeAsync(ProviderServices)">Изменить</button>
+            <button class="btn btn-sm btn-danger" @onclick="()=>RemoveEvent.InvokeAsync(ProviderServices)">Удалить</button>
+        </div>
+    </td>
+</tr>
+
+@code {
+
+    [Parameter] public ProvidersServices ProviderServices { get; set; }
+    [Parameter] public EventCallback<ProvidersServices> RemoveEvent { get; set; }
+    [Parameter] public EventCallback<ProvidersServices> EditEvent { get; set; }
+
+}

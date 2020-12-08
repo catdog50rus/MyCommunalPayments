@@ -1,108 +1,51 @@
 ﻿@inherits InvoicesBase
 
-@if (invoices == null)
+
+
+@if (!isPay)
 {
-    <Spinner></Spinner>
+    <!-- Форма -->
+    <FormTableComponent ItemsCollection="invoices">
+        <TableTitleFragment>
+            Квитанции ЖКХ
+        </TableTitleFragment>
+        <TableTitleButtonFragment>
+            @*Добавление нового счета*@
+            <div class="col">
+                <button class="btn btn-success " @onclick="()=>OpenModal()">Добавить</button>
+            </div>
+            @*Флаг отображения оплаченных/неоплаченных квитанций*@
+            <div class="col text-right align-content-center">
+                <label>Показывать только неоплаченные квитанции</label>
+                <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
+            </div>
+        </TableTitleButtonFragment>
+        <TableHeaderFragment>
+            <th scope="col">Оплачено</th>
+            <th scope="col" class="w-auto">Период</th>
+            <th scope="col" class="w-auto">Поставщик услуг</th>
+            <th scope="col" class="w-auto">Сумма</th>
+            <th scope="col" class="w-auto"></th>
+            <th scope="col" class="w-auto"></th>
+        </TableHeaderFragment>
+        <TableBodyFragment>
+            <TableBodyComponent ItemsCollection="@invoices">
+                <ItemFragment Context="context">
+                    <RowInvoicesTable Invoice="context" EditEvent="Edit" RemoveEvent="Remove" SetServiceEvent="SetService" PayEvent="Pay" />
+                </ItemFragment>
+            </TableBodyComponent>
+        </TableBodyFragment>
+    </FormTableComponent>
+
 }
 else
 {
-    <!-- Форма -->
-    @if (!isPay)
-    {
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <h2 class="text-center">Квитанции ЖКХ </h2>
-                    <div class="row mb-3">
-                        @*Добавление нового счета*@
-                        <div class="col">
-                            <button class="btn btn-success " @onclick="()=>OpenModal()">Добавить</button>
-                        </div>
-                        @*Флаг отображения оплаченных/неоплаченных квитанций*@
-                        <div class="col text-right align-content-center">
-                            <label>Показывать только неоплаченные квитанции</label>
-                            <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
-                        </div>
-                    </div>
-                    @*  Отображение таблицы со счетами  *@
-                    <table class="table table-bordered table-hover ">
-                        @*Заголовок таблицы*@
-                        <thead class="table-dark ">
-                            <tr>
-                                <th scope="col">Оплачено</th>
-                                <th scope="col" class="w-auto">Период</th>
-                                <th scope="col" class="w-auto">Поставщик услуг</th>
-                                <th scope="col" class="w-auto">Сумма</th>
-                                <th scope="col" class="w-auto"></th>
-                                <th scope="col" class="w-auto"></th>
-                            </tr>
-                        </thead>
-                        @*Тело таблицы*@
-                        @foreach (var item in invoices)
-                        {
-                            <tbody class="table-sm">
-                                <tr>
-                                    <!--Чек-бокс-->
-                                    <td>
-                                        <div class="text-center align-content-center">
-                                            <input onclick="return false;" type="checkbox" @bind="item.Pay" />
+    <Payments Invoice="invoice"
+              OnPaimentReturnToInvoices="ReturnToPayment" />
+}
 
-                                        </div>
-                                    </td>
-                                    <!--Период-->
-                                    <td>
-                                        <div>
-                                            @item.Period
-                                        </div>
-                                    </td>
-                                    <!--Поставщик-->
-                                    <td>
-                                        <div>
-                                            @item.Provider.NameProvider
-                                        </div>
-                                    </td>
-                                    <!--Сумма-->
-                                    <td>
-                                        <div class="text-right">
-                                            @item.InvoiceSum
-                                        </div>
-
-                                    </td>
-                                    <!--Блок кнопок-->
-                                    <td>
-                                        <div class="text-center">
-                                            <button class="btn btn-sm btn-info" @onclick="(() => Edit(item))">Изменить</button>
-                                            <button class="btn btn-sm btn-danger" @onclick="(() => Remove(item))">Удалить</button>
-                                            <button class="btn btn-sm btn-warning" @onclick="(()=>SetService(item))">Услуги</button>
-                                        </div>
-                                    </td>
-                                    @*Блок оплаты*@
-                                    <td>
-                                        <div class="text-center">
-                                            @if (item.Pay)
-                                            {
-                                                <button class="btn btn-sm btn-success" @onclick="()=>Pay(item)">Оплачено!</button>
-                                            }
-                                            else
-                                            {
-                                                <button class="btn btn-sm btn-outline-success" @onclick="()=>Pay(item)">Оплатить</button>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        }
-                    </table>
-                </div>
-            </div>
-        </div>
-    }
-    else
-    {
-        <Payments Invoice="invoice"
-                  OnPaimentReturnToInvoices="ReturnToPayment" />
-    }
-
+@if (periodsList != null && providersList != null)
+{
 
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">
@@ -132,10 +75,6 @@ else
             <div class="col mb-3">
                 <input class="form-control" placeholder="Сумма" @bind="summ" />
             </div>
-            @*Флаг оплаты. Можно только снять оплату*@
-                <div>
-                    <input type="checkbox" @bind="@pay" />
-                </div>
         </Body>
         <Footer>
             <a class="btn btn-sm btn-outline-success" role="button" href="@GetProviderByName(providerName).WebSite" target="_blank">Перейти в личный кабинет</a>
