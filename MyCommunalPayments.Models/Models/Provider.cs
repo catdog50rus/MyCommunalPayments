@@ -18,17 +18,19 @@ namespace MyCommunalPayments.Models.Models
         /// <summary>
         /// Наименование поставщика услуги ЖКХ
         /// </summary>
-        [Required]
         public string NameProvider { get; set; }
         /// <summary>
         /// Путь к личному кабинету поставщика
         /// </summary>
         public string WebSite { get; set; }
 
-        public override string ToString()
-        {
-            return NameProvider;
-        }
+
+
+        public override string ToString() => NameProvider;
+
+        public override bool Equals(object obj) => this.ToString() == obj.ToString();
+
+        public override int GetHashCode() => base.GetHashCode();
 
     }
 }

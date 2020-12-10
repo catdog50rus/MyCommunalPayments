@@ -2,6 +2,10 @@
 
 @inherits ServicesBase
 
+<Toast @ref="toast" OnClickConfirm="Confirm">
+    <Message>@message</Message>
+</Toast>
+
 <!-- Форма -->
 <FormTableComponent ItemsCollection="@Services">
     <TableTitleFragment>
@@ -30,17 +34,23 @@
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>@modalTitle</Title>
     <Body>
-        <div class="col mb-2">
-            <input class="form-control" placeholder="Наименование услуги" @bind-value="serviceName" />
-        </div>
-        <!--Чек-бокс-->
-        <div class="col">
-            <input type="checkbox" @bind="count" class="align-content-center" />
-            <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
-        </div>
+        <EditForm Model="@ServiceModel" OnValidSubmit="AddAsync">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <div class="col mb-2">
+                <InputText class="form-control" placeholder="Наименование услуги" @bind-Value="ServiceModel.Name" />
+            </div>
+            <!--Чек-бокс-->
+            <div class="col">
+                <InputCheckbox @bind-Value="ServiceModel.IsCounter" class="align-content-center" />
+                <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
+            </div>
+            <div class="col text-center">
+                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+            </div>
+
+        </EditForm>
     </Body>
-    <Footer>
-        <button type="submit" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-    </Footer>
 </Modal>
 

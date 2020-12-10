@@ -18,9 +18,9 @@ namespace MyCommunalPayments.BlazorWebUI
     public class Startup
     {
         //[SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
-        private const string _apiPathIIS = @"http://localhost:8080/";
-        [SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
-        private const string _apiPathExpress = @"https://localhost:44390";
+        //private const string _apiPathIIS = @"http://localhost:8080/";
+        //[SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
+        private const string _apiPathExpress = @"https://localhost:44390/";
 
         
 
@@ -39,11 +39,19 @@ namespace MyCommunalPayments.BlazorWebUI
             services.AddServerSideBlazor();
             services.AddDbContextPool<DBContext>(options =>
             {
-                //options.UseSqlite(Configuration.GetConnectionString("MySQLLiteDB"));
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
+            //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
+            
+            options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
+                    new MySqlServerVersion(new Version(8, 0, 19)), 
+                    mySqlOptions => mySqlOptions
+                        .CharSetBehavior(CharSetBehavior.NeverAppend))
+                    // Everything from this point on is optional but helps with debugging.
+                        .EnableSensitiveDataLogging()
+                        .EnableDetailedErrors();
             });
 
-            string _apiPath = _apiPathIIS;
+            //string _apiPath = _apiPathIIS;
+            string _apiPath = _apiPathExpress;
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
             {
                 client.BaseAddress = new Uri(_apiPath);

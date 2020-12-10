@@ -20,11 +20,14 @@ namespace MyCommunalPayments.Models.Models
         /// </summary>
         public bool IsCounter { get; set; }
 
-        public override string ToString()
-        {
-            return NameService;
-        }
-        
+
+
+
+        public override string ToString() => NameService;
+
+        public override bool Equals(object obj) => this.ToString() == obj.ToString();
+
+        public override int GetHashCode() => base.GetHashCode();
 
     }
 }

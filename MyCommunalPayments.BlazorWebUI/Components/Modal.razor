@@ -1,4 +1,5 @@
-﻿
+﻿@inherits ModalBase
+
 <div class="modal @modalClass" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">
     <div class="modal-dialog modal-dialog-centered @ModalSize" role="document">
         <div class="modal-content">
@@ -21,38 +22,4 @@
 @if (showBackdrop)
 {
     <div class="modal-backdrop fade show"></div>
-}
-
-@code {
-    [Parameter]
-    public RenderFragment Title { get; set; }
-
-    [Parameter]
-    public RenderFragment Body { get; set; }
-
-    [Parameter]
-    public RenderFragment Footer { get; set; }
-
-    [Parameter]
-    public EventCallback CloseWindow { get; set; }
-
-    public string ModalSize { get; set; }
-
-    private string modalDisplay = "none;";
-    private string modalClass = "";
-    private bool showBackdrop = false;
-
-    public void Open()
-    {
-        modalDisplay = "block;";
-        modalClass = "show";
-        showBackdrop = true;
-    }
-
-    public void Close()
-    {
-        modalDisplay = "none";
-        modalClass = "";
-        showBackdrop = false;
-    }
 }

@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Models.Models;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
@@ -12,26 +16,27 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
     {
         #region Поля, Инициализация формы, Модальное окно
 
+        public ProviderViewModel ProviderModel { get; set; }
+        public ProvidersBase()
+        {
+            ProviderModel = new ProviderViewModel();
+        }
 
         [Inject]
         public IApiRepository<Provider> Repository { get; set; }
 
         protected Provider provider = default;
         protected IEnumerable<Provider> providers;
-        protected string provideName;
-        protected string webSite;
 
         protected bool isProvider = true;
 
-        protected bool confirm = false;
-
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
         protected void CloseModal()
         {
-            provideName = default;
-            webSite = default;
+            ProviderModel = new ProviderViewModel();
+
             provider = default;
             modal.Close();
         }
@@ -39,11 +44,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         {
             modal.Open();
         }
+        protected Modal setServicesModal;
 
-        protected Toast toast;// { get; set; }
+        //Уведомление
+        protected Toast toast;
         protected string message;
+        protected bool confirm = false;
 
-        protected Modal setServicesModal;// { get; set; }
+        
 
 
         protected override async Task OnInitializedAsync()
@@ -51,7 +59,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             await StateUpdate();
             NavMenu.SetSubMenu(true);
         }
- 
+
 
         #endregion
 
@@ -60,32 +68,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
-            if (!string.IsNullOrWhiteSpace(provideName) || !string.IsNullOrWhiteSpace(provider.NameProvider))
+            (string, ToastLevel) toastMessage = ("Данные обновлены", ToastLevel.Success);
+            if (provider == null)
             {
-
-                if (provider == null)
+                provider = new Provider()
                 {
-                    provider = new Provider()
-                    {
-                        NameProvider = provideName,
-                        WebSite = webSite
-                    };
+                    NameProvider = ProviderModel.NameProvider,
+                    WebSite = ProviderModel.WebSite
+                };
 
+                if(providers.FirstOrDefault(p => p.Equals(provider)) == null)
+                {
                     await Repository.AddAsync(provider);
                 }
                 else
                 {
-                    provider.NameProvider = provideName;
-                    provider.WebSite = webSite;
-                    await Repository.EditAsync(provider);
+                    toastMessage = ("Такой поставщик уже существует!", ToastLevel.Error);
                 }
+                
             }
+            else
+            {
+                provider.NameProvider = ProviderModel.NameProvider;
+                provider.WebSite = ProviderModel.WebSite;
+                await Repository.EditAsync(provider);
+            }
+
 
             CloseModal();
             await StateUpdate();
-            ToastShow("Данные обновлены", ToastLevel.Success);
+            ToastShow(toastMessage.Item1, toastMessage.Item2);
         }
 
         /// <summary>
@@ -95,8 +109,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         {
             provider = item;
             modal.Open();
-            provideName = item.NameProvider;
-            webSite = item.WebSite;
+            ProviderModel.NameProvider = provider.NameProvider;
+            ProviderModel.WebSite = provider.WebSite;
         }
 
         /// <summary>
@@ -120,6 +134,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
 
         protected void ReturnFromService() => isProvider = true;
 
+
+
+        #endregion
+
         protected void ToastShow(string mes, ToastLevel level)
         {
             message = mes;
@@ -133,7 +151,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             await DeleteData();
         }
 
-        protected async Task DeleteData()
+        private async Task DeleteData()
         {
 
             if (confirm && provider != null)
@@ -145,11 +163,24 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
 
         }
 
-        #endregion
-
         private async Task StateUpdate()
         {
             providers = await Repository.GetAllAsync();
         }
+    }
+
+    public class ProviderViewModel
+    {
+        /// <summary>
+        /// Наименование поставщика услуги ЖКХ
+        /// </summary>
+        [Required]
+        [MinLength(5, ErrorMessage = "Слишком короткое название")]
+        [MaxLength(70, ErrorMessage = "Слишком длинное название")]
+        public string NameProvider { get; set; }
+        /// <summary>
+        /// Путь к личному кабинету поставщика
+        /// </summary>
+        public string WebSite { get; set; }
     }
 }

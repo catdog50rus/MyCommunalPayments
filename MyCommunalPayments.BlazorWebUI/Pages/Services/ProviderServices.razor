@@ -1,7 +1,6 @@
 ﻿
 @inherits ProviderServicesBase
 
-
 <!-- Форма -->
 <FormTableComponent ItemsCollection="providersServicesCollection">
     <TableTitleFragment>
@@ -50,12 +49,14 @@
                             <td>
                                 <!--Услуга-->
                                 <div>
-                                    <select class="form-control" placeholder="Услуга" @bind="serviceName">
+
+                                    <select class="form-control" @bind="@serviceName">
                                         @foreach (var item in services)
                                         {
-                                            <option>@item.NameService</option>
+                                            <option value="@item.NameService">@item.NameService</option>
                                         }
                                     </select>
+
                                 </div>
                             </td>
                             <td>

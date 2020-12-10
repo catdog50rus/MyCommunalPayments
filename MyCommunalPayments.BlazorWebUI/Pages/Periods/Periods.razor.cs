@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
 using MyCommunalPayments.Data.Services.ApiServices;
+using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Models.Models;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,20 +15,30 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
     public class PeriodsBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+        /// <summary>
+        /// Данные модели представления
+        /// </summary>
+        public PeriodViewModel PeriodModel { get; set; }
+
+        public PeriodsBase()
+        {
+            PeriodModel = new PeriodViewModel();
+        }
+        
+        /// <summary>
+        /// Репозиторий данных
+        /// </summary>
         [Inject]
         public IApiRepository<Period> Repository { get; set; }
 
         protected Period period = default;
         protected IEnumerable<Period> periods;
-        protected string year;
-        protected PeriodsName month;
 
         //Модальное окно
         protected Modal modal;
         protected void CloseModal()
         {
-            year = default;
-            month = default;
+            PeriodModel = new PeriodViewModel();
             period = default;
             modal.Close();
         }
@@ -32,6 +46,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         {
             modal.Open();
         }
+
+        //Уведомление
+        protected Toast toast;
+        protected string message;
+        private bool confirm;
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,32 +65,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
-            if (!string.IsNullOrWhiteSpace(year))
+            (string, ToastLevel) toastMessage = ("Данные обновлены", ToastLevel.Success);
+
+            if (period == null)
             {
-
-                if (period == null)
+                period = new Period()
                 {
-                    period = new Period()
-                    {
-                        Year = year,
-                        Month = month
-                    };
+                    Year = PeriodModel.Year.ToString(),
+                    Month = PeriodModel.Month
+                };
 
+                if (periods.FirstOrDefault(p => p.Equals(period)) == null)
+                {
                     await Repository.AddAsync(period);
                 }
                 else
                 {
-                    period.Year = year;
-                    period.Month = month;
-                    await Repository.EditAsync(period);
-                    period = default;
+                    toastMessage = ("Такой период уже существует!", ToastLevel.Error);
                 }
-            }
 
+            }
+            else
+            {
+                period.Year = PeriodModel.Year.ToString();
+                period.Month = PeriodModel.Month;
+                await Repository.EditAsync(period);
+                period = default;
+            }
             CloseModal();
             await StateUpdate();
+            ToastShow(toastMessage.Item1, toastMessage.Item2);
         }
 
         /// <summary>
@@ -81,18 +106,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         {
             period = item;
             modal.Open();
-            year = item.Year;
-            month = item.Month;
+            PeriodModel.Year = int.Parse(period.Year);
+            PeriodModel.Month = period.Month;
         }
 
         /// <summary>
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected async Task Remove(Period item)
+        protected void Remove(Period item)
         {
-            await Repository.RemoveAsync(item.IdKey);
-            await StateUpdate();
+            period = item;
+            ToastShow("Внимание! Данные о периоде будут безвозвратно удалены. Вы уверенны?", ToastLevel.Warning);
+            
         }
 
         #endregion
@@ -102,5 +128,41 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             periods = await Repository.GetAllAsync();
             periods = periods.OrderByDescending(p => p.ToSort());
         }
+
+        protected void ToastShow(string mes, ToastLevel level)
+        {
+            message = mes;
+            toast.ShowToast(level);
+        }
+
+        protected async Task Confirm()
+        {
+            confirm = true;
+
+            await DeleteData();
+        }
+
+        private async Task DeleteData()
+        {
+
+            if (confirm && period != null)
+            {
+                await Repository.RemoveAsync(period.IdKey);
+                await StateUpdate();
+            }
+            confirm = false;
+
+        }
+    }
+
+    /// <summary>
+    /// Модель представления 
+    /// </summary>
+    public class PeriodViewModel
+    {
+        [Required]
+        public int Year { get; set; } = DateTime.Now.Year;
+        [Required]
+        public PeriodsName Month { get; set; }
     }
 }

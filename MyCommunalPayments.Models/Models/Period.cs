@@ -19,6 +19,17 @@ namespace MyCommunalPayments.Models.Models
             return $"{Month} {Year}";
         }
 
+        public override bool Equals(object obj)
+        {
+            if (this.ToString() == obj.ToString()) return true;
+            else return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public int ToSort()
         {
             return int.Parse(Year)*100 + (int)Month;
@@ -27,7 +38,8 @@ namespace MyCommunalPayments.Models.Models
 
     public enum PeriodsName
     {
-        Январь = 1,
+        None,
+        Январь,
         Февраль,
         Март,
         Апрель,

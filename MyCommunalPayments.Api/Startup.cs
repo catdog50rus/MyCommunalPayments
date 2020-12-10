@@ -33,8 +33,15 @@ namespace MyCommunalPayments.Api
         {
             services.AddDbContextPool<DBContext>(options =>
             {
-                //options.UseSqlite(Configuration.GetConnectionString("MySQLLiteDB"));
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), x => x.ServerVersion(new Version(8, 0, 19), ServerType.MySql));
+                //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
+                
+                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
+                new MySqlServerVersion(new Version(8, 0, 19)), 
+                    mySqlOptions => mySqlOptions
+                        .CharSetBehavior(CharSetBehavior.NeverAppend))
+                    // Everything from this point on is optional but helps with debugging.
+                        .EnableSensitiveDataLogging()
+                        .EnableDetailedErrors();
             });
             
             services.AddScoped<IRepository<Service>, SQLService<Service>>();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
@@ -29,7 +30,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected string serviceName = "";
 
         protected List<Service> services;
-        private Service service;
+        protected Service service;
 
         //Модальное окно
         protected Modal modal;// { get; set; }

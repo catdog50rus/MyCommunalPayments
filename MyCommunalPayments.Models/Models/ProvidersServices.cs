@@ -15,11 +15,13 @@ namespace MyCommunalPayments.Models.Models
         public int IdProvider { get; set; }
 
         [ForeignKey("IdProvider")]
+        [Required]
         public Provider Provider { get; set; }
 
         public int IdService { get; set; }
 
         [ForeignKey("IdService")]
+        [Required]
         public Service Service { get; set; }
 
     }

@@ -1,0 +1,21 @@
+﻿@inherits ToastBase
+
+<div class="toast @(IsVisible ? "toast-visible" : "") @windowShow @BackgroundCssClass" @onclick="HideToast">
+    <div class="toast-icon">
+        <i class="fa fa-@IconCssClass" aria-hidden="true"></i>
+    </div>
+    <div class="toast-body">
+        <h5>@Heading</h5>
+        <p>@Message</p>
+        @if (isWarning)
+        {
+            <div>
+                <button class="btn btn-success" @onclick="(()=>isConfirm = true)">Да</button>
+                <button class="btn btn-danger">Нет</button>
+            </div>
+        }
+
+    </div>
+</div>
+
+

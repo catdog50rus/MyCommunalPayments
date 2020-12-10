@@ -43,16 +43,21 @@ else
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление нового поставщика услуг ЖКХ</Title>
     <Body>
-        <div class="col mb-3">
-            <input class="form-control" placeholder="Новый поставщик" @bind-value="@provideName" />
-        </div>
-        <div class="col mb-3">
-            <input class="form-control" placeholder="Web site" @bind-value="webSite" />
-        </div>
+        <EditForm Model="@ProviderModel" OnValidSubmit="AddAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="col mb-3">
+                <InputText class="form-control" placeholder="Новый поставщик" @bind-Value="ProviderModel.NameProvider" />
+            </div>
+            <div class="col mb-3">
+                <InputText class="form-control" placeholder="Web site" @bind-Value="ProviderModel.WebSite" />
+            </div>
+            <div class="col text-center">
+                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+            </div>
+        </EditForm>
     </Body>
-    <Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-    </Footer>
 </Modal>
 
 

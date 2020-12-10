@@ -2,6 +2,10 @@
 
 @inherits PeriodsBase
 
+<Toast @ref="toast" OnClickConfirm="@Confirm">
+    <Message>@message</Message>
+</Toast>
+
 <!-- Форма -->
  <FormTableComponent ItemsCollection="@periods">
     <TableTitleFragment>
@@ -32,21 +36,25 @@
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление нового расчетного периода</Title>
     <Body>
-        <div class="col mb-3">
-            <input class="form-control" placeholder="Расчетный год" @bind-value="@year" />
-        </div>
-        <!--Период-->
-        <div class="col mb-3">
-            <select class="form-control" placeholder="Период" @bind="month">
-                @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
-                {
-                    <option>@item</option>
-                }
-            </select>
-        </div>
+        <EditForm Model="@PeriodModel" OnValidSubmit="AddAsync">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+
+            <div class="col mb-3">
+                <InputNumber class="form-control" placeholder="Расчетный год" @bind-Value="@PeriodModel.Year" />
+            </div>
+            <div class="col mb-3">
+                <InputSelect class="form-control" placeholder="Период" @bind-Value="PeriodModel.Month">
+                    @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col text-center">
+                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+            </div>
+        </EditForm>
     </Body>
-    <Footer>
-        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-    </Footer>
 </Modal>
 
