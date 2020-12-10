@@ -33,81 +33,39 @@
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>Добавление показаний счетчика услуги ЖКХ</Title>
         <Body>
-            <!--<div>
-                <table class="table table-sm table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="w-25"></th>
-                            <th class="w-50"></th>
-                            <th class="w-25"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>-->
-            <!--Дата-->
-            <!--<div>
-                    <input class="form-control" placeholder="Дата передачи" @bind="dateCount" />
-                </div>
-            </td>
-            <td>-->
-            <!--Услуга-->
-            <!--<div>
-                    <select class="form-control" placeholder="Услуга" @bind="@serviceName">
-                        @foreach (var item in services)
-                        {
-                            <option>@item.ToString()</option>
-                        }
-                    </select>
-                </div>
-            </td>
-            <td>-->
-            <!--Показания счетчика-->
-            <!--<div>
-                                    <input class="form-control" placeholder="Показания счетчика" @bind="valueCounter" />
-                                </div>
-                            </td>
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>-->
-            <FormTableComponent ItemsCollection="@services">
+            <ModalTableComponent T="ServiceCounterViewModel" ViewModel="@ServiceCounterModel" SaveEvent="@AddAsync">
                 <TableHeaderFragment>
-                    <th class="w-25">Дата</th>
+                    <th class="w-25">Дата передачи</th>
                     <th class="w-50">Услуга</th>
                     <th class="w-25">Показания</th>
                 </TableHeaderFragment>
                 <TableBodyFragment>
                     <td>
-                        <!--Дата-->
+                        @*Дата*@
                         <div>
-                            <input class="form-control" placeholder="Дата передачи" @bind="dateCount" />
+                            <InputDate class="form-control" placeholder="Дата передачи" @bind-Value="ServiceCounterModel.DateCount" />
                         </div>
                     </td>
                     <td>
-                        <!--Услуга-->
+                        @*Услуга*@
                         <div>
-                            <select class="form-control" placeholder="Услуга" @bind="@serviceName">
+                            <InputSelect class="form-control" placeholder="Услуга" @bind-Value="ServiceCounterModel.ServiceId">
                                 @foreach (var item in services)
-                                    {
-                                    <option>@item.ToString()</option>
-                                    }
-                            </select>
+                                 {
+                                    <option value="@item.IdService">@item.NameService</option>
+                                 }
+                            </InputSelect>
                         </div>
                     </td>
                     <td>
-                        <!--Показания счетчика-->
+                        @*Показания счетчика*@
                         <div>
-                            <input class="form-control" placeholder="Показания счетчика" @bind="valueCounter" />
+                            <InputNumber class="form-control" placeholder="Показания счетчика" @bind-Value="ServiceCounterModel.ValueCounter" />
                         </div>
                     </td>
                 </TableBodyFragment>
-            </FormTableComponent>
+            </ModalTableComponent>
         </Body>
-        <Footer>
-            <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
-        </Footer>
     </Modal>
 
 }

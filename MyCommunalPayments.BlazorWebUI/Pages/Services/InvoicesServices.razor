@@ -22,7 +22,7 @@
         <TableBodyFragment>
             <TableBodyComponent ItemsCollection="@invoiceServicesList">
                 <ItemFragment Context="context">
-                    <RowInvoiceServicesTable InvoiceServices="context" EditEvent="Edit" RemoveEvent="Remove" AddCounterEvent="AddCounter"/>
+                    <RowInvoiceServicesTable InvoiceServices="context" EditEvent="Edit" RemoveEvent="Remove"/>
                 </ItemFragment>
             </TableBodyComponent>
         </TableBodyFragment>
@@ -106,11 +106,6 @@
                                     @*Показания*@
                                     <div class="text-center">
                                         <input class="form-control text-center" placeholder="Показания" @bind-value="amount" />
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-center">
-                                        <button type="button" class="btn btn-sm btn-danger" @onclick="SaveCount">Сохранить</button>
                                     </div>
                                 </td>
                             </tr>

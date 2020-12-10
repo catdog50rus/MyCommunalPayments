@@ -137,40 +137,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         }
 
 
-        protected void AddCounter(InvoiceServices item)
-        {
-            service = item.Service;
-            invoiceService = invoiceServicesList.FirstOrDefault(s => s.Service == item.Service);
-            isCounter = true;
-            
-            amount = invoiceService.Amount;
-
-            dateCount = DateTime.Today.ToString("dd/MM/yyyy");
-
-            modal.ModalSize = "modal-lg";
-            OpenModal();
-        }
-
-        protected async Task SaveCount()
-        {
-            if (counter == null)
-            {
-                counter = new ServiceCounter()
-                {
-                    DateCount = dateCount,
-                    ValueCounter = amount,
-                    IdService = service.IdService
-                };
-                invoiceService.Amount = amount;
-                await Repository.EditAsync(invoiceService);
-                await CountersRepository.AddAsync(counter);
-
-            }
-            await CloseModal();
-        }
-
-
-
         #endregion
 
         private async Task StateUpdate()

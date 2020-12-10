@@ -21,9 +21,9 @@ namespace MyCommunalPayments.Models.Models
 
         public int ToSort()
         {
-            int.TryParse(DateCount.Substring(6, 4), out int rrr);
-            int.TryParse(DateCount.Substring(3, 2), out int rr);
-            int.TryParse(DateCount.Substring(0, 2), out int r);
+            _ = int.TryParse(DateCount.Substring(6, 4), out int rrr);
+            _ = int.TryParse(DateCount.Substring(3, 2), out int rr);
+            _ = int.TryParse(DateCount.Substring(0, 2), out int r);
             return rrr * 1000 + rr * 100 + r;
         }
 
@@ -31,5 +31,6 @@ namespace MyCommunalPayments.Models.Models
         {
             return ValueCounter;
         }
+
     }
 }

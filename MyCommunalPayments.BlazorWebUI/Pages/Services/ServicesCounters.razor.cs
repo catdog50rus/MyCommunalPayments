@@ -4,14 +4,21 @@ using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
-{
+namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base 
+{ 
     public class ServicesCountersBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+
+        public ServiceCounterViewModel ServiceCounterModel { get; set; }
+        public ServicesCountersBase()
+        {
+            ServiceCounterModel = new ServiceCounterViewModel();
+        }
 
         [Inject]
         public IApiRepository<ServiceCounter> Repository { get; set; }
@@ -21,12 +28,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         protected IEnumerable<ServiceCounter> serviceCounters;
         protected ServiceCounter serviceCounter;
-        protected string dateCount;
-        protected int valueCounter;
 
         protected List<Service> services;
         private int serviceId;
-        protected string serviceName = "";
+        private string countDate;
 
         //Модальное окно
         protected Modal modal;
@@ -34,13 +39,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected void CloseModal()
         {
             serviceCounter = default;
-            dateCount = default;
-            valueCounter = default;
+            ServiceCounterModel = new ServiceCounterViewModel();
             modal.Close();
         }
         protected void OpenModal()
         {
-            dateCount = DateTime.Today.ToString("dd/MM/yyyy");
             modal.ModalSize = "modal-lg";
             modal.Open();
         }
@@ -52,12 +55,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             services = services.Where(c => c.IsCounter == true).ToList();
         }
 
-        protected Service GetServiceByName(string name)
-        {
-            return services.FirstOrDefault(s => s.NameService == name);
-        }
-
-
         #endregion
 
         #region Обработка нажатия кнопок
@@ -65,18 +62,18 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
-            if (!string.IsNullOrWhiteSpace(dateCount) && !string.IsNullOrWhiteSpace(serviceName) && valueCounter >= 0)
-            {
-                serviceId = GetServiceByName(serviceName).IdService;
+
+            serviceId = int.Parse(ServiceCounterModel.ServiceId);
+            countDate = ServiceCounterModel.DateCount.ToString("dd/MM/yyyy");
 
                 if (serviceCounter == null)
                 {
                     serviceCounter = new ServiceCounter()
                     {
-                        DateCount = dateCount,
-                        ValueCounter = valueCounter,
+                        DateCount = countDate,
+                        ValueCounter = ServiceCounterModel.ValueCounter,
                         IdService = serviceId
                     };
 
@@ -84,12 +81,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                 }
                 else
                 {
-                    serviceCounter.DateCount = dateCount;
+                    serviceCounter.DateCount = countDate;
                     serviceCounter.IdService = serviceId;
-                    serviceCounter.ValueCounter = valueCounter;
+                    serviceCounter.ValueCounter = ServiceCounterModel.ValueCounter;
                     await Repository.EditAsync(serviceCounter);
                 }
-            }
+            
 
             CloseModal();
             await StateUpdate();
@@ -101,9 +98,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected void Edit(ServiceCounter item)
         {
             serviceCounter = item;
-            serviceName = item.Service.NameService;
-            dateCount = item.DateCount;
-            valueCounter = item.ValueCounter;
+            ServiceCounterModel = new ServiceCounterViewModel()
+            {
+                ServiceId = serviceCounter.Service.IdService.ToString(),
+                DateCount = DateTime.Parse(serviceCounter.DateCount),
+                ValueCounter = serviceCounter.ValueCounter
+            };
             OpenModal();
         }
 
@@ -119,11 +119,22 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         private async Task StateUpdate()
         {
-            serviceCounters = await Repository.GetAllAsync();
-            serviceCounters.OrderByDescending(d => d.ToSort());//.ThenBy(s => s.Service.NameService);
+            serviceCounters =  await Repository.GetAllAsync();
+            _ = serviceCounters.OrderByDescending(d => d.ToSort()).ThenBy(s => s.Service.NameService);
             
         }
 
         #endregion
+    }
+
+    public class ServiceCounterViewModel
+    {
+        [Required(ErrorMessage = "Необходимо выбрать услугу")]
+        public string ServiceId { get; set; } = "";
+        [Required(ErrorMessage = "Необходимо указать дату")]
+        public DateTime DateCount { get; set; } = DateTime.Today;
+        [Required(ErrorMessage = "Поле должно быть заполнено!")]
+        [Range(0, 100000, ErrorMessage = "Показания счетчика - не отрицательное число")]
+        public int ValueCounter { get; set; }
     }
 }

@@ -34,23 +34,22 @@
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>@modalTitle</Title>
     <Body>
-        <EditForm Model="@ServiceModel" OnValidSubmit="AddAsync">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
-            <div class="col mb-2">
-                <InputText class="form-control" placeholder="Наименование услуги" @bind-Value="ServiceModel.Name" />
-            </div>
-            <!--Чек-бокс-->
-            <div class="col">
-                <InputCheckbox @bind-Value="ServiceModel.IsCounter" class="align-content-center" />
-                <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
-            </div>
-            <div class="col text-center">
-                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
-            </div>
-
-        </EditForm>
+        <ModalFormComponent T="@ServiceViewModel" ViewModel="@ServiceModel" SaveEvent="AddAsync">
+            <FormBodyFragment>
+                <div class="row">
+                    <div class="col mb-2">
+                        <InputText class="form-control" placeholder="Наименование услуги" @bind-Value="ServiceModel.Name" />
+                    </div>
+                </div>
+                <!--Чек-бокс-->
+                <div class="row">
+                    <div class="col">
+                        <InputCheckbox @bind-Value="ServiceModel.IsCounter" class="align-content-center" />
+                        <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
+                    </div>
+                </div>
+            </FormBodyFragment>
+        </ModalFormComponent>
     </Body>
 </Modal>
 

@@ -4,6 +4,7 @@ using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,6 +13,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     public class ProviderServicesBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+
+        public ProviderServiceViewModel ProviderServiceModel { get; set; }
+        public ProviderServicesBase()
+        {
+            ProviderServiceModel = new ProviderServiceViewModel();
+        }
 
         [Parameter]
         public Provider Provider { get; set; }
@@ -27,36 +34,28 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected ProvidersServices providersServices;
         protected IEnumerable<ProvidersServices> providersServicesCollection;
 
-        protected string serviceName = "";
-
         protected List<Service> services;
-        protected Service service;
+        private int IdService;
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
-
+        protected Modal modal;
         private bool isUpdate = default;
-        protected string buttonLabel = "";
         protected string modalLabel = "";
 
-        protected async Task CloseModal()
+        protected void CloseModal()
         {
-            serviceName = "";
             providersServices = default;
             isUpdate = false;
             modal.Close();
-            await StateUpdate();
         }
         protected void OpenModal()
         {
             if (isUpdate)
             {
-                buttonLabel = "Изменить";
                 modalLabel = "Изменение услуги ЖКХ у поставщика";
             }
             else
             {
-                buttonLabel = "Добавить";
                 modalLabel = "Добавление услуг ЖКХ поставщику";
             }
             modal.Open();
@@ -76,31 +75,28 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
-            if (!string.IsNullOrWhiteSpace(serviceName))
+            IdService = int.Parse(ProviderServiceModel.IdService);
+            if (providersServices == null)
             {
-                service = GetServiceByName(serviceName);
-                if (providersServices == null)
+                providersServices = new ProvidersServices()
                 {
-                    providersServices = new ProvidersServices()
-                    {
-                        
-                        IdProvider = Provider.IdProvider,
-                        IdService = service.IdService,
-                    };
 
-                    await Repository.AddAsync(providersServices);
-                }
-                else
-                {
-                    providersServices.IdService = service.IdService;
-                    await Repository.EditAsync(providersServices);
-                    await CloseModal();
-                }
+                    IdProvider = Provider.IdProvider,
+                    IdService = IdService
+                };
+
+                await Repository.AddAsync(providersServices);
             }
-            providersServices = default;
-            
+            else
+            {
+                providersServices.IdService = IdService;
+                await Repository.EditAsync(providersServices);
+
+            }
+            CloseModal();
+            await StateUpdate();
         }
 
         /// <summary>
@@ -111,7 +107,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             isUpdate = true;
             providersServices = item;
             OpenModal();
-            serviceName = item.Service.NameService;
+            ProviderServiceModel.IdService = providersServices.IdService.ToString();
         }
 
         /// <summary>
@@ -133,7 +129,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                 .Where(p => p.Provider.IdProvider == Provider.IdProvider).ToList();
         }
 
-        private Service GetServiceByName(string name) => services.Single(i => i.NameService == name);
+    }
 
+    public class ProviderServiceViewModel
+    {
+        [Required]
+        public string IdService { get; set; } = "";
     }
 }

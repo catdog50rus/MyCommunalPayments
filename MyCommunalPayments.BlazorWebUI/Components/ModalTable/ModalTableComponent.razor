@@ -1,0 +1,35 @@
+﻿@typeparam T
+
+<EditForm Model="@ViewModel" OnValidSubmit="@SaveEvent">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <table class="table table-sm table-bordered table-hover">
+            @if(TableHeaderFragment != null)
+            {
+                <thead class="table-dark">
+                    <tr>
+                        @TableHeaderFragment
+                    </tr>
+                </thead>
+            }
+            
+            <tbody>
+                <tr>
+                    @TableBodyFragment
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+        </div>
+    </div>
+</EditForm>
+
+
+    @code {
+        [Parameter] public RenderFragment TableHeaderFragment { get; set; }
+        [Parameter] public RenderFragment TableBodyFragment { get; set; }
+        [Parameter] public T ViewModel { get; set; }
+        [Parameter] public EventCallback SaveEvent { get; set; }
+    }

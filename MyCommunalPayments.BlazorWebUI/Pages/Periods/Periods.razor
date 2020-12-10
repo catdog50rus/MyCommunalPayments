@@ -36,25 +36,25 @@
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление нового расчетного периода</Title>
     <Body>
-        <EditForm Model="@PeriodModel" OnValidSubmit="AddAsync">
-            <DataAnnotationsValidator/>
-            <ValidationSummary/>
-
-            <div class="col mb-3">
-                <InputNumber class="form-control" placeholder="Расчетный год" @bind-Value="@PeriodModel.Year" />
-            </div>
-            <div class="col mb-3">
-                <InputSelect class="form-control" placeholder="Период" @bind-Value="PeriodModel.Month">
-                    @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
-                    {
-                        <option value="@item">@item</option>
-                    }
-                </InputSelect>
-            </div>
-            <div class="col text-center">
-                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
-            </div>
-        </EditForm>
+        <ModalFormComponent T="@PeriodViewModel" ViewModel="PeriodModel" SaveEvent="AddAsync">
+            <FormBodyFragment>
+                <div class="row">
+                    <div class="col mb-3">
+                        <InputNumber class="form-control" placeholder="Расчетный год" @bind-Value="@PeriodModel.Year" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <InputSelect class="form-control" placeholder="Период" @bind-Value="PeriodModel.Month">
+                            @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+            </FormBodyFragment>
+        </ModalFormComponent>
     </Body>
 </Modal>
 

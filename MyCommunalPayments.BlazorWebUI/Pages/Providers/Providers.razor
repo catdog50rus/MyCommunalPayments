@@ -43,20 +43,20 @@ else
 <Modal @ref="modal" CloseWindow="CloseModal">
     <Title>Добавление нового поставщика услуг ЖКХ</Title>
     <Body>
-        <EditForm Model="@ProviderModel" OnValidSubmit="AddAsync">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="col mb-3">
-                <InputText class="form-control" placeholder="Новый поставщик" @bind-Value="ProviderModel.NameProvider" />
-            </div>
-            <div class="col mb-3">
-                <InputText class="form-control" placeholder="Web site" @bind-Value="ProviderModel.WebSite" />
-            </div>
-            <div class="col text-center">
-                <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
-            </div>
-        </EditForm>
+        <ModalFormComponent T="@ProviderViewModel" ViewModel="@ProviderModel" SaveEvent="AddAsync">
+            <FormBodyFragment>
+                <div class="row">
+                    <div class="col mb-3">
+                        <InputText class="form-control" placeholder="Новый поставщик" @bind-Value="ProviderModel.NameProvider" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <InputText class="form-control" placeholder="Web site" @bind-Value="ProviderModel.WebSite" />
+                    </div>
+                </div>
+            </FormBodyFragment>
+        </ModalFormComponent>
     </Body>
 </Modal>
 
