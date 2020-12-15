@@ -6,7 +6,6 @@
 
 @if (isUpload)
 {
-    @*<InputPDFFile OnUploadReturnToPaiment="SetOrder" />*@
     <UploadPDFComponent OnUploadReturnToPayment="SetOrder"/>
 }
 else
@@ -19,9 +18,13 @@ else
         <TableTitleButtonFragment>
             <!--Добавление нового платежа-->
             @if (Invoice != null)
-            { 
+            {
                 <div class="col">
-                    <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    @if (!paymentsList.Any())
+                    {
+                        <button type="button" class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    }
+                    
                 </div>
                 <div>
                     <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
@@ -43,42 +46,67 @@ else
         <TableBodyFragment>
             <TableBodyComponent ItemsCollection="@paymentsList">
                 <ItemFragment Context="context">
-                    <RowPaymentsTable Payment="context" EditEvent="Edit" RemoveEvent="Remove" DownloadFileEvent="DownloadFile" Invoice="Invoice"/>
+                    <RowPaymentsTable Payment="context" EditEvent="Edit" RemoveEvent="RemoveAsync" DownloadFileEvent="DownloadFile" Invoice="Invoice"/>
                 </ItemFragment>            
             </TableBodyComponent>
         </TableBodyFragment>
     </FormTableComponent>
 }
 
-@if (invoice != null)
+@if (Invoice != null)
 {
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>
-            Добавление новой оплаты за услуги ЖКХ <br />
-            Поставщик услуг ЖКХ: @invoice.Provider.NameProvider <br />
-            Период оплаты: @invoice.Period
+            Добавление новой оплаты за услуги ЖКХ <br /> 
         </Title>
         <Body>
-            <div class="row mb-3 text-center">
-                <div class="col-1 text-center align-content-center">
-                    <input type="checkbox" @bind ="paid" class="align-content-center" />
-                </div>
-                <div class="col-3">
-                    <input class="form-control text-center" placeholder="Дата оплаты" @bind-value="datePayment" />
-                </div>
-                <div class="col-3">
-                    <input class="form-control text-right" placeholder="Сумма платежа" @bind-value="paymentSum" />
-                </div>
-                <div class="col-5">
-                    <a class="btn btn-sm btn-outline-success" role="button" href="@invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
-                    <button class="btn btn-sm btn-info" @onclick="UploadOrder">Загрузить платежку</button>
-                </div>
-            </div>
+            <ModalTableComponent T="@PaymentViewModel" ViewModel="@PaymentViewModel" SaveEvent="@AddAsync" >
+                <TableTitleFragment>
+                    Поставщик услуг ЖКХ: @Invoice.Provider.NameProvider <br />
+                    Период оплаты: @Invoice.Period
+                </TableTitleFragment>
+                <TableHeaderFragment>
+                    <th scope="col"  >Оплата</th>
+                    <th scope="col" >Дата оплаты</th>
+                    <th scope="col" >Сумма оплаты</th>
+                    <th scope="col" class="w-25"></th>
+                </TableHeaderFragment>
+                <TableBodyFragment>
+                    <td class="text-center align-content-center">
+                        <InputCheckbox @bind-Value="@PaymentViewModel.Paid" class="align-content-center" />
+                    </td>
+                    <td >
+                        <InputDate class="form-control text-center" @bind-Value="PaymentViewModel.DatePayment" />
+                    </td>
+                    <td >
+                        <InputNumber class="form-control text-right" @bind-Value="PaymentViewModel.PaymentSum" />
+                    </td>
+                    <td >
+                        @if (!PaymentViewModel.Paid)
+                        {
+                            <a class="btn btn-sm btn-outline-success" role="button" href="@Invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
+                        }
+                        
+                    </td>
+                </TableBodyFragment>
+                <AnotherButton>
+                    @if (payment != null && payment.IdPayment != 0 && PaymentViewModel.Paid)
+                    {
+                        @if (payment.IdOrder != 0)
+                        {
+                            <button type="button" class="btn btn-danger" @onclick="RemoveOrderAsync">Удалить платежку</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-success" @onclick="UploadOrder">Загрузить платежку</button>
+                        }
+
+                    }
+
+                </AnotherButton>
+            </ModalTableComponent>
         </Body>
-        <Footer>
-            <button class="btn btn-sm btn-danger " @onclick="Add">Сохранить</button>
-        </Footer>
     </Modal>
 }
 

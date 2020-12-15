@@ -6,6 +6,7 @@ using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
     public class PaymentsBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+        public PaymentViewModel PaymentViewModel { get; set; } = new PaymentViewModel();
+
         [Parameter]
         public Invoice Invoice { get; set; }
 
@@ -34,13 +37,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         protected Payment payment = default;
         protected IEnumerable<Payment> paymentsList;
-        protected string datePayment;
-        protected decimal paymentSum;
-        protected int orderId;
-        protected bool paid;
+        //protected int orderId;
 
         protected List<Invoice> invoices;
-        protected Invoice invoice;
+        //protected Invoice invoice;
 
         //Модальное окно
         protected Modal modal = new Modal();
@@ -58,12 +58,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             if (Invoice != null) 
             {
-                invoice = Invoice;
-                paymentSum = invoice.InvoiceSum;
+                //invoice = Invoice;
+                PaymentViewModel.PaymentSum = Invoice.InvoiceSum;
             } 
             await StateUpdate();
-            
-            datePayment = DateTime.Now.Date.ToString("dd/MM/yyyy");
         }
 
         #endregion
@@ -73,38 +71,33 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
+            var date = PaymentViewModel.DatePayment.ToString("dd.MM.yyyy");
 
-            if (!string.IsNullOrWhiteSpace(datePayment) && paymentSum >= 0)
+            if (payment == null && Invoice != null)
             {
-                if (payment == null && Invoice != null)
-                {
-                    
-                    payment = new Payment()
-                    {
-                        DatePayment = datePayment,
-                        IdInvoice = invoice.IdInvoice,
-                        PaymentSum = paymentSum,
-                        Paid = paid,
-                        IdOrder = orderId
 
-                    };
-                    Invoice.Pay = payment.Paid;
-
-                    await Repository.AddAsync(payment);
-                }
-                else
+                payment = new Payment()
                 {
-                    payment.DatePayment = datePayment;
-                    payment.Paid = paid;
-                    payment.PaymentSum = paymentSum;
-                    Invoice.Pay = paid;
-                    payment.IdOrder = orderId;
-                    await Repository.EditAsync(payment);
-                }
+                    DatePayment = date,
+                    IdInvoice = Invoice.IdInvoice,
+                    PaymentSum = PaymentViewModel.PaymentSum,
+                    Paid = PaymentViewModel.Paid,
+                };
+
+                await Repository.AddAsync(payment);
+
+            }
+            else
+            {
+                payment.DatePayment = date;
+                payment.Paid = PaymentViewModel.Paid;
+                payment.PaymentSum = PaymentViewModel.PaymentSum;
+                await Repository.EditAsync(payment);
             }
 
+            Invoice.Pay = payment.Paid;
             CloseModal();
             await InvoiceRepository.EditAsync(Invoice);
             await StateUpdate();
@@ -116,11 +109,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected void Edit(Payment item)
         {
             payment = item;
-            paid = item.Paid;
-            datePayment = item.DatePayment;
-            paymentSum = item.PaymentSum;
-            invoice = item.Invoice;
-            orderId = item.IdOrder;
+            PaymentViewModel.Paid = payment.Paid;
+            PaymentViewModel.DatePayment = DateTime.Parse(payment.DatePayment);
+            PaymentViewModel.PaymentSum = payment.PaymentSum;
             OpenModal();
         }
 
@@ -128,31 +119,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected async Task Remove(Payment item)
+        protected async Task RemoveAsync(Payment item)
         {
             await Repository.RemoveAsync(item.IdPayment);
+            await FileLoad.RemoveAsync(item.IdOrder);
+            Invoice.Pay = false;
+            await InvoiceRepository.EditAsync(Invoice);
             await StateUpdate();
-            item.Invoice.Pay = false;
+            //item.Invoice.Pay = false;
         }
 
         protected void UploadOrder()
         {
-
             modal.Close();
             isUpload = true;
         }
 
         protected void SetOrder(int id)
         {
-            if (id > 0)
+            if (id > 0 && payment != null)
             {
-                if (payment != null)
-                {
-                    payment.IdOrder = id;
-                    //Edit(payment);
-                }
+                payment.IdOrder = id;
+                payment.Paid = true;
+                Edit(payment);
+                isUpload = false;
             }
-            isUpload = false;
+        }
+
+        protected async Task RemoveOrderAsync()
+        {
+            await FileLoad.RemoveAsync(payment.IdOrder);
+            payment.IdOrder = 0;
+
         }
 
         protected async void DownloadFile(Payment item)
@@ -179,7 +177,28 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             paymentsList = await Repository.GetAllAsync();
             paymentsList = paymentsList.OrderByDescending(d => d.Invoice.Period.ToSort());
             if (Invoice != null)
-                paymentsList = paymentsList.Where(i => i.IdInvoice == invoice.IdInvoice);
+            {
+                paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice).ToList();
+                if (!paymentsList.Any()) payment = default;
+            }
         }
+    }
+
+    public class PaymentViewModel
+    {
+        [Required(ErrorMessage = "Необходимо указать дату платежа")]
+        public DateTime DatePayment { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// Сумма платежа
+        /// </summary>
+        [Required(ErrorMessage = "Необходимо указать сумму платежа")]
+        [Range(0, 1000000, ErrorMessage = "Сумма должна быть неотрицательным числом")]
+        public decimal PaymentSum { get; set; }
+
+        /// <summary>
+        /// Флаг была ли произведена оплата
+        /// </summary>
+        public bool Paid { get; set; }
     }
 }

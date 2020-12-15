@@ -53,6 +53,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         protected override async Task OnInitializedAsync()
         {
+            
             await StateUpdate();
             NavMenu.SetSubMenu(true);
             service = default;
