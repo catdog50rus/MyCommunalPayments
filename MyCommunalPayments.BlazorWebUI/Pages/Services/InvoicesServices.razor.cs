@@ -21,40 +21,39 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         [Parameter]
         public Invoice Invoice { get; set; }
+        [Parameter]
+        public EventCallback OnClickReturnToInvoces { get; set; }
+
         [Inject]
         public IApiRepository<InvoiceServices> Repository { get; set; }
         [Inject]
         public IApiRepository<ServiceCounter> CountersRepository { get; set; }
-        [Parameter]
-        public EventCallback OnClickReturnToInvoces { get; set; }
         [Inject]
         public IApiRepository<ProvidersServices> ProviderServicesRepository { get; set; }
 
         
-
+        //Сервисы в квитанции
         protected InvoiceServices invoiceService;
         protected IEnumerable<InvoiceServices> invoiceServicesList;
-        protected int amount;
-        //protected int idInvoice;
 
+        //Поставщик
         protected Provider provider;
 
+        //Сервисы
         protected Service service;
         protected List<Service> services;
-        protected int IdService;
 
+        //Счетчики услуг
         protected ServiceCounter counter;
         protected List<ServiceCounter> counters;
         protected string dateCount;
 
         //Модальное окно
         protected Modal modal;
-
         protected void CloseModal()
         {
             modal.Close();
         }
-
         protected void OpenModal()
         {
             modal.Open();
@@ -84,24 +83,32 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// </summary>
         protected async Task AddAsync()
         {
-            IdService = int.Parse(InvoiceServiceModel.IdService);
-            service = services.FirstOrDefault(s => s.IdService == IdService);
+            //Получаем id сервиса
+            int idService = int.Parse(InvoiceServiceModel.IdService);
+            //Последнее показание счетчика
+            int amount = 0;
 
+            //Получаем сервис по id и проверяем его на null
+            service = services.FirstOrDefault(s => s.IdService == idService);
             if(service != null)
             {
+                //Если сервис подразумевает наличие счетчика получаем последнее показания
                 if (service.IsCounter)
                 {
-                    amount = counters.Where(s => s.IdService == IdService).Select(c => c.ValueCounter).Max();
+                    amount = counters.Where(s => s.IdService == idService).Select(c => c.ValueCounter).Max();
                 }
 
+                //Проверяем если ли текущая модель
                 if (invoiceService == null)
                 {
+                    //Создаем и инициализируем модель
                     invoiceService = new InvoiceServices()
                     {
                         IdInvoice = Invoice.IdInvoice,
-                        IdService = IdService,
+                        IdService = idService,
                         Amount = amount
                     };
+                    //Если модель уникальная, записываем ее в БД
                     if(invoiceServicesList.FirstOrDefault(ins=>ins.Equals(invoiceService)) == null)
                     {
                         await Repository.AddAsync(invoiceService);
@@ -109,14 +116,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
                 }
                 else
                 {
-                    invoiceService.IdService = IdService;
+                    //Меняем Модель
+                    invoiceService.IdService = idService;
                     await Repository.EditAsync(invoiceService);
                 }
             }
             
             invoiceService = default;
             service = default;
-            amount = default;
             await StateUpdate();
             CloseModal();
 
@@ -127,6 +134,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// </summary>
         protected void Edit(InvoiceServices item)
         {
+            //Готовим модель представления
             invoiceService = item;
             OpenModal();
             InvoiceServiceModel.IdService = invoiceService.Invoice.ToString();
@@ -135,7 +143,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Удалить запись
         /// </summary>
-        protected async Task Remove(InvoiceServices item)
+        protected async Task RemoveAsync(InvoiceServices item)
         {
             await Repository.RemoveAsync(item.IdInvoiceServices);
             await StateUpdate();
@@ -152,8 +160,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         }
     }
 
+    /// <summary>
+    /// Модель представления
+    /// </summary>
     public class InvoiceServiceViewModel
     {
+        /// <summary>
+        /// Получение услуги
+        /// </summary>
         [Required(ErrorMessage = "Необходимо выбрать услугу")]
         public string IdService { get; set; } = "";
     }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.Data.Services.ApiServices;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,15 +13,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     {
         #region Поля, Инициализация формы, Модальное окно
 
-        public ProviderServiceViewModel ProviderServiceModel { get; set; }
-        public ProviderServicesBase()
-        {
-            ProviderServiceModel = new ProviderServiceViewModel();
-        }
+        /// <summary>
+        /// Модель представления
+        /// </summary>
+        protected ProviderServiceViewModel ProviderServiceModel = new ProviderServiceViewModel();
 
         [Parameter]
         public Provider Provider { get; set; }
-
         [Parameter]
         public EventCallback OnClickReturnToProviders { get; set; }
 
@@ -31,17 +28,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         [Inject]
         public IApiRepository<Service> RepositoryServices { get; set; }
 
+        //Услуги поставщиков
         protected ProvidersServices providersServices;
         protected IEnumerable<ProvidersServices> providersServicesCollection;
 
+        //Услуги
         protected List<Service> services;
-        private int IdService;
 
         //Модальное окно
         protected Modal modal;
         private bool isUpdate = default;
         protected string modalLabel = "";
-
         protected void CloseModal()
         {
             providersServices = default;
@@ -77,21 +74,25 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// </summary>
         protected async Task AddAsync()
         {
-            IdService = int.Parse(ProviderServiceModel.IdService);
+            //Получаем id услуги
+            int idService = int.Parse(ProviderServiceModel.IdService);
+
+            //Проверяем, существует ли текущая модель 
             if (providersServices == null)
             {
+                //Создаем и инициализируем модель
                 providersServices = new ProvidersServices()
                 {
-
                     IdProvider = Provider.IdProvider,
-                    IdService = IdService
+                    IdService = idService
                 };
-
+                //Записываем модель в БД
                 await Repository.AddAsync(providersServices);
             }
             else
             {
-                providersServices.IdService = IdService;
+                //Меняем модель и записываем изменения в БД
+                providersServices.IdService = idService;
                 await Repository.EditAsync(providersServices);
 
             }
@@ -104,6 +105,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// </summary>
         protected void Edit(ProvidersServices item)
         {
+            //Готовим модель представления
             isUpdate = true;
             providersServices = item;
             OpenModal();
@@ -114,7 +116,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// Удалить запись
         /// </summary>
         /// <param name="item"></param>
-        protected async Task Remove(ProvidersServices item)
+        protected async Task RemoveAsync(ProvidersServices item)
         {
             await Repository.RemoveAsync(item.Id);
             await StateUpdate();
@@ -131,8 +133,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
     }
 
+    /// <summary>
+    /// Модель представления
+    /// </summary>
     public class ProviderServiceViewModel
     {
+        /// <summary>
+        /// Услуга
+        /// </summary>
         [Required]
         public string IdService { get; set; } = "";
     }

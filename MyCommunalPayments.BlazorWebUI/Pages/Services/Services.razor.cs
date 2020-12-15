@@ -16,19 +16,16 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         #region Поля, Инициализация формы, Модальное окно
 
         /// <summary>
-        /// Свойство модели представления Модальной формы
+        /// Модель представления
         /// </summary>
-        public ServiceViewModel ServiceModel { get; set; }
-        public ServicesBase()
-        {
-            ServiceModel = new ServiceViewModel();
-        }
+        protected ServiceViewModel ServiceModel = new ServiceViewModel();
 
         [Inject]
         public IApiRepository<Service> Repository { get; set; }
 
+        //Услуги
         protected Service service;
-        protected IEnumerable<Service> Services { get; set; } = new List<Service>();
+        protected IEnumerable<Service> Services { get; set; }
 
         //Модальное окно
         protected Modal modal;
@@ -49,7 +46,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         private bool confirm;
         protected Toast toast;
         protected string message;
-      
 
         protected override async Task OnInitializedAsync()
         {
@@ -70,13 +66,16 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         {
             (string, ToastLevel) toastMessage = ("Данные обновлены", ToastLevel.Success);
 
+            //Проверяем, есть ли текущая модель
             if (service == null)
             {
+                //Создаем и инициализируем модель
                 service = new Service()
                 {
                     NameService = ServiceModel.Name,
                     IsCounter = ServiceModel.IsCounter
                 };
+                //Если модель уникальна, записываем ее в БД
                 if (Services.FirstOrDefault(s => s.Equals(service)) == null)
                 {
                     await Repository.AddAsync(service);
@@ -89,6 +88,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             }
             else
             {
+                //Меняем модель и записываем в БД
                 service.NameService = ServiceModel.Name;
                 service.IsCounter = ServiceModel.IsCounter;
                 await Repository.EditAsync(service);
@@ -113,7 +113,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         /// <summary>
         /// Удалить запись
         /// </summary>
-        protected async Task Remove(Service item)
+        protected async Task RemoveAsync(Service item)
         {
             await Repository.RemoveAsync(item.IdService);
             await StateUpdate();
@@ -127,6 +127,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             toast.ShowToast(level);
         }
 
+        /// <summary>
+        /// Подтверждение удаления
+        /// </summary>
+        /// <returns></returns>
         protected async Task Confirm()
         {
             confirm = true;
@@ -134,6 +138,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
             await DeleteData();
         }
 
+        /// <summary>
+        /// Реализация удаления
+        /// </summary>
+        /// <returns></returns>
         private async Task DeleteData()
         {
 
@@ -152,12 +160,22 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         }
     }
 
+    /// <summary>
+    /// Модель представления
+    /// </summary>
     public class ServiceViewModel
     {
+        /// <summary>
+        /// Наименование услуги
+        /// </summary>
         [Required]
         [MaxLength(75, ErrorMessage ="Превышена максимальная длина наименования")]
         [MinLength(5, ErrorMessage = "Наименование не может быть короче 5 символов")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Флаг, подразумевает ли услуга счетчик
+        /// </summary>
         public bool IsCounter { get; set; }
     }
 }
