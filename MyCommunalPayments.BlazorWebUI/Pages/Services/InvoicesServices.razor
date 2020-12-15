@@ -40,10 +40,12 @@
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>
             <p>Добавление новой услуги ЖКХ </p>
-            Поставщик: @provider.NameProvider
         </Title>
         <Body>
             <ModalFormComponent T="@InvoiceServiceViewModel" ViewModel="@InvoiceServiceModel" SaveEvent="AddAsync">
+                <TitleFragment>
+                    Поставщик: @provider.NameProvider
+                </TitleFragment>
                 <FormBodyFragment>
                     <ModalFormRowComponent>
                         <RowFragment>

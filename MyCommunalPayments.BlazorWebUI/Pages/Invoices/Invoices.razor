@@ -53,7 +53,7 @@ else
             <p>Добавление нового счета за ЖКХ</p>
         </Title>
         <Body>
-            <ModalTableComponent T="InvoiceViewModel" ViewModel="InvoiceModel" SaveEvent="AddAsync" >
+            <ModalTableComponent T="InvoiceViewModel" ViewModel="InvoiceViewModel" SaveEvent="AddAsync" >
                 <TableHeaderFragment>
                     <th class="w-25">Период</th>
                     <th class="w-50">Поставщик услуг</th>
@@ -61,7 +61,7 @@ else
                 </TableHeaderFragment>
                 <TableBodyFragment>
                     <td>
-                        <InputSelect @bind-Value="@InvoiceModel.IdPeriod" class="form-control">
+                        <InputSelect @bind-Value="@InvoiceViewModel.IdPeriod" class="form-control">
                             @foreach (var item in Periods)
                             {
                                 <option value="@item.IdKey">@item.ToString()</option>
@@ -69,7 +69,7 @@ else
                         </InputSelect>
                     </td>
                     <td>
-                        <InputSelect class="form-control" @bind-Value="@InvoiceModel.IdProvider">
+                        <InputSelect class="form-control" @bind-Value="@InvoiceViewModel.IdProvider">
                             @foreach (var item in Providers)
                             {
                                 <option value="@item.IdProvider">@item.NameProvider</option>
@@ -77,19 +77,17 @@ else
                         </InputSelect>
                     </td>
                     <td>
-                        <InputNumber class="form-control" @bind-Value="@InvoiceModel.InvoiceSum"></InputNumber>
+                        <InputNumber class="form-control" @bind-Value="@InvoiceViewModel.InvoiceSum"></InputNumber>
                     </td>
                 </TableBodyFragment>
                 <AnotherButton>
-                    @if (!string.IsNullOrEmpty(InvoiceModel.IdProvider))
+                    @if (!string.IsNullOrEmpty(InvoiceViewModel.IdProvider))
                     {
-                        <a class="btn btn-sm btn-outline-success" role="button" href="@GetWeb(int.Parse(InvoiceModel.IdProvider))" target="_blank">Перейти в личный кабинет</a>
+                        <a class="btn btn-sm btn-outline-success" role="button" href="@GetWeb(int.Parse(InvoiceViewModel.IdProvider))" target="_blank">Перейти в личный кабинет</a>
                     }
                 </AnotherButton>
             </ModalTableComponent>
         </Body>
-        <Footer>
-        </Footer>
     </Modal>
 }
 
