@@ -6,7 +6,8 @@
 
 @if (isUpload)
 {
-    <InputPDFFile OnUploadReturnToPaiment="SetOrder" />
+    @*<InputPDFFile OnUploadReturnToPaiment="SetOrder" />*@
+    <UploadPDFComponent OnUploadReturnToPayment="SetOrder"/>
 }
 else
 {

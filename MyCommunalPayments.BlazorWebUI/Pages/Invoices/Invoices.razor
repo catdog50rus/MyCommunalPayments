@@ -44,7 +44,7 @@ else
               OnPaimentReturnToInvoices="ReturnToPayment" />
 }
 
-@if (periodsList != null && providersList != null)
+@if (Periods != null && Providers != null)
 {
 
     <!-- Modal -->
@@ -53,32 +53,42 @@ else
             <p>Добавление нового счета за ЖКХ</p>
         </Title>
         <Body>
-            <!--Период-->
-            <div class="col mb-3">
-                <select @bind="periodName" class="form-control">
-                    @foreach (var item in periodsList)
+            <ModalTableComponent T="InvoiceViewModel" ViewModel="InvoiceModel" SaveEvent="AddAsync" >
+                <TableHeaderFragment>
+                    <th class="w-25">Период</th>
+                    <th class="w-50">Поставщик услуг</th>
+                    <th class="w-25">Сумма</th>
+                </TableHeaderFragment>
+                <TableBodyFragment>
+                    <td>
+                        <InputSelect @bind-Value="@InvoiceModel.IdPeriod" class="form-control">
+                            @foreach (var item in Periods)
+                            {
+                                <option value="@item.IdKey">@item.ToString()</option>
+                            }
+                        </InputSelect>
+                    </td>
+                    <td>
+                        <InputSelect class="form-control" @bind-Value="@InvoiceModel.IdProvider">
+                            @foreach (var item in Providers)
+                            {
+                                <option value="@item.IdProvider">@item.NameProvider</option>
+                            }
+                        </InputSelect>
+                    </td>
+                    <td>
+                        <InputNumber class="form-control" @bind-Value="@InvoiceModel.InvoiceSum"></InputNumber>
+                    </td>
+                </TableBodyFragment>
+                <AnotherButton>
+                    @if (!string.IsNullOrEmpty(InvoiceModel.IdProvider))
                     {
-                        <option>@item.ToString()</option>
+                        <a class="btn btn-sm btn-outline-success" role="button" href="@GetWeb(int.Parse(InvoiceModel.IdProvider))" target="_blank">Перейти в личный кабинет</a>
                     }
-                </select>
-            </div>
-            <!--Поставщик-->
-            <div class="col mb-3">
-                <select class="form-control" placeholder="Поставщик" @bind="providerName">
-                    @foreach (var item in providersList)
-                    {
-                        <option>@item.NameProvider</option>
-                    }
-                </select>
-            </div>
-            <!--Сумма-->
-            <div class="col mb-3">
-                <input class="form-control" placeholder="Сумма" @bind="summ" />
-            </div>
+                </AnotherButton>
+            </ModalTableComponent>
         </Body>
         <Footer>
-            <a class="btn btn-sm btn-outline-success" role="button" href="@GetProviderByName(providerName).WebSite" target="_blank">Перейти в личный кабинет</a>
-            <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Сохранить</button>
         </Footer>
     </Modal>
 }

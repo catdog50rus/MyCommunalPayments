@@ -36,18 +36,17 @@
     <Body>
         <ModalFormComponent T="@ServiceViewModel" ViewModel="@ServiceModel" SaveEvent="AddAsync">
             <FormBodyFragment>
-                <div class="row">
-                    <div class="col mb-2">
+                <ModalFormRowComponent>
+                    <RowFragment >
                         <InputText class="form-control" placeholder="Наименование услуги" @bind-Value="ServiceModel.Name" />
-                    </div>
-                </div>
-                <!--Чек-бокс-->
-                <div class="row">
-                    <div class="col">
+                    </RowFragment>
+                </ModalFormRowComponent>
+                <ModalFormRowComponent>
+                    <RowFragment>
                         <InputCheckbox @bind-Value="ServiceModel.IsCounter" class="align-content-center" />
                         <label class="form-check-label">Услуга подразумевает наличие счетчика </label>
-                    </div>
-                </div>
+                    </RowFragment>
+                </ModalFormRowComponent>
             </FormBodyFragment>
         </ModalFormComponent>
     </Body>

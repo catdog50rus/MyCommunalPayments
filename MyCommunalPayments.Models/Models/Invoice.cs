@@ -32,10 +32,17 @@ namespace MyCommunalPayments.Models.Models
         /// <summary>
         /// Сумма счета
         /// </summary>
-        [Required]
-        [DataType(DataType.Currency)]
+
         public decimal InvoiceSum { get; set; }
 
         public bool Pay { get; set; }
+
+
+        public override string ToString() => $"{IdPeriod}, {IdProvider}";
+
+        public override bool Equals(object obj) => this.ToString() == obj.ToString();
+
+        public override int GetHashCode() => base.GetHashCode();
+ 
     }
 }

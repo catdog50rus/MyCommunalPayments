@@ -149,21 +149,15 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
                 if (payment != null)
                 {
                     payment.IdOrder = id;
-                    Edit(payment);
-                }
-                else
-                {
-                    orderId = id;
-                    OpenModal();
-
+                    //Edit(payment);
                 }
             }
             isUpload = false;
         }
 
-        protected async void DownloadFile(Payment payment)
+        protected async void DownloadFile(Payment item)
         {
-            Order order = await FileLoad.GetOrderById(payment.IdOrder);
+            Order order = await FileLoad.GetOrderById(item.IdOrder);
             if (order != null)
             {
                 var content = order.OrderScreen;

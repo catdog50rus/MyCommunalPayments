@@ -45,16 +45,16 @@ else
     <Body>
         <ModalFormComponent T="@ProviderViewModel" ViewModel="@ProviderModel" SaveEvent="AddAsync">
             <FormBodyFragment>
-                <div class="row">
-                    <div class="col mb-3">
+                <ModalFormRowComponent>
+                    <RowFragment>
                         <InputText class="form-control" placeholder="Новый поставщик" @bind-Value="ProviderModel.NameProvider" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-3">
-                        <InputText class="form-control" placeholder="Web site" @bind-Value="ProviderModel.WebSite" />
-                    </div>
-                </div>
+                    </RowFragment>
+                </ModalFormRowComponent>
+                <ModalFormRowComponent>
+                    <RowFragment>
+                        <InputText class="form-control" placeholder="Web site" @bind-Value="ProviderModel.WebSite" /> 
+                    </RowFragment>
+                </ModalFormRowComponent>
             </FormBodyFragment>
         </ModalFormComponent>
     </Body>

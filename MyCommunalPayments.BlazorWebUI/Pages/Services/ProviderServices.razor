@@ -35,23 +35,21 @@
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>@modalLabel</Title>
         <Body>
-            <ModalTableComponent T="@ProviderServiceViewModel" ViewModel="@ProviderServiceModel" SaveEvent="AddAsync">
-                <TableHeaderFragment>
-                    <th class="w-50">Выбрать услугу</th>
-                </TableHeaderFragment>
-                <TableBodyFragment>
-                    <td>
-                        <div>
+            <ModalFormComponent T="@ProviderServiceViewModel" ViewModel="@ProviderServiceModel" SaveEvent="AddAsync" >
+                <FormBodyFragment>
+                    <ModalFormRowComponent>
+                        <RowFragment>
+                            <label class="form-check-label mb-2">Выберите услугу</label>
                             <InputSelect class="form-control" @bind-Value="@ProviderServiceModel.IdService">
                                 @foreach (var item in services)
                                     {
                                     <option value="@item.IdService">@item.NameService</option>
                                     }
                             </InputSelect>
-                        </div>
-                    </td>
-                </TableBodyFragment>
-            </ModalTableComponent>
+                        </RowFragment>
+                    </ModalFormRowComponent>
+                </FormBodyFragment>
+            </ModalFormComponent>
         </Body>
         <Footer></Footer>
     </Modal>

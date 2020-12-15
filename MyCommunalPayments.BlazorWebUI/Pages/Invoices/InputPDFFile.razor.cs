@@ -1,5 +1,5 @@
-﻿using BlazorInputFile;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MyCommunalPayments.Data.Services.Upload;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,17 +16,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         [Parameter]
         public EventCallback<int> OnUploadReturnToPaiment { get; set; }
 
-        IFileListEntry file;
+        //IBrowserUploadFile file;
 
-        protected async Task HandleFileSelected(IFileListEntry[] files)
-        {
-            file = files.FirstOrDefault();
-            if (file != null)
-            {
-                await FileUpload.UploadAsync(file);
-                orderId = FileUpload.OrderId;
+        //protected async Task HandleFileSelected(InputFileChangeEventArgs eventArgs)
+        //{
+        //    //file = eventArgs.pleFiles.file.File. files.FirstOrDefault();
+        //    //if (file != null)
+        //    //{
+        //    //    await FileUpload.UploadAsync(file);
+        //    //    orderId = FileUpload.OrderId;
 
-            }
-        }
+        //    //}
+        //}
     }
 }

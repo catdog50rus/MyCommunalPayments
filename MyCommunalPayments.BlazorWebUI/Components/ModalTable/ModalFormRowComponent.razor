@@ -1,0 +1,12 @@
+﻿<div class="row">
+    <div class="col mb-3 @ColClass">
+        @RowFragment
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public RenderFragment RowFragment { get; set; }
+    [Parameter] public string ColClass { get; set; } = "";
+}

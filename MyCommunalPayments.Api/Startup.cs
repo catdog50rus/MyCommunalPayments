@@ -1,21 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.Repositories;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System;
 
 namespace MyCommunalPayments.Api
 {
@@ -44,14 +38,14 @@ namespace MyCommunalPayments.Api
                         .EnableDetailedErrors();
             });
             
-            services.AddScoped<IRepository<Service>, SQLService<Service>>();
-            services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
-            services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
-            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
-            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
-            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+            services.AddTransient<IRepository<Service>, SQLService<Service>>();
+            services.AddTransient<IRepository<Period>, SQLPeriod<Period>>();
+            services.AddTransient<IRepository<Provider>, SQLProvider<Provider>>();
+            services.AddTransient<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
+            services.AddTransient<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
+            services.AddTransient<IRepository<Payment>, SQLPayments<Payment>>();
+            services.AddTransient<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            services.AddTransient<IRepository<Invoice>, SQLInvoice<Invoice>>();
 
             services.AddControllers();
         }

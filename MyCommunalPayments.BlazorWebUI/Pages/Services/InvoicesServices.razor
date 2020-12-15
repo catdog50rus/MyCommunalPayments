@@ -6,13 +6,18 @@
         <TableTitleFragment>
             Услуги ЖКХ
         </TableTitleFragment>
+        <TableOtherTitleFragment>
+            <p><span class="CSSAttantonInvoiceService">Важно!!!</span> Перед добавлением услуг не забудьте внести показания счетчиков!</p>
+        </TableOtherTitleFragment>
         <TableTitleButtonFragment>
             <div class="col">
                 <button class="btn btn-success" @onclick="OpenModal">Добавить</button>
+                
             </div>
             <div class="col text-right">
                 <button class="btn btn-danger" @onclick="OnClickReturnToInvoces">Вернуться к списку квитанций</button>
             </div>
+            
         </TableTitleButtonFragment>
         <TableHeaderFragment>
             <th scope="col" class="w-50">Услуга</th>
@@ -34,86 +39,24 @@
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">
         <Title>
-            @if (!isCounter)
-            {
-                <p>Добавление новой услуги ЖКХ </p>
-
-            }
-            else
-            {
-                <p>Внесение показаний счетчика ЖКХ </p>
-            }
+            <p>Добавление новой услуги ЖКХ </p>
             Поставщик: @provider.NameProvider
         </Title>
         <Body>
-            @if (!isCounter)
-            {
-                @*Таблица выбора услуг*@
-                <div>
-                    <table class="table table-sm table-bordered table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="w-75"></th>
-                                <th class="w-25"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    @*Услуга*@
-                                    <div>
-                                        <select class="form-control" placeholder="Услуга" @bind="serviceName">
-                                            @foreach (var item in services)
-                                            {
-                                                <option>@item.NameService</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-center">
-                                        <button type="button" class="btn btn-sm btn-primary" @onclick="Add">Добавить услугу</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                @*Внесение показаний счетчика*@
-                <div>
-                    <p>Услуга: @service.NameService</p>
-
-                    <table class="table table-sm table-bordered table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="w-25"></th>
-                                <th class="w-25"></th>
-                                <th class="w-25"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    @*Дата*@
-                                    <div class="text-center">
-                                        <input class="form-control text-center" placeholder="Дата передачи" @bind-value="dateCount" />
-                                    </div>
-                                </td>
-                                <td>
-                                    @*Показания*@
-                                    <div class="text-center">
-                                        <input class="form-control text-center" placeholder="Показания" @bind-value="amount" />
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            }
-
+            <ModalFormComponent T="@InvoiceServiceViewModel" ViewModel="@InvoiceServiceModel" SaveEvent="AddAsync">
+                <FormBodyFragment>
+                    <ModalFormRowComponent>
+                        <RowFragment>
+                            <InputSelect class="form-control" placeholder="Услуга" @bind-Value="@InvoiceServiceModel.IdService">
+                                @foreach (var item in services)
+                                {
+                                    <option value="@item.IdService">@item.NameService</option>
+                                }
+                            </InputSelect>
+                        </RowFragment>
+                    </ModalFormRowComponent>
+                </FormBodyFragment>
+            </ModalFormComponent>
         </Body>
     </Modal>
 }

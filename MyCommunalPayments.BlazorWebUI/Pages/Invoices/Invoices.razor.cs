@@ -3,6 +3,7 @@ using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,6 +12,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
     public class InvoicesBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+        public InvoiceViewModel InvoiceModel { get; set; }
+        public InvoicesBase()
+        {
+            InvoiceModel = new InvoiceViewModel();
+        }
+
         [Parameter]
         public IApiRepository<Invoice> Repository { get; set; }
 
@@ -33,47 +40,39 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         //Providers
         protected Provider provider;
         protected List<Provider> providersList;
-        protected string providerName;
+        protected int IdProvider;
 
         //Periods
         protected Period period;
         protected List<Period> periodsList;
-        protected string periodName;
+        protected int IdPeriod;
 
         //Модальное окно
-        protected Modal modal;// { get; set; }
+        protected Modal modal;
 
-        protected async Task CloseModal()
+        protected void CloseModal()
         {
-            summ = default;
             invoice = default;
             pay = default;
             modal.ModalSize = "";
-
             modal.Close();
-            await StateUpdate(isNotPaided);
+            
         }
 
         protected void OpenModal()
         {
+            modal.ModalSize = "modal-lg";
             modal.Open();
         }
 
         protected override async Task OnInitializedAsync()
         {
             await StateUpdate(isNotPaided);
-            providersList = Providers;
-            periodsList = Periods.OrderByDescending(p => p.ToSort()).ToList();
-            providerName = providersList[0].NameProvider;
-            periodName = periodsList[0].ToString();
             pay = default;
             
             invoice = default;
             isPay = default;
         }
-
-
-        
 
         #endregion
 
@@ -82,39 +81,41 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <summary>
         /// Добавить или отредактировать
         /// </summary>
-        protected async Task Add()
+        protected async Task AddAsync()
         {
-            if (!string.IsNullOrWhiteSpace(periodName) && !string.IsNullOrWhiteSpace(providerName))
+            IdProvider = int.Parse(InvoiceModel.IdProvider);
+            IdPeriod = int.Parse(InvoiceModel.IdPeriod);
+            //Добавить новый
+            if (invoice == null)
             {
-                provider = GetProviderByName(providerName);
-                period = GetPeriodByName(periodName);
-                //Добавить новый
-                if (invoice == null)
+                invoice = new Invoice()
                 {
+                    IdPeriod = IdPeriod,
+                    IdProvider = IdProvider,
+                    InvoiceSum = InvoiceModel.InvoiceSum,
+                    Pay = false
+                };
 
-                    invoice = new Invoice()
-                    {
-                        IdPeriod = period.IdKey,
-                        IdProvider = provider.IdProvider,
-                        InvoiceSum = summ,
-                        Pay = false
-                    };
+                if(invoices.FirstOrDefault(i=>i.Equals(invoice)) == null)
+                {
                     await Repository.AddAsync(invoice);
-
                 }
-                //Отредактировать
-                else
-                {
-                    invoice.IdPeriod = period.IdKey;
-                    invoice.IdProvider = provider.IdProvider;
-                    invoice.InvoiceSum = summ;
-                    invoice.Pay = pay;
-                    await Repository.EditAsync(invoice);
-                }
+                
 
             }
+            //Отредактировать
+            else
+            {
+                invoice.IdPeriod = IdPeriod;
+                invoice.IdProvider = IdProvider;
+                invoice.InvoiceSum = InvoiceModel.InvoiceSum;
+                invoice.Pay = pay;
+                await Repository.EditAsync(invoice);
+            }
 
-            await CloseModal();
+            await StateUpdate(isNotPaided);
+
+            CloseModal();
         }
 
         /// <summary>
@@ -123,12 +124,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected void Edit(Invoice item)
         {
             invoice = item;
-            modal.Open();
+            OpenModal();
 
-            periodName = item.Period.ToString();
-            providerName = item.Provider.NameProvider;
-            summ = item.InvoiceSum;
-            pay = item.Pay;
+            InvoiceModel.IdPeriod = invoice.IdPeriod.ToString();
+            InvoiceModel.IdProvider = invoice.IdProvider.ToString();
+            InvoiceModel.InvoiceSum = invoice.InvoiceSum;
+            pay = invoice.Pay;
 
         }
 
@@ -178,8 +179,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             }
         }
 
-        protected Provider GetProviderByName(string name) => providersList.SingleOrDefault(n => n.NameProvider == name);
+        protected string GetWeb(int id) => Providers.FirstOrDefault(p => p.IdProvider == id).WebSite;
+    }
 
-        private Period GetPeriodByName(string name) => periodsList.SingleOrDefault(n => n.ToString() == name);
+    public class InvoiceViewModel
+    {
+        [Required(ErrorMessage = "Необходимо выбрать период!")]
+        public string IdPeriod { get; set; } = "";
+        [Required(ErrorMessage = "Необходимо выбрать поставщика!")]
+        public string IdProvider { get; set; } = "";
+        [Required(ErrorMessage = "Необходимо указать сумму квитанции!")]
+        [Range(0, 100000, ErrorMessage = "Сумма должна быть неотрицательным числом!")]
+        public decimal InvoiceSum { get; set; }
     }
 }

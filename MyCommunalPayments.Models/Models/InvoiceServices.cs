@@ -21,5 +21,15 @@ namespace MyCommunalPayments.Models.Models
         public Service Service { get; set; }
 
         public int Amount { get; set; }
+
+        public override string ToString()
+        {
+            return $"Квитанция: {IdInvoice}, Сервис: {IdService}";
+        }
+
+        public override bool Equals(object obj) => this.ToString() == obj.ToString();
+
+        public override int GetHashCode() => base.GetHashCode();
+
     }
 }

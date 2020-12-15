@@ -38,21 +38,21 @@
     <Body>
         <ModalFormComponent T="@PeriodViewModel" ViewModel="PeriodModel" SaveEvent="AddAsync">
             <FormBodyFragment>
-                <div class="row">
-                    <div class="col mb-3">
+                <ModalFormRowComponent>
+                    <RowFragment>
                         <InputNumber class="form-control" placeholder="Расчетный год" @bind-Value="@PeriodModel.Year" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col mb-3">
+                    </RowFragment>
+                </ModalFormRowComponent>
+                <ModalFormRowComponent>
+                    <RowFragment>
                         <InputSelect class="form-control" placeholder="Период" @bind-Value="PeriodModel.Month">
                             @foreach (var item in Enum.GetValues(typeof(PeriodsName)))
                             {
                                 <option value="@item">@item</option>
                             }
                         </InputSelect>
-                    </div>
-                </div>
+                    </RowFragment>
+                </ModalFormRowComponent>
             </FormBodyFragment>
         </ModalFormComponent>
     </Body>
