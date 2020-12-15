@@ -59,6 +59,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         protected async Task SaveFileAsync()
         {
+            isLoad = false;
             using var stream = uploadViewModel.File.OpenReadStream();
 
             var ms = new MemoryStream();

@@ -9,14 +9,14 @@
     </td>
     @*Количество*@
     <td>
-        <div>
+        <div class="text-center">
             @Period.Month
         </div>
 
     </td>
     @*Блок кнопок*@
     <td>
-        <div class="text-right">
+        <div class="text-center">
             <button class="btn btn-sm btn-info" @onclick="()=>EditEvent.InvokeAsync(Period)">Изменить</button>
             <button class="btn btn-sm btn-danger" @onclick="()=>RemoveEvent.InvokeAsync(Period)">Удалить</button>
         </div>

@@ -38,14 +38,14 @@ namespace MyCommunalPayments.Api
                         .EnableDetailedErrors();
             });
             
-            services.AddTransient<IRepository<Service>, SQLService<Service>>();
-            services.AddTransient<IRepository<Period>, SQLPeriod<Period>>();
-            services.AddTransient<IRepository<Provider>, SQLProvider<Provider>>();
-            services.AddTransient<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            services.AddTransient<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
-            services.AddTransient<IRepository<Payment>, SQLPayments<Payment>>();
-            services.AddTransient<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            services.AddTransient<IRepository<Invoice>, SQLInvoice<Invoice>>();
+            services.AddScoped<IRepository<Service>, SQLService<Service>>();
+            services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
+            services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
+            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
+            services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
+            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
+            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
 
             services.AddControllers();
         }
