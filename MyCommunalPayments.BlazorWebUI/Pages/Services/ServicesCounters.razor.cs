@@ -14,24 +14,22 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     {
         #region Поля, Инициализация формы, Модальное окно
 
-        public ServiceCounterViewModel ServiceCounterModel { get; set; }
-        public ServicesCountersBase()
-        {
-            ServiceCounterModel = new ServiceCounterViewModel();
-        }
+        /// <summary>
+        /// Модель представления
+        /// </summary>
+        protected ServiceCounterViewModel ServiceCounterModel = new ServiceCounterViewModel();
 
         [Inject]
         public IApiRepository<ServiceCounter> Repository { get; set; }
-
         [Inject]
         public IApiRepository<Service> ServiceRepository { get; set; }
 
+        //Счетчики
         protected IEnumerable<ServiceCounter> serviceCounters;
         protected ServiceCounter serviceCounter;
-
+        
+        //Услуги
         protected List<Service> services;
-        private int serviceId;
-        private string countDate;
 
         //Модальное окно
         protected Modal modal;
@@ -65,8 +63,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         protected async Task AddAsync()
         {
 
-            serviceId = int.Parse(ServiceCounterModel.ServiceId);
-            countDate = ServiceCounterModel.DateCount.ToString("dd/MM/yyyy");
+            int serviceId = int.Parse(ServiceCounterModel.ServiceId);
+            string countDate = ServiceCounterModel.DateCount.ToString("dd/MM/yyyy");
 
                 if (serviceCounter == null)
                 {
