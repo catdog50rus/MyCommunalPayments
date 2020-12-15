@@ -61,7 +61,7 @@ else
             Добавление новой оплаты за услуги ЖКХ <br /> 
         </Title>
         <Body>
-            <ModalTableComponent T="@PaymentViewModel" ViewModel="@PaymentViewModel" SaveEvent="@AddAsync" >
+            <ModalTableComponent T="@PaymentViewModel" ViewModel="paymentViewModel" SaveEvent="@AddAsync" >
                 <TableTitleFragment>
                     Поставщик услуг ЖКХ: @Invoice.Provider.NameProvider <br />
                     Период оплаты: @Invoice.Period
@@ -74,16 +74,16 @@ else
                 </TableHeaderFragment>
                 <TableBodyFragment>
                     <td class="text-center align-content-center">
-                        <InputCheckbox @bind-Value="@PaymentViewModel.Paid" class="align-content-center" />
+                        <InputCheckbox @bind-Value="@paymentViewModel.Paid" class="align-content-center" />
                     </td>
                     <td >
-                        <InputDate class="form-control text-center" @bind-Value="PaymentViewModel.DatePayment" />
+                        <InputDate class="form-control text-center" @bind-Value="paymentViewModel.DatePayment" />
                     </td>
                     <td >
-                        <InputNumber class="form-control text-right" @bind-Value="PaymentViewModel.PaymentSum" />
+                        <InputNumber class="form-control text-right" @bind-Value="paymentViewModel.PaymentSum" />
                     </td>
                     <td >
-                        @if (!PaymentViewModel.Paid)
+                        @if (!paymentViewModel.Paid)
                         {
                             <a class="btn btn-sm btn-outline-success" role="button" href="@Invoice.Provider.WebSite" target="_blank">Перейти к оплате</a>
                         }
@@ -91,7 +91,7 @@ else
                     </td>
                 </TableBodyFragment>
                 <AnotherButton>
-                    @if (payment != null && payment.IdPayment != 0 && PaymentViewModel.Paid)
+                    @if (payment != null && payment.IdPayment != 0 && paymentViewModel.Paid)
                     {
                         @if (payment.IdOrder != 0)
                         {

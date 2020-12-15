@@ -11,9 +11,6 @@ namespace MyCommunalPayments.BlazorWebUI.Components
         public RenderFragment Body { get; set; }
 
         [Parameter]
-        public RenderFragment Footer { get; set; }
-
-        [Parameter]
         public EventCallback CloseWindow { get; set; }
 
         public string ModalSize { get; set; }

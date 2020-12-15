@@ -12,11 +12,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
     public class InvoicesBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
-        public InvoiceViewModel InvoiceModel { get; set; }
-        public InvoicesBase()
-        {
-            InvoiceModel = new InvoiceViewModel();
-        }
+
+        /// <summary>
+        /// Модель представления
+        /// </summary>
+        protected InvoiceViewModel InvoiceViewModel = new InvoiceViewModel();
 
         [Parameter]
         public IApiRepository<Invoice> Repository { get; set; }
@@ -30,10 +30,16 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         [Parameter]
         public EventCallback<Invoice> OnClickSetService { get; set; }
 
+        /// <summary>
+        /// Список квитанций
+        /// </summary>
         protected IEnumerable<Invoice> invoices;
+        /// <summary>
+        /// Квитанция
+        /// </summary>
         protected Invoice invoice;
-        protected decimal summ;
-        protected bool pay;
+
+        //protected bool pay;
         protected bool isNotPaided = true;
         protected bool isPay;
 
@@ -49,16 +55,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         //Модальное окно
         protected Modal modal;
-
         protected void CloseModal()
         {
             invoice = default;
-            pay = default;
-            modal.ModalSize = "";
-            modal.Close();
-            
+            modal.Close(); 
         }
-
         protected void OpenModal()
         {
             modal.ModalSize = "modal-lg";
@@ -68,8 +69,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected override async Task OnInitializedAsync()
         {
             await StateUpdate(isNotPaided);
-            pay = default;
-            
             invoice = default;
             isPay = default;
         }
@@ -83,33 +82,34 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// </summary>
         protected async Task AddAsync()
         {
-            IdProvider = int.Parse(InvoiceModel.IdProvider);
-            IdPeriod = int.Parse(InvoiceModel.IdPeriod);
-            //Добавить новый
+            //Получаем из модели представления id
+            IdProvider = int.Parse(InvoiceViewModel.IdProvider);
+            IdPeriod = int.Parse(InvoiceViewModel.IdPeriod);
+            
+            //Проверяем, есть ли текущая квитанция
             if (invoice == null)
             {
+                //Создаем и инициализируем экземпляр квитанции
                 invoice = new Invoice()
                 {
                     IdPeriod = IdPeriod,
                     IdProvider = IdProvider,
-                    InvoiceSum = InvoiceModel.InvoiceSum,
-                    Pay = false
+                    InvoiceSum = InvoiceViewModel.InvoiceSum,
                 };
 
+                //Если квитанция уникальная записываем ее в БД
                 if(invoices.FirstOrDefault(i=>i.Equals(invoice)) == null)
                 {
                     await Repository.AddAsync(invoice);
                 }
-                
-
             }
-            //Отредактировать
             else
             {
+                //Меняем модель и вносим изменения в БД
                 invoice.IdPeriod = IdPeriod;
                 invoice.IdProvider = IdProvider;
-                invoice.InvoiceSum = InvoiceModel.InvoiceSum;
-                invoice.Pay = pay;
+                invoice.InvoiceSum = InvoiceViewModel.InvoiceSum;
+
                 await Repository.EditAsync(invoice);
             }
 
@@ -123,14 +123,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// </summary>
         protected void Edit(Invoice item)
         {
+            //Готовим модель представления
             invoice = item;
             OpenModal();
 
-            InvoiceModel.IdPeriod = invoice.IdPeriod.ToString();
-            InvoiceModel.IdProvider = invoice.IdProvider.ToString();
-            InvoiceModel.InvoiceSum = invoice.InvoiceSum;
-            pay = invoice.Pay;
-
+            InvoiceViewModel.IdPeriod = invoice.IdPeriod.ToString();
+            InvoiceViewModel.IdProvider = invoice.IdProvider.ToString();
+            InvoiceViewModel.InvoiceSum = invoice.InvoiceSum;
         }
 
         /// <summary>
@@ -143,23 +142,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             await StateUpdate(isNotPaided);
         }
 
+        /// <summary>
+        /// Устанавливаем в квитанцию услуги
+        /// </summary>
+        /// <param name="item"></param>
         protected void SetService(Invoice item)
         {
             OnClickSetService.InvokeAsync(item);
         }
 
+        /// <summary>
+        /// Переходим к оплате квитанции
+        /// </summary>
+        /// <param name="item"></param>
         protected void Pay(Invoice item)
         {
             invoice = item;
             isPay = true;
         }
 
+        /// <summary>
+        /// Скрыть / Показать оплаченные квитанции
+        /// </summary>
+        /// <returns></returns>
         protected async Task ShowPaided()
         {
             isNotPaided = !isNotPaided;
             await StateUpdate(isNotPaided);
         }
 
+        /// <summary>
+        /// Возврат к интерфейсу списка квитаций после оплаты
+        /// </summary>
         protected void ReturnToPayment()
         {
             isPay = false;
@@ -179,15 +193,34 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             }
         }
 
+        /// <summary>
+        /// Получить URL к личному кабинету на сайте поставщика услуг
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         protected string GetWeb(int id) => Providers.FirstOrDefault(p => p.IdProvider == id).WebSite;
     }
 
+    /// <summary>
+    /// Модель представления
+    /// </summary>
     public class InvoiceViewModel
     {
+        /// <summary>
+        /// Период
+        /// </summary>
         [Required(ErrorMessage = "Необходимо выбрать период!")]
         public string IdPeriod { get; set; } = "";
+
+        /// <summary>
+        /// Поставщик услуг
+        /// </summary>
         [Required(ErrorMessage = "Необходимо выбрать поставщика!")]
         public string IdProvider { get; set; } = "";
+
+        /// <summary>
+        /// Сумма квитанции
+        /// </summary>
         [Required(ErrorMessage = "Необходимо указать сумму квитанции!")]
         [Range(0, 100000, ErrorMessage = "Сумма должна быть неотрицательным числом!")]
         public decimal InvoiceSum { get; set; }

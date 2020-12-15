@@ -16,15 +16,15 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
     {
         #region Поля, Инициализация формы, Модальное окно
 
-        public ProviderViewModel ProviderModel { get; set; }
-        public ProvidersBase()
-        {
-            ProviderModel = new ProviderViewModel();
-        }
+        /// <summary>
+        /// Модель представления
+        /// </summary>
+        protected ProviderViewModel ProviderModel = new ProviderViewModel();
 
         [Inject]
         public IApiRepository<Provider> Repository { get; set; }
 
+        //Поставщик
         protected Provider provider = default;
         protected IEnumerable<Provider> providers;
 
@@ -51,9 +51,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         protected string message;
         protected bool confirm = false;
 
-        
-
-
         protected override async Task OnInitializedAsync()
         {
             await StateUpdate();
@@ -71,14 +68,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         protected async Task AddAsync()
         {
             (string, ToastLevel) toastMessage = ("Данные обновлены", ToastLevel.Success);
+
+            //Проверяем есть ли текущая модель
             if (provider == null)
             {
+                //Создаем и инициализируем модель
                 provider = new Provider()
                 {
                     NameProvider = ProviderModel.NameProvider,
                     WebSite = ProviderModel.WebSite
                 };
-
+                //Если модель уникальная, записываем в БД
                 if(providers.FirstOrDefault(p => p.Equals(provider)) == null)
                 {
                     await Repository.AddAsync(provider);
@@ -91,6 +91,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             }
             else
             {
+                //Изменяем модель
                 provider.NameProvider = ProviderModel.NameProvider;
                 provider.WebSite = ProviderModel.WebSite;
                 await Repository.EditAsync(provider);
@@ -124,16 +125,20 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             ToastShow("Внимание! Данные о поставщике будут безвозвратно удалены. Вы уверенны?", ToastLevel.Warning);
         }
 
+        /// <summary>
+        /// Устанавливаем услуги для каждого поставщика
+        /// </summary>
+        /// <param name="item"></param>
         protected void SetServices(Provider item)
         {
             provider = item;
             isProvider = false;
-
-
         }
 
+        /// <summary>
+        /// Возвращаемся к интерфейсу списка поставщиков
+        /// </summary>
         protected void ReturnFromService() => isProvider = true;
-
 
 
         #endregion
@@ -144,6 +149,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             toast.ShowToast(level);
         }
 
+        /// <summary>
+        /// Подтверждение удаления
+        /// </summary>
+        /// <returns></returns>
         protected async Task Confirm()
         {
             confirm = true;
@@ -151,6 +160,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
             await DeleteData();
         }
 
+        /// <summary>
+        /// Реализация удаления
+        /// </summary>
+        /// <returns></returns>
         private async Task DeleteData()
         {
 
@@ -169,15 +182,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Providers
         }
     }
 
+    /// <summary>
+    /// Модель представления
+    /// </summary>
     public class ProviderViewModel
     {
         /// <summary>
         /// Наименование поставщика услуги ЖКХ
         /// </summary>
         [Required]
-        [MinLength(5, ErrorMessage = "Слишком короткое название")]
-        [MaxLength(70, ErrorMessage = "Слишком длинное название")]
+        [MinLength(5, ErrorMessage = "Название не может быть короче 5-ти символов")]
+        [MaxLength(70, ErrorMessage = "Название не может быть длиннее 70-ти символов")]
         public string NameProvider { get; set; }
+
         /// <summary>
         /// Путь к личному кабинету поставщика
         /// </summary>

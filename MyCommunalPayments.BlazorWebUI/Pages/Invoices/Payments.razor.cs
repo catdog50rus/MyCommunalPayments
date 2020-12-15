@@ -15,14 +15,22 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
     public class PaymentsBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
-        public PaymentViewModel PaymentViewModel { get; set; } = new PaymentViewModel();
 
+        /// <summary>
+        /// Объявление и инициализация модели представления
+        /// </summary>
+        protected PaymentViewModel paymentViewModel = new PaymentViewModel();
+
+        /// <summary>
+        /// Получаемая квитанция
+        /// </summary>
         [Parameter]
         public Invoice Invoice { get; set; }
 
         [Parameter]
         public EventCallback OnPaimentReturnToInvoices { get; set; }
 
+        //Зависимости
         [Inject] 
         public IApiRepository<Payment> Repository { get; set; }
         [Inject]
@@ -32,15 +40,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
-
+        /// <summary>
+        /// Переменная для переключения интерфейса (платежи/загрузка файла) 
+        /// </summary>
         protected bool isUpload = default;
 
+        /// <summary>
+        /// Платеж
+        /// </summary>
         protected Payment payment = default;
+        /// <summary>
+        /// Список платежей
+        /// </summary>
         protected IEnumerable<Payment> paymentsList;
-        //protected int orderId;
-
-        protected List<Invoice> invoices;
-        //protected Invoice invoice;
 
         //Модальное окно
         protected Modal modal = new Modal();
@@ -58,8 +70,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             if (Invoice != null) 
             {
-                //invoice = Invoice;
-                PaymentViewModel.PaymentSum = Invoice.InvoiceSum;
+                paymentViewModel.PaymentSum = Invoice.InvoiceSum;
             } 
             await StateUpdate();
         }
@@ -73,33 +84,36 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// </summary>
         protected async Task AddAsync()
         {
-            var date = PaymentViewModel.DatePayment.ToString("dd.MM.yyyy");
+            //Получаем дату платежа в текстовом виде, как предусматривает модель
+            var date = paymentViewModel.DatePayment.ToString("dd.MM.yyyy");
 
+            //Проверяем есть ли активная модель
             if (payment == null && Invoice != null)
             {
-
+                //Создаем экземпляр модели
                 payment = new Payment()
                 {
                     DatePayment = date,
                     IdInvoice = Invoice.IdInvoice,
-                    PaymentSum = PaymentViewModel.PaymentSum,
-                    Paid = PaymentViewModel.Paid,
+                    PaymentSum = paymentViewModel.PaymentSum,
+                    Paid = paymentViewModel.Paid,
                 };
-
+                //Добавляем модель в БД
                 await Repository.AddAsync(payment);
 
             }
             else
             {
+                //Обновляем модель и записываем изменения в БД
                 payment.DatePayment = date;
-                payment.Paid = PaymentViewModel.Paid;
-                payment.PaymentSum = PaymentViewModel.PaymentSum;
+                payment.Paid = paymentViewModel.Paid;
+                payment.PaymentSum = paymentViewModel.PaymentSum;
                 await Repository.EditAsync(payment);
             }
-
+            //Меняем поле оплаты в квитанции и записываем в БД
             Invoice.Pay = payment.Paid;
-            CloseModal();
             await InvoiceRepository.EditAsync(Invoice);
+            CloseModal();
             await StateUpdate();
         }
 
@@ -109,9 +123,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected void Edit(Payment item)
         {
             payment = item;
-            PaymentViewModel.Paid = payment.Paid;
-            PaymentViewModel.DatePayment = DateTime.Parse(payment.DatePayment);
-            PaymentViewModel.PaymentSum = payment.PaymentSum;
+            paymentViewModel.Paid = payment.Paid;
+            paymentViewModel.DatePayment = DateTime.Parse(payment.DatePayment);
+            paymentViewModel.PaymentSum = payment.PaymentSum;
             OpenModal();
         }
 
@@ -121,22 +135,31 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <param name="item"></param>
         protected async Task RemoveAsync(Payment item)
         {
+            //Удаляем платеж и вносим изменения в БД
             await Repository.RemoveAsync(item.IdPayment);
             await FileLoad.RemoveAsync(item.IdOrder);
             Invoice.Pay = false;
             await InvoiceRepository.EditAsync(Invoice);
             await StateUpdate();
-            //item.Invoice.Pay = false;
         }
 
+        /// <summary>
+        /// Загрузка файла в БД
+        /// </summary>
         protected void UploadOrder()
         {
+            //Закрываем модальное окно и переходим к загрузке файла
             modal.Close();
             isUpload = true;
         }
 
+        /// <summary>
+        /// Обработка данных о загруженной файле
+        /// </summary>
         protected void SetOrder(int id)
         {
+            //Если файл загружен, проверяем его id
+            //Если id и платежка существуют, вносим изменения в модели и БД
             if (id > 0 && payment != null)
             {
                 payment.IdOrder = id;
@@ -146,21 +169,36 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             }
         }
 
+        /// <summary>
+        /// Удаление файла платежки из БД
+        /// </summary>
+        /// <returns></returns>
         protected async Task RemoveOrderAsync()
         {
-            await FileLoad.RemoveAsync(payment.IdOrder);
-            payment.IdOrder = 0;
+            //Проверяем модель а наличие записи о файле платежки и удаляем ее
+            if (payment.IdOrder != 0)
+            {
+                await FileLoad.RemoveAsync(payment.IdOrder);
+                payment.IdOrder = 0;
+            }
 
         }
 
+        /// <summary>
+        /// Скачать файл платежки из БД
+        /// </summary>
+        /// <param name="item"></param>
         protected async void DownloadFile(Payment item)
         {
+            //Проверяем есть ли в БД файл платежки
             Order order = await FileLoad.GetOrderById(item.IdOrder);
             if (order != null)
             {
+                //Получаем из БД файл в виде массива байтов и имя файла
                 var content = order.OrderScreen;
                 var filename = order.FileName;
 
+                //Сохраняем файл на диск
                 await JSRuntime.InvokeAsync<object>(
                     "FileSaveAs",
                     filename,
@@ -184,8 +222,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         }
     }
 
+    /// <summary>
+    /// Модель представления 
+    /// </summary>
     public class PaymentViewModel
     {
+        /// <summary>
+        /// Дата платежа
+        /// </summary>
         [Required(ErrorMessage = "Необходимо указать дату платежа")]
         public DateTime DatePayment { get; set; } = DateTime.Today;
 

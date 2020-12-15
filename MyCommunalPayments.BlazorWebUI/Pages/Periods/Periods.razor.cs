@@ -15,15 +15,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
     public class PeriodsBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
+
         /// <summary>
         /// Данные модели представления
         /// </summary>
-        public PeriodViewModel PeriodModel { get; set; }
-
-        public PeriodsBase()
-        {
-            PeriodModel = new PeriodViewModel();
-        }
+        public PeriodViewModel PeriodModel { get; set; } = new PeriodViewModel();
         
         /// <summary>
         /// Репозиторий данных
@@ -69,14 +65,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         {
             (string, ToastLevel) toastMessage = ("Данные обновлены", ToastLevel.Success);
 
+            //Проверяем существует ли текущий период
             if (period == null)
             {
+                //Создаем и инициализируем модель
                 period = new Period()
                 {
                     Year = PeriodModel.Year.ToString(),
                     Month = PeriodModel.Month
                 };
 
+                //Если период уникальный добавляем в БД
                 if (periods.FirstOrDefault(p => p.Equals(period)) == null)
                 {
                     await Repository.AddAsync(period);
@@ -89,6 +88,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             }
             else
             {
+                //Меняем текущий период и записываем изменения в БД
                 period.Year = PeriodModel.Year.ToString();
                 period.Month = PeriodModel.Month;
                 await Repository.EditAsync(period);
@@ -104,6 +104,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         /// </summary>
         protected void Edit(Period item)
         {
+            //Готовим модель представления
             period = item;
             modal.Open();
             PeriodModel.Year = int.Parse(period.Year);
@@ -135,6 +136,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             toast.ShowToast(level);
         }
 
+        /// <summary>
+        /// Удаляем данные после подтверждения
+        /// </summary>
+        /// <returns></returns>
         protected async Task Confirm()
         {
             confirm = true;
@@ -142,6 +147,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             await DeleteData();
         }
 
+        /// <summary>
+        /// Реализация удаления из БД
+        /// </summary>
+        /// <returns></returns>
         private async Task DeleteData()
         {
 
@@ -160,8 +169,14 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
     /// </summary>
     public class PeriodViewModel
     {
+        /// <summary>
+        /// Год
+        /// </summary>
         [Required]
         public int Year { get; set; } = DateTime.Now.Year;
+        /// <summary>
+        /// Месяц
+        /// </summary>
         [Required]
         public PeriodsName Month { get; set; }
     }

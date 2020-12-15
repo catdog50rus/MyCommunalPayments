@@ -13,11 +13,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
     public class InvoicesServicesBase : ComponentBase
     {
         #region Поля, Инициализация формы, Модальное окно
-        public InvoiceServiceViewModel InvoiceServiceModel { get; set; }
-        public InvoicesServicesBase()
-        {
-            InvoiceServiceModel = new InvoiceServiceViewModel();
-        }
+
+        /// <summary>
+        /// Модель представления
+        /// </summary>
+        protected InvoiceServiceViewModel InvoiceServiceModel = new InvoiceServiceViewModel();
 
         [Parameter]
         public Invoice Invoice { get; set; }
@@ -30,11 +30,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         [Inject]
         public IApiRepository<ProvidersServices> ProviderServicesRepository { get; set; }
 
-        protected int idInvoice;
+        
 
         protected InvoiceServices invoiceService;
         protected IEnumerable<InvoiceServices> invoiceServicesList;
         protected int amount;
+        //protected int idInvoice;
 
         protected Provider provider;
 
