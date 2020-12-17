@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200902112301_changeFK.cs" />
-    <Compile Remove="Migrations\20200902112301_changeFK.Designer.cs" />
-    <Compile Remove="Migrations\20200902112611_changeFK.cs" />
-    <Compile Remove="Migrations\20200902112611_changeFK.Designer.cs" />
-    <Compile Remove="Migrations\20200902112900_changeFK.cs" />
-    <Compile Remove="Migrations\20200902112900_changeFK.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="BD\" />
   </ItemGroup>
 

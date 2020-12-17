@@ -165,8 +165,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
                 payment.IdOrder = id;
                 payment.Paid = true;
                 Edit(payment);
-                isUpload = false;
+                
             }
+            else
+            {
+                OpenModal();
+            }
+            isUpload = false;
         }
 
         /// <summary>

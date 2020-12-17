@@ -30,7 +30,7 @@ namespace MyCommunalPayments.Api
                 //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
                 
                 options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                new MySqlServerVersion(new Version(8, 0, 19)), 
+                new MySqlServerVersion(new Version(8, 0, 22)), 
                     mySqlOptions => mySqlOptions
                         .CharSetBehavior(CharSetBehavior.NeverAppend))
                     // Everything from this point on is optional but helps with debugging.

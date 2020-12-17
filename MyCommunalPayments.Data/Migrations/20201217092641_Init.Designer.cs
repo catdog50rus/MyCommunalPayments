@@ -9,15 +9,15 @@ using MyCommunalPayments.Data.Context;
 namespace MyCommunalPayments.Data.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20200904181918_AddFielsInInvoice")]
-    partial class AddFielsInInvoice
+    [Migration("20201217092641_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64)
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("MyCommunalPayments.Models.Models.Invoice", b =>
                 {
@@ -70,22 +70,49 @@ namespace MyCommunalPayments.Data.Migrations
                     b.ToTable("InvoceServices");
                 });
 
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.Order", b =>
+                {
+                    b.Property<int>("IdOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("longtext");
+
+                    b.Property<byte[]>("OrderScreen")
+                        .HasColumnType("longblob");
+
+                    b.HasKey("IdOrder");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("MyCommunalPayments.Models.Models.Payment", b =>
                 {
                     b.Property<int>("IdPayment")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DatePayment")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("DatePayment")
+                        .HasColumnType("longtext");
 
-                    b.Property<string>("OrderPath")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("IdInvoice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Paid")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<decimal>("PaymentSum")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("IdPayment");
+
+                    b.HasIndex("IdInvoice");
+
+                    b.HasIndex("IdOrder");
 
                     b.ToTable("Payments");
                 });
@@ -96,11 +123,11 @@ namespace MyCommunalPayments.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Month")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
 
                     b.Property<string>("Year")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("IdKey");
 
@@ -114,14 +141,35 @@ namespace MyCommunalPayments.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("NameProvider")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("WebSite")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("IdProvider");
 
                     b.ToTable("Providers");
+                });
+
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.ProvidersServices", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProvider")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdService")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProvider");
+
+                    b.HasIndex("IdService");
+
+                    b.ToTable("ProvidersServices");
                 });
 
             modelBuilder.Entity("MyCommunalPayments.Models.Models.Service", b =>
@@ -134,11 +182,33 @@ namespace MyCommunalPayments.Data.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("NameService")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("IdService");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.ServiceCounter", b =>
+                {
+                    b.Property<int>("IdCounter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("DateCount")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("IdService")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ValueCounter")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdCounter");
+
+                    b.HasIndex("IdService");
+
+                    b.ToTable("ServicesCounters");
                 });
 
             modelBuilder.Entity("MyCommunalPayments.Models.Models.Transactions", b =>
@@ -154,7 +224,7 @@ namespace MyCommunalPayments.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Period")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext");
 
                     b.HasKey("IdTransaction");
 
@@ -174,6 +244,10 @@ namespace MyCommunalPayments.Data.Migrations
                         .HasForeignKey("IdProvider")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Period");
+
+                    b.Navigation("Provider");
                 });
 
             modelBuilder.Entity("MyCommunalPayments.Models.Models.InvoiceServices", b =>
@@ -189,6 +263,59 @@ namespace MyCommunalPayments.Data.Migrations
                         .HasForeignKey("IdService")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.Payment", b =>
+                {
+                    b.HasOne("MyCommunalPayments.Models.Models.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("IdInvoice")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyCommunalPayments.Models.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("IdOrder")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.ProvidersServices", b =>
+                {
+                    b.HasOne("MyCommunalPayments.Models.Models.Provider", "Provider")
+                        .WithMany()
+                        .HasForeignKey("IdProvider")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyCommunalPayments.Models.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("IdService")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("MyCommunalPayments.Models.Models.ServiceCounter", b =>
+                {
+                    b.HasOne("MyCommunalPayments.Models.Models.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("IdService")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
                 });
 #pragma warning restore 612, 618
         }
