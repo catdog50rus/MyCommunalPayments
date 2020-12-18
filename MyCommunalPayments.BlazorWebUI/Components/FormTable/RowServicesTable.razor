@@ -1,18 +1,18 @@
 ﻿<tr>
     <!--Наименование услуги-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Service.NameService
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Блок кнопок-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Service))">Изменить</button>
             <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Service))">Удалить</button>
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
 </tr>
 
 @code{
