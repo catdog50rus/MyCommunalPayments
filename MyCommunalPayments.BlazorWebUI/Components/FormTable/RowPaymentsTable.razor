@@ -1,55 +1,55 @@
 ﻿<tr>
     <!--Период-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Payment.Invoice.Period
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Наименование поставщика-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Payment.Invoice.Provider.NameProvider
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Сумма счета-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Payment.Invoice.InvoiceSum
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Дата оплаты-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Payment.DatePayment
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Сумма платежа-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Payment.PaymentSum
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Блок кнопок-->
     @if (Invoice != null)
     {
-        <td>
-            <div class="text-center">
+        <TableColumnComponent ColClass="text-center">
+            <ColFragment>
                 <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Payment))">Изменить</button>
                 <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Payment))">Удалить</button>
-            </div>
-        </td>
+            </ColFragment>
+        </TableColumnComponent>
     }
     <!--Блок кнопок-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             <button class="btn btn-sm btn-warning" disabled="@(Payment.IdOrder == 0? "disabled" : null)" @onclick="(() => DownloadFileEvent.InvokeAsync(Payment))">Платежка</button>
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
 </tr>
 
 @code {
