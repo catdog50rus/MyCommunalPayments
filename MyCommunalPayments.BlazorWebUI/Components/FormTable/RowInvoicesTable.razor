@@ -1,50 +1,49 @@
 ﻿<tr>
     <!--Чек-бокс-->
-    <td>
-        <div class="text-center align-content-center">
+    <TableColumnComponent ColClass="text-center align-content-center">
+        <ColFragment>
             <input onclick="return false;" type="checkbox" @bind="Invoice.Pay" />
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
     <!--Период-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Invoice.Period
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
     <!--Поставщик-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @Invoice.Provider.NameProvider
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
     <!--Сумма-->
-    <td>
-        <div class="text-right">
+    <TableColumnComponent ColClass="text-right">
+        <ColFragment>
             @Invoice.InvoiceSum
-        </div>
-
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
     <!--Блок кнопок-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(Invoice))">Изменить</button>
             <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(Invoice))">Удалить</button>
             <button class="btn btn-sm btn-warning" @onclick="(()=>SetServiceEvent.InvokeAsync(Invoice))">Услуги</button>
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
     @*Блок оплаты*@
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             @if (Invoice.Pay)
             {
-                <button class="btn btn-sm btn-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплачено!</button>
+                <button class="btn btn-sm btn-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплатить</button>
             }
             else
             {
                 <button class="btn btn-sm btn-outline-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплатить</button>
             }
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
 </tr>
 
 @code {

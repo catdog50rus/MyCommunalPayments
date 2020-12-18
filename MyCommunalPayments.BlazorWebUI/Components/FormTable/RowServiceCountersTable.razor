@@ -1,33 +1,33 @@
 ﻿
 <tr>
     <!--Дата передачи-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             @ServicesCounter.DateCount
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Услуга-->
-    <td>
-        <div>
+    <TableColumnComponent>
+        <ColFragment>
             @ServicesCounter.Service.ToString()
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Показания счетчика-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             @ServicesCounter.ValueCounter
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     <!--Блок кнопок-->
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center"> 
+        <ColFragment >
             <button class="btn btn-sm btn-info" @onclick="(() => EditEvent.InvokeAsync(ServicesCounter))">Изменить</button>
             <button class="btn btn-sm btn-danger" @onclick="(() => RemoveEvent.InvokeAsync(ServicesCounter))">Удалить</button>
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
 </tr>
 
 @code{
