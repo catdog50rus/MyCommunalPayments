@@ -1,26 +1,26 @@
 ﻿
 <tr>
     @*Год*@
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
             @Period.Year
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     @*Количество*@
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment >
             @Period.Month
-        </div>
+        </ColFragment>
 
-    </td>
+    </TableColumnComponent>
     @*Блок кнопок*@
-    <td>
-        <div class="text-center">
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment >
             <button class="btn btn-sm btn-info" @onclick="()=>EditEvent.InvokeAsync(Period)">Изменить</button>
             <button class="btn btn-sm btn-danger" @onclick="()=>RemoveEvent.InvokeAsync(Period)">Удалить</button>
-        </div>
-    </td>
+        </ColFragment>
+    </TableColumnComponent>
 </tr>
 
 @code{
