@@ -1,20 +1,16 @@
 ﻿<tr>
     <!--Наименование услуги-->
     <TableColumnComponent>
-        <div>
+        <ColFragment>
             @InvoiceServices.Service.NameService
-        </div>
-
+        </ColFragment>
     </TableColumnComponent>
     <!--Показания счетчика-->
-    @if (InvoiceServices.Service.IsCounter)
-    {
-        <TableColumnComponent ColClass="text-centet">
-            <ColFragment>
-                @InvoiceServices.Amount
-            </ColFragment>
-        </TableColumnComponent>
-    }
+    <TableColumnComponent ColClass="text-center">
+        <ColFragment>
+            @InvoiceServices.Amount
+        </ColFragment>
+    </TableColumnComponent>
     <!--Блок кнопок-->
     <TableColumnComponent ColClass="text-center">
         <ColFragment>
