@@ -21,10 +21,14 @@ namespace MyCommunalPayments.Models.Models
 
         public int ToSort()
         {
+            //Получаем год
             _ = int.TryParse(DateCount.Substring(6, 4), out int rrr);
+            //Получаем месяц
             _ = int.TryParse(DateCount.Substring(3, 2), out int rr);
+            //Получаем день
             _ = int.TryParse(DateCount.Substring(0, 2), out int r);
-            return rrr * 10000000 + rr * 1000 + r;
+            //пример: 11/01/2021 = 20210111
+            return rrr * 10000 + rr * 100 + r;
         }
 
         public int MaxValue()
