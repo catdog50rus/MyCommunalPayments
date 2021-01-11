@@ -50,7 +50,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         //Periods
         protected Period period;
-        protected List<Period> periodsList;
+        //protected List<Period> periodsList;
         protected int IdPeriod;
 
         //Модальное окно
@@ -172,7 +172,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         }
 
         /// <summary>
-        /// Возврат к интерфейсу списка квитаций после оплаты
+        /// Возврат к интерфейсу списка квитанций после оплаты
         /// </summary>
         protected void ReturnToPayment()
         {
