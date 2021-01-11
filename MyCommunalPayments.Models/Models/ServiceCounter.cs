@@ -24,7 +24,7 @@ namespace MyCommunalPayments.Models.Models
             _ = int.TryParse(DateCount.Substring(6, 4), out int rrr);
             _ = int.TryParse(DateCount.Substring(3, 2), out int rr);
             _ = int.TryParse(DateCount.Substring(0, 2), out int r);
-            return rrr * 1000 + rr * 100 + r;
+            return rrr * 10000000 + rr * 1000 + r;
         }
 
         public int MaxValue()
