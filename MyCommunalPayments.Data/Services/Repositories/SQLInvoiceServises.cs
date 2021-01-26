@@ -37,34 +37,30 @@ namespace MyCommunalPayments.Data.Services.Repositories
 
         public async Task<T> EditAsync(T item)
         {
-            if (item != null)
-            {
-                var updateContent = await GetByIdAsync(item.IdInvoiceServices);
-                if (updateContent != null)
-                {
-                    //updateContent.IdInvoice = item.IdInvoice;
-                    updateContent.IdService = item.IdService;
-                    updateContent.Amount = item.Amount;
-
-                    await Context.SaveChangesAsync();
-
-                    return updateContent;
-                }
+            if (item == null)
                 return null;
-            }
-            return null;
 
+            var updateContent = await GetByIdAsync(item.IdInvoiceServices);
+            if (updateContent == null)
+                return null;
+
+            updateContent.IdService = item.IdService;
+            updateContent.Amount = item.Amount;
+
+            await Context.SaveChangesAsync();
+
+            return updateContent;
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            var res = await Context.InvoiceServices
+            var result = await Context.InvoiceServices
                 .Include(i=>i.Invoice)
                     .ThenInclude(p=>p.Provider)
                 .Include(s=>s.Service)
                 .FirstOrDefaultAsync(s => s.IdInvoiceServices == id);
 
-            return (T)res;
+            return (T)result;
         }
 
         public async Task<T> RemoveAsync(int id)
