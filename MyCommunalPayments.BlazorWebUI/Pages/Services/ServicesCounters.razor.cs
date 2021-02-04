@@ -118,7 +118,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         private async Task StateUpdate()
         {
             serviceCounters =  await Repository.GetAllAsync();
-            _ = serviceCounters.OrderByDescending(d => d.ToSort()).ThenBy(s => s.Service.NameService);
+            serviceCounters.OrderByDescending(d => d.ToSort()).ThenBy(s => s.Service.NameService);
             
         }
 

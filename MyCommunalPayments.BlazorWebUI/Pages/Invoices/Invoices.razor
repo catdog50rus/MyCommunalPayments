@@ -62,7 +62,7 @@ else
                 <TableBodyFragment>
                     <td>
                         <InputSelect @bind-Value="@InvoiceViewModel.IdPeriod" class="form-control">
-                            @foreach (var item in Periods)
+                            @foreach (var item in Periods.OrderByDescending(p=>p.ToSort()))
                             {
                                 <option value="@item.IdKey">@item.ToString()</option>
                             }

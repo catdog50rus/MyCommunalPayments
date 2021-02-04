@@ -32,6 +32,8 @@ namespace MyCommunalPayments.Models.Models
 
         public int ToSort()
         {
+            //Пример 01.2021 = 202101
+            //       12.2020 = 202012
             return int.Parse(Year)*100 + (int)Month;
         }
     }
