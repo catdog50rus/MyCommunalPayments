@@ -7,7 +7,7 @@
 </Toast>
 
 <!-- Форма -->
- <FormTableComponent ItemsCollection="@periods">
+<FormTableComponent ItemsCollection="@periods">
     <TableTitleFragment>
         Расчетные периоды
     </TableTitleFragment>
@@ -21,6 +21,14 @@
         <th scope="col" class="w-auto">Расчетный период</th>
         <th scope="col" class="w-auto text-right"></th>
     </TableHeaderFragment>
+    <PaginationFragment>
+        <PaginationComponent PageSize="pageSize"
+                             Radius="2"
+                             TotalItems="totalItems"
+                             Pagination="SetPageOfSet">
+
+        </PaginationComponent>
+    </PaginationFragment>
     <TableBodyFragment>
         <TableBodyComponent ItemsCollection="@periods">
             <ItemFragment Context="period">

@@ -16,9 +16,6 @@ namespace MyCommunalPayments.BlazorWebUI
 {
     public class Startup
     {
-        //[SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
-        //private const string _apiPathIIS = @"http://localhost:8080/";
-        //[SuppressMessage("CodeQuality", "IDE0051:Удалите неиспользуемые закрытые члены", Justification = "<Ожидание>")]
         private const string _apiPathExpress = @"https://localhost:44390/";
 
         
@@ -30,26 +27,21 @@ namespace MyCommunalPayments.BlazorWebUI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddDbContextPool<DBContext>(options =>
             {
-            //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
-            
-            options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                    new MySqlServerVersion(new Version(8, 0, 22)), 
-                    mySqlOptions => mySqlOptions
-                        .CharSetBehavior(CharSetBehavior.NeverAppend))
-                    // Everything from this point on is optional but helps with debugging.
-                        .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors();
+
+                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
+                        new MySqlServerVersion(new Version(8, 0, 22)),
+                        mySqlOptions => mySqlOptions
+                            .CharSetBehavior(CharSetBehavior.NeverAppend))
+                            .EnableSensitiveDataLogging()
+                            .EnableDetailedErrors();
             });
 
-            //string _apiPath = _apiPathIIS;
             string _apiPath = _apiPathExpress;
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
             {

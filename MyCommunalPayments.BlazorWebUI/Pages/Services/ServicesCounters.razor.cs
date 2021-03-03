@@ -31,6 +31,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         //Услуги
         protected List<Service> services;
 
+        private int pageOfSet = 0;
+        protected int pageSize = 10;
+        protected int totalItems = 0;
+
+        protected async Task SetPageOfSet(int pageOfSet)
+        {
+            this.pageOfSet = pageOfSet;
+            await StateUpdate();
+
+        }
+
         //Модальное окно
         protected Modal modal;
 
@@ -117,8 +128,23 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         private async Task StateUpdate()
         {
-            serviceCounters =  await Repository.GetAllAsync();
-            serviceCounters.OrderByDescending(d => d.ToSort()).ThenBy(s => s.Service.NameService);
+            if (totalItems == 0)
+            {
+                serviceCounters = (await Repository.GetAllAsync())
+                                .OrderByDescending(d => d.ToSort())
+                                .ThenBy(s => s.Service.NameService);
+                totalItems = serviceCounters.Count();
+                serviceCounters = serviceCounters.Skip(pageOfSet)
+                                                 .Take(pageSize);
+            }
+            else
+            {
+                serviceCounters = (await Repository.GetAllAsync())
+                                .OrderByDescending(d => d.ToSort())
+                                .ThenBy(s => s.Service.NameService)
+                                .Skip(pageOfSet)
+                                .Take(pageSize);
+            }
             
         }
 

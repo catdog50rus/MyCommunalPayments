@@ -30,6 +30,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         protected Period period = default;
         protected IEnumerable<Period> periods;
 
+        private int pageOfSet = 0;
+        protected int pageSize = 10;
+        protected int totalItems = 0;
+
         //Модальное окно
         protected Modal modal;
         protected void CloseModal()
@@ -47,6 +51,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
         protected Toast toast;
         protected string message;
         private bool confirm;
+
+        protected async Task SetPageOfSet(int pageOfSet)
+        {
+            this.pageOfSet = pageOfSet;
+            await StateUpdate();
+
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -95,6 +106,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
                 period = default;
             }
             CloseModal();
+            totalItems = 0;
             await StateUpdate();
             ToastShow(toastMessage.Item1, toastMessage.Item2);
         }
@@ -126,8 +138,17 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
 
         private async Task StateUpdate()
         {
-            periods = await Repository.GetAllAsync();
-            periods = periods.OrderByDescending(p => p.ToSort());
+            if (totalItems == 0)
+            {
+                periods = (await Repository.GetAllAsync()).OrderByDescending(p => p.ToSort());
+                totalItems = periods.Count();
+                periods = periods.Skip(pageOfSet).Take(pageSize);
+            }
+            else
+            {
+                periods = (await Repository.GetAllAsync()).OrderByDescending(p => p.ToSort()).Skip(pageOfSet).Take(pageSize); ;
+            }
+            
         }
 
         protected void ToastShow(string mes, ToastLevel level)
@@ -157,6 +178,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             if (confirm && period != null)
             {
                 await Repository.RemoveAsync(period.IdKey);
+                totalItems = 0;
                 await StateUpdate();
             }
             confirm = false;

@@ -50,8 +50,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         //Periods
         protected Period period;
-        //protected List<Period> periodsList;
+
         protected int IdPeriod;
+
+        private int pageOfSet = 0;
+        protected int pageSize = 10;
+        protected int totalItems = 0;
 
         //Модальное окно
         protected Modal modal;
@@ -64,6 +68,13 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             modal.ModalSize = "modal-lg";
             modal.Open();
+        }
+
+        protected async Task SetPageOfSet(int pageOfSet)
+        {
+            this.pageOfSet = pageOfSet;
+            await StateUpdate(isNotPaided);
+
         }
 
         protected override async Task OnInitializedAsync()
@@ -168,6 +179,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected async Task ShowPaided()
         {
             isNotPaided = !isNotPaided;
+            totalItems = 0;
+            pageOfSet = 0;
             await StateUpdate(isNotPaided);
         }
 
@@ -183,13 +196,25 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         private async Task StateUpdate(bool show)
         {
+            await GetAllAsync();
             if (show)
-            {
-                invoices = (await Repository.GetAllAsync()).ToList().Where(i => i.Pay == false).OrderByDescending(p => p.Period.ToSort());
-            }
-            else
+            { 
+                invoices = invoices.Where(i => i.Pay == false);
+                totalItems = invoices.Count();
+            }          
+        }
+
+        protected async Task GetAllAsync()
+        {
+            if(totalItems == 0)
             {
                 invoices = (await Repository.GetAllAsync()).ToList().OrderByDescending(p => p.Period.ToSort());
+                totalItems = invoices.Count();
+                invoices = invoices.Skip(pageOfSet).Take(pageSize);
+            }
+            else
+            { 
+                invoices = (await Repository.GetAllAsync()).ToList().OrderByDescending(p => p.Period.ToSort()).Skip(pageOfSet).Take(pageSize);
             }
         }
 

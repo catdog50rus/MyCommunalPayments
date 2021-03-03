@@ -15,6 +15,9 @@ else
                 <div class="row mb-3">
                     @TableTitleButtonFragment
                 </div>
+                <div class="row mb-2">
+                    @PaginationFragment
+                </div>
                 <table class="table table-sm table-bordered table-hover ">
                     @*Шапка таблицы*@
                     <thead class="table-dark text-center">
@@ -38,6 +41,8 @@ else
     [Parameter] public RenderFragment TableTitleFragment { get; set; }
     [Parameter] public RenderFragment TableOtherTitleFragment { get; set; }
     [Parameter] public RenderFragment TableTitleButtonFragment { get; set; }
+
+    [Parameter] public RenderFragment PaginationFragment { get; set; }
 
     [Parameter] public RenderFragment TableHeaderFragment { get; set; }
     [Parameter] public RenderFragment TableBodyFragment { get; set; }
