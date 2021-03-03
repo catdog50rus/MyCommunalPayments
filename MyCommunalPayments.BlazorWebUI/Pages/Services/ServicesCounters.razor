@@ -5,29 +5,37 @@
 @if (services != null)
 {
     <!-- Форма -->
-    <FormTableComponent ItemsCollection="@serviceCounters">
-        <TableTitleFragment>
-            Показания счетчиков услуг ЖКХ
-        </TableTitleFragment>
-        <TableTitleButtonFragment>
-            <div class="col">
-                <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
-            </div>
-        </TableTitleButtonFragment>
-        <TableHeaderFragment>
-            <th scope="col" class="w-auto">Дата передачи</th>
-            <th scope="col" class="w-auto">Услуга</th>
-            <th scope="col" class="w-auto">Показания счетчика</th>
-            <th scope="col" class="w-auto text-center"></th>
-        </TableHeaderFragment>
-        <TableBodyFragment>
-            <TableBodyComponent ItemsCollection="@serviceCounters">
-                <ItemFragment Context="context">
-                    <RowServiceCountersTable ServicesCounter="context" EditEvent="Edit" RemoveEvent="Remove" />
-                </ItemFragment>
-            </TableBodyComponent>
-        </TableBodyFragment>
-    </FormTableComponent>
+<FormTableComponent ItemsCollection="@serviceCounters">
+    <TableTitleFragment>
+        Показания счетчиков услуг ЖКХ
+    </TableTitleFragment>
+    <TableTitleButtonFragment>
+        <div class="col">
+            <button class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+        </div>
+    </TableTitleButtonFragment>
+    <PaginationFragment>
+        <PaginationComponent PageSize="pageSize"
+                             Radius="2"
+                             TotalItems="totalItems"
+                             Pagination="SetPageOfSet">
+
+        </PaginationComponent>
+    </PaginationFragment>
+    <TableHeaderFragment>
+        <th scope="col" class="w-auto">Дата передачи</th>
+        <th scope="col" class="w-auto">Услуга</th>
+        <th scope="col" class="w-auto">Показания счетчика</th>
+        <th scope="col" class="w-auto text-center"></th>
+    </TableHeaderFragment>
+    <TableBodyFragment>
+        <TableBodyComponent ItemsCollection="@serviceCounters">
+            <ItemFragment Context="context">
+                <RowServiceCountersTable ServicesCounter="context" EditEvent="Edit" RemoveEvent="Remove" />
+            </ItemFragment>
+        </TableBodyComponent>
+    </TableBodyFragment>
+</FormTableComponent>
 
     <!-- Modal -->
     <Modal @ref="modal" CloseWindow="CloseModal">

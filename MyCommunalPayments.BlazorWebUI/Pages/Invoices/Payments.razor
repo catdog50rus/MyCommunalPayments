@@ -11,46 +11,54 @@
 else
 {
         <!-- Форма -->
-    <FormTableComponent ItemsCollection="@paymentsList">
-        <TableTitleFragment>
-            Платежи за услуги ЖКХ
-        </TableTitleFragment>
-        <TableTitleButtonFragment>
-            <!--Добавление нового платежа-->
-            @if (Invoice != null)
+<FormTableComponent ItemsCollection="@paymentsList">
+    <TableTitleFragment>
+        Платежи за услуги ЖКХ
+    </TableTitleFragment>
+    <TableTitleButtonFragment>
+        <!--Добавление нового платежа-->
+        @if (Invoice != null)
             {
-                <div class="col">
-                    @if (!paymentsList.Any())
+            <div class="col">
+                @if (!paymentsList.Any())
                     {
-                        <button type="button" class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
+                    <button type="button" class="btn btn-success" @onclick="()=>OpenModal()">Добавить</button>
                     }
-                    
-                </div>
-                <div>
-                    <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
-                 </div>
+
+            </div>
+            <div>
+                <button class="btn btn-info mr-3" @onclick="OnPaimentReturnToInvoices">Вернуться к квитанциям</button>
+            </div>
             }
-        </TableTitleButtonFragment>
-        <TableHeaderFragment>
-            <th scope="col"> Период</th>
-            <th scope="col" class="w-auto">Наименование поставщика</th>
-            <th scope="col" class="w-auto">Сумма по квитанции</th>
-            <th scope="col" class="w-auto">Дата оплаты</th>
-            <th scope="col" class="w-auto">Сумма платежа</th>
-            @if (Invoice != null)
+    </TableTitleButtonFragment>
+    <PaginationFragment>
+        <PaginationComponent PageSize="pageSize"
+                             Radius="2"
+                             TotalItems="totalItems"
+                             Pagination="SetPageOfSet">
+
+        </PaginationComponent>
+    </PaginationFragment>
+    <TableHeaderFragment>
+        <th scope="col"> Период</th>
+        <th scope="col" class="w-auto">Наименование поставщика</th>
+        <th scope="col" class="w-auto">Сумма по квитанции</th>
+        <th scope="col" class="w-auto">Дата оплаты</th>
+        <th scope="col" class="w-auto">Сумма платежа</th>
+        @if (Invoice != null)
             {
-                <th scope="col" class="w-25"></th>
+            <th scope="col" class="w-25"></th>
             }
-            <th scope="col" class="w-auto"></th>
-        </TableHeaderFragment>
-        <TableBodyFragment>
-            <TableBodyComponent ItemsCollection="@paymentsList">
-                <ItemFragment Context="context">
-                    <RowPaymentsTable Payment="context" EditEvent="Edit" RemoveEvent="RemoveAsync" DownloadFileEvent="DownloadFile" Invoice="Invoice"/>
-                </ItemFragment>            
-            </TableBodyComponent>
-        </TableBodyFragment>
-    </FormTableComponent>
+        <th scope="col" class="w-auto"></th>
+    </TableHeaderFragment>
+    <TableBodyFragment>
+        <TableBodyComponent ItemsCollection="@paymentsList">
+            <ItemFragment Context="context">
+                <RowPaymentsTable Payment="context" EditEvent="Edit" RemoveEvent="RemoveAsync" DownloadFileEvent="DownloadFile" Invoice="Invoice" />
+            </ItemFragment>
+        </TableBodyComponent>
+    </TableBodyFragment>
+</FormTableComponent>
 }
 
 @if (Invoice != null)

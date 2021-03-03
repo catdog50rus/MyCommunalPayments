@@ -54,6 +54,11 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// </summary>
         protected IEnumerable<Payment> paymentsList;
 
+        private int pageOfSet = 0;
+        protected int pageSize = 10;
+        protected int totalItems = 0;
+
+
         //Модальное окно
         protected Modal modal = new Modal();
         protected void CloseModal()
@@ -215,15 +220,38 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         #endregion
 
+        protected async Task SetPageOfSet(int pageOfSet)
+        {
+            this.pageOfSet = pageOfSet;
+            await StateUpdate();
+
+        }
+
         private async Task StateUpdate()
         {
-            paymentsList = await Repository.GetAllAsync();
-            paymentsList = paymentsList.OrderByDescending(d => d.Invoice.Period.ToSort());
+            await GetAllAsync();
             if (Invoice != null)
             {
-                paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice).ToList();
+                paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice);
+                totalItems = paymentsList.Count();
                 if (!paymentsList.Any()) payment = default;
             }
+        }
+
+        private async Task GetAllAsync()
+        {
+            if (totalItems == 0)
+            {
+                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(d => d.Invoice.Period.ToSort());
+                totalItems = paymentsList.Count();
+                paymentsList = paymentsList.Skip(pageOfSet).Take(pageSize);
+            }
+            else
+                paymentsList = (await Repository.GetAllAsync())
+                    .OrderByDescending(d => d.Invoice.Period.ToSort())
+                    .Skip(pageOfSet)
+                    .Take(pageSize);
+
         }
     }
 

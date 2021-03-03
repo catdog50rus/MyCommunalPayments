@@ -20,6 +20,15 @@
                 <input type="checkbox" checked="checked" value="isNotPaided" @onchange="()=>ShowPaided()" />
             </div>
         </TableTitleButtonFragment>
+        <PaginationFragment>
+            <PaginationComponent 
+                                 PageSize="pageSize" 
+                                 Radius="2"
+                                 TotalItems="totalItems"
+                                 Pagination="SetPageOfSet">
+
+            </PaginationComponent>
+        </PaginationFragment>
         <TableHeaderFragment>
             <th scope="col">Оплачено</th>
             <th scope="col" class="w-auto">Период</th>
