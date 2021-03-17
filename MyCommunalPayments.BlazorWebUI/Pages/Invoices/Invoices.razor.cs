@@ -53,8 +53,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         protected int IdPeriod;
 
+        protected int[] pageSizeList = new int[] { 10, 25, 50 };
         private int pageOfSet = 0;
-        protected int pageSize = 10;
+        private int pageSize;
         protected int totalItems = 0;
 
         //Модальное окно
@@ -70,18 +71,19 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             modal.Open();
         }
 
-        protected async Task SetPageOfSet(int pageOfSet)
+        protected async Task SetPageOfSet(int[] page)
         {
-            this.pageOfSet = pageOfSet;
+            pageOfSet = page[0];
+            pageSize = page[1];
             await StateUpdate(isNotPaided);
-
         }
 
         protected override async Task OnInitializedAsync()
         {
-            await StateUpdate(isNotPaided);
             invoice = default;
             isPay = default;
+            pageSize = pageSizeList[0];
+            await StateUpdate(isNotPaided);
         }
 
         #endregion

@@ -31,13 +31,15 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
         //Услуги
         protected List<Service> services;
 
+        protected int[] pageSizeList = new int[] { 10, 25, 50 };
         private int pageOfSet = 0;
-        protected int pageSize = 10;
+        private int pageSize;
         protected int totalItems = 0;
 
-        protected async Task SetPageOfSet(int pageOfSet)
+        protected async Task SetPageOfSet(int[] page)
         {
-            this.pageOfSet = pageOfSet;
+            pageOfSet = page[0];
+            pageSize = page[1];
             await StateUpdate();
 
         }
@@ -59,6 +61,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 
         protected override async Task OnInitializedAsync()
         {
+            pageSize = pageSizeList[0];
             await StateUpdate();
             services = (await ServiceRepository.GetAllAsync()).ToList();
             services = services.Where(c => c.IsCounter == true).ToList();
