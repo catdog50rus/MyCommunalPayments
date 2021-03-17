@@ -36,7 +36,7 @@
         <ColFragment>
             @if (Invoice.Pay)
             {
-                <button class="btn btn-sm btn-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплатить</button>
+                <button class="btn btn-sm btn-success" @onclick="()=>PayEvent.InvokeAsync(Invoice)">Оплачено</button>
             }
             else
             {
