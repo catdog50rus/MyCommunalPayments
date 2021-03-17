@@ -54,8 +54,9 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// </summary>
         protected IEnumerable<Payment> paymentsList;
 
+        protected int[] pageSizeList = new int[] {10, 25, 50 };
         private int pageOfSet = 0;
-        protected int pageSize = 10;
+        private int pageSize;
         protected int totalItems = 0;
 
 
@@ -76,7 +77,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             if (Invoice != null) 
             {
                 paymentViewModel.PaymentSum = Invoice.InvoiceSum;
-            } 
+            }
+            pageSize = pageSizeList[0];
             await StateUpdate();
         }
 
@@ -220,9 +222,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         #endregion
 
-        protected async Task SetPageOfSet(int pageOfSet)
+        protected async Task SetPageOfSet(int[] page)
         {
-            this.pageOfSet = pageOfSet;
+            pageOfSet = page[0];
+            pageSize = page[1];
             await StateUpdate();
 
         }

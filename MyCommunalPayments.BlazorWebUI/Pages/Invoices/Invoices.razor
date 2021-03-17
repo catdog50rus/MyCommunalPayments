@@ -22,7 +22,7 @@
         </TableTitleButtonFragment>
         <PaginationFragment>
             <PaginationComponent 
-                                 PageSize="pageSize" 
+                                 PageSize="pageSizeList"
                                  Radius="2"
                                  TotalItems="totalItems"
                                  Pagination="SetPageOfSet">
@@ -34,8 +34,11 @@
             <th scope="col" class="w-auto">Период</th>
             <th scope="col" class="w-auto">Поставщик услуг</th>
             <th scope="col" class="w-auto">Сумма</th>
-            <th scope="col" class="w-auto"></th>
-            <th scope="col" class="w-auto"></th>
+            @if (!isNotPaided)
+            {
+                <th scope="col" class="w-auto"></th>
+                <th scope="col" class="w-auto"></th>
+            }
         </TableHeaderFragment>
         <TableBodyFragment>
             <TableBodyComponent ItemsCollection="@invoices">

@@ -13,5 +13,13 @@
                 </button>
             </li>
         }
+        <li>
+            <select class="form-control bg-info text-light"  @onchange="@SelectedPageSize">
+                @foreach (var item in PageSize)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>          
+        </li>
     </ul>
 </nav>
