@@ -9,15 +9,22 @@ using MyCommunalPayments.Models.Models;
 
 namespace MyCommunalPayments.Api.Controllers
 {
+    /// <summary>
+    /// Invoice controller
+    /// </summary>
     [Route("api/[controller]")]
+    [Produces("application/json")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public class InvoiceController : ControllerBase
     {
         private readonly IRepository<Invoice> repository;
-
+        /// <summary>
+        /// Invoice Controller
+        /// </summary>
+        /// <param name="repository"></param>
         public InvoiceController(IRepository<Invoice> repository) => this.repository = repository;
 
 
@@ -39,6 +46,11 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get All Invoices
+        /// </summary>
+        /// <returns>All Invoces</returns>
+        /// <response code="500">Ошибка базы данных</response> 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
