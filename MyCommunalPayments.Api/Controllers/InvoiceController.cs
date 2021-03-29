@@ -65,6 +65,12 @@ namespace MyCommunalPayments.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Get By Id
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <returns>Invoice</returns>
+        /// <response code="200">Find Invoice</response> 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Invoice>> GetById(int id)
         {
@@ -83,6 +89,11 @@ namespace MyCommunalPayments.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Create New Invoice
+        /// </summary>
+        /// <param name="item">Invoice</param>
+        /// <returns>Invoice</returns>
         [HttpPost]
         public async Task<ActionResult<Invoice>> CreateNew(Invoice item)
         {
@@ -99,6 +110,12 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Update Invoice
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <param name="item">Invoice</param>
+        /// <returns></returns>
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Invoice>> Update(int id, Invoice item)
         {
@@ -138,6 +155,11 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete 
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <returns></returns>
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Invoice>> Delete(int id)
         {
