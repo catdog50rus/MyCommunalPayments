@@ -9,15 +9,22 @@ using MyCommunalPayments.Models.Models;
 
 namespace MyCommunalPayments.Api.Controllers
 {
+    /// <summary>
+    /// Invoice controller
+    /// </summary>
     [Route("api/[controller]")]
+    [Produces("application/json")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public class InvoiceController : ControllerBase
     {
         private readonly IRepository<Invoice> repository;
-
+        /// <summary>
+        /// Invoice Controller
+        /// </summary>
+        /// <param name="repository"></param>
         public InvoiceController(IRepository<Invoice> repository) => this.repository = repository;
 
 
@@ -39,6 +46,11 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get All Invoices
+        /// </summary>
+        /// <returns>All Invoces</returns>
+        /// <response code="500">Ошибка базы данных</response> 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
@@ -53,6 +65,12 @@ namespace MyCommunalPayments.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Get By Id
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <returns>Invoice</returns>
+        /// <response code="200">Find Invoice</response> 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Invoice>> GetById(int id)
         {
@@ -71,6 +89,11 @@ namespace MyCommunalPayments.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Create New Invoice
+        /// </summary>
+        /// <param name="item">Invoice</param>
+        /// <returns>Invoice</returns>
         [HttpPost]
         public async Task<ActionResult<Invoice>> CreateNew(Invoice item)
         {
@@ -87,6 +110,12 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Update Invoice
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <param name="item">Invoice</param>
+        /// <returns></returns>
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Invoice>> Update(int id, Invoice item)
         {
@@ -126,6 +155,11 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete 
+        /// </summary>
+        /// <param name="id">Invoice Id</param>
+        /// <returns></returns>
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Invoice>> Delete(int id)
         {
