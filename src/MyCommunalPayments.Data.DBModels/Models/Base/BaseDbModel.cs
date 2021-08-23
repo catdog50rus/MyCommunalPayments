@@ -2,7 +2,7 @@
 
 namespace MyCommunalPayments.Data.DBModels.Models.Base
 {
-    public class BaseDbModel
+    public abstract class BaseDbModel
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
