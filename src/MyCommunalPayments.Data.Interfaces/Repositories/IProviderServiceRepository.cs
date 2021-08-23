@@ -3,7 +3,7 @@ using MyCommunalPayments.Data.Interfaces.Repositories.Base;
 
 namespace MyCommunalPayments.Data.Interfaces.Repositories
 {
-    public interface IProviderServiceRepository : IBaseRepository<ProvidersServicesDb>
+    public interface IProviderServiceRepository : IBaseRepository<ProviderServiceDb>
     {
     }
 }

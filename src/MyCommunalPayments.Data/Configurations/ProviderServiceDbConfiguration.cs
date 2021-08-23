@@ -5,9 +5,9 @@ using System;
 
 namespace MyCommunalPayments.Data.Configurations
 {
-    public class ProviderServiceDbConfiguration : IEntityTypeConfiguration<ProvidersServicesDb>
+    public class ProviderServiceDbConfiguration : IEntityTypeConfiguration<ProviderServiceDb>
     {
-        public void Configure(EntityTypeBuilder<ProvidersServicesDb> builder)
+        public void Configure(EntityTypeBuilder<ProviderServiceDb> builder)
         {
             builder.ToTable("ProvidersServices").HasKey(c => c.Id);
 

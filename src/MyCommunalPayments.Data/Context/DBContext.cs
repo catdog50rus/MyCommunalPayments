@@ -27,7 +27,7 @@ namespace MyCommunalPayments.Data.Context
         public DbSet<InvoiceServiceDb> InvoiceServices1 { get; set; }
         public DbSet<OrderDb> Orders1 { get; set; }
         public DbSet<PaymentDb> Payments1 { get; set; }
-        public DbSet<ProvidersServicesDb> ProvidersServices1 { get; set; }
+        public DbSet<ProviderServiceDb> ProvidersServices1 { get; set; }
         public DbSet<ServiceCounterDb> ServiceCounters1 { get; set; }
         public DbSet<ServiceDb> Services1 { get; set; }
 
