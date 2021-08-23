@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyCommunalPayments.Data.DBModels\MyCommunalPayments.Data.DBModels.csproj" />
+    <ProjectReference Include="..\MyCommunalPayments.Data.Interfaces\MyCommunalPayments.Data.Interfaces.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Models\MyCommunalPayments.Models.csproj" />
   </ItemGroup>
 

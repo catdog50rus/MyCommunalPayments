@@ -9,7 +9,7 @@
             Invoice controller
             </summary>
         </member>
-        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.#ctor(MyCommunalPayments.Data.Services.Repositories.Base.IRepository{MyCommunalPayments.Models.Models.Invoice})">
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.#ctor(MyCommunalPayments.Data.Services.Repositories.Base.IRepository{MyCommunalPayments.Models.Models.Invoice},MyCommunalPayments.BL.Interfaces.IInvoiceService)">
             <summary>
             Invoice Controller
             </summary>

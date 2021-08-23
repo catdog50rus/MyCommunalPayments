@@ -5,9 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MyCommunalPayments.BL.Services;
 using MyCommunalPayments.Data.Context;
+using MyCommunalPayments.Data.Repositories.Impl;
 using MyCommunalPayments.Data.Services.Repositories;
 using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.Infrastructure.Mapper;
 using MyCommunalPayments.Models.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
@@ -53,6 +56,12 @@ namespace MyCommunalPayments.Api
             services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
             services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
             services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+
+            services.AddCustomAutoMapper();
+
+            services.AddRepositories();
+
+            services.AddServices();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

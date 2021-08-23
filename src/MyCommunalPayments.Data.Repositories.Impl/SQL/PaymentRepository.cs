@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace MyCommunalPayments.Data.Repositories.Impl.SQL
 {
-    public class PamentRepository : BaseSqlRepository<PaymentDb>, IPaymentRepository
+    public class PaymentRepository : BaseSqlRepository<PaymentDb>, IPaymentRepository
     {
-        public PamentRepository(DBContext context) : base(context)
+        public PaymentRepository(DBContext context) : base(context)
         {
         }
 

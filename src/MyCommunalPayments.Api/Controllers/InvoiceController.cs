@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyCommunalPayments.BL.Interfaces;
 using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
 
@@ -20,12 +21,19 @@ namespace MyCommunalPayments.Api.Controllers
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public class InvoiceController : ControllerBase
     {
-        private readonly IRepository<Invoice> repository;
+        private readonly IRepository<Invoice> _repository;
+        private readonly IInvoiceService  _invoiceService;
+
         /// <summary>
         /// Invoice Controller
         /// </summary>
         /// <param name="repository"></param>
-        public InvoiceController(IRepository<Invoice> repository) => this.repository = repository;
+        public InvoiceController(IRepository<Invoice> repository,
+                                 IInvoiceService invoiceService)
+        {
+            _repository = repository;
+            _invoiceService = invoiceService ?? throw new ArgumentNullException(nameof(invoiceService));
+        }
 
 
         [HttpGet("{search}")]
@@ -33,7 +41,7 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var result = await repository.Search(name);
+                var result = await _repository.Search(name);
 
                 if (result.Any()) return Ok(result);
 
@@ -56,7 +64,7 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                return Ok(await repository.GetAllAsync());
+                return Ok(await _invoiceService.GetEntitiesAsync());
             }
             catch (Exception ex)
             {
@@ -76,7 +84,7 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var result = await repository.GetByIdAsync(id);
+                var result = await _repository.GetByIdAsync(id);
                 if (result == null) return NotFound($"Запись с ID: {id} не найдена");
 
                 return result;
@@ -101,7 +109,7 @@ namespace MyCommunalPayments.Api.Controllers
             {
                 if (item == null) return BadRequest($"Запрос пустой");
 
-                var result = await repository.AddAsync(item);
+                var result = await _repository.AddAsync(item);
                 return CreatedAtAction(nameof(GetById), new { id = result.IdInvoice }, result);
             }
             catch (Exception ex)
@@ -122,11 +130,11 @@ namespace MyCommunalPayments.Api.Controllers
             try
             {
                 if (item == null || id != item.IdInvoice) return BadRequest($"ID: {id} не соответствует запросу");
-                var updateContent = await repository.GetByIdAsync(id);
+                var updateContent = await _repository.GetByIdAsync(id);
 
                 if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
 
-                return await repository.EditAsync(item);
+                return await _repository.EditAsync(item);
 
             }
             catch (Exception ex)
@@ -142,11 +150,11 @@ namespace MyCommunalPayments.Api.Controllers
             {
                 if (item == null) return BadRequest();
                 int id = item.IdInvoice;
-                var updateContent = await repository.GetByIdAsync(id);
+                var updateContent = await _repository.GetByIdAsync(id);
 
                 if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
 
-                return await repository.EditAsync(item);
+                return await _repository.EditAsync(item);
 
             }
             catch (Exception ex)
@@ -165,11 +173,11 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var deleteContent = await repository.GetByIdAsync(id);
+                var deleteContent = await _repository.GetByIdAsync(id);
 
                 if (deleteContent == null) return BadRequest($"Запись с ID: {id} не найдена");
 
-                return await repository.RemoveAsync(id);
+                return await _repository.RemoveAsync(id);
 
             }
             catch (Exception ex)
