@@ -3,13 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Models", "MyCommunalPayments.Models\MyCommunalPayments.Models.csproj", "{66E86296-BFE8-46C3-B797-004C4BEA3B7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Models", "src\MyCommunalPayments.Models\MyCommunalPayments.Models.csproj", "{66E86296-BFE8-46C3-B797-004C4BEA3B7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Data", "MyCommunalPayments.Data\MyCommunalPayments.Data.csproj", "{CCC625EF-B835-4134-A073-14697B8FFD58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Data", "src\MyCommunalPayments.Data\MyCommunalPayments.Data.csproj", "{CCC625EF-B835-4134-A073-14697B8FFD58}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.BlazorWebUI", "MyCommunalPayments.BlazorWebUI\MyCommunalPayments.BlazorWebUI.csproj", "{28895B07-2151-4203-B419-7D4F88DB6827}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.BlazorWebUI", "src\MyCommunalPayments.BlazorWebUI\MyCommunalPayments.BlazorWebUI.csproj", "{28895B07-2151-4203-B419-7D4F88DB6827}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Api", "MyCommunalPayments.Api\MyCommunalPayments.Api.csproj", "{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Api", "src\MyCommunalPayments.Api\MyCommunalPayments.Api.csproj", "{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{206EB788-5766-4FA0-970E-AEEFEDC16221}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLayer", "DataLayer", "{DFB26203-FDC6-4134-823A-6BB7587BD563}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D84DFE64-76B5-40E1-BDFB-F68D610BC51F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BL", "BL", "{EEA598E9-D552-4808-9E91-E973F9815FE3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{A3FD30BF-773A-4FC9-AB2D-51725621B1A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Data.DBModels", "src\MyCommunalPayments.Data.DBModels\MyCommunalPayments.Data.DBModels.csproj", "{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +47,25 @@ Global
 		{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{66E86296-BFE8-46C3-B797-004C4BEA3B7A} = {D84DFE64-76B5-40E1-BDFB-F68D610BC51F}
+		{CCC625EF-B835-4134-A073-14697B8FFD58} = {DFB26203-FDC6-4134-823A-6BB7587BD563}
+		{28895B07-2151-4203-B419-7D4F88DB6827} = {A3FD30BF-773A-4FC9-AB2D-51725621B1A4}
+		{F56E04C5-D0F4-48D9-82CD-6DDE0C864D34} = {FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758}
+		{DFB26203-FDC6-4134-823A-6BB7587BD563} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
+		{D84DFE64-76B5-40E1-BDFB-F68D610BC51F} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
+		{EEA598E9-D552-4808-9E91-E973F9815FE3} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
+		{FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
+		{A3FD30BF-773A-4FC9-AB2D-51725621B1A4} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
+		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7} = {DFB26203-FDC6-4134-823A-6BB7587BD563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7A0B136-87BB-47E5-BF95-BFF1D5BA2DEA}

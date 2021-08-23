@@ -16,7 +16,7 @@ namespace MyCommunalPayments.BlazorWebUI
 {
     public class Startup
     {
-        private const string _apiPathExpress = @"https://localhost:44390/";
+        private const string _apiPathExpress = @"https://localhost:3001/";
 
         
 
