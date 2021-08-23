@@ -31,16 +31,23 @@ namespace MyCommunalPayments.BlazorWebUI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContextPool<DBContext>(options =>
-            {
 
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                        new MySqlServerVersion(new Version(8, 0, 22)),
-                        mySqlOptions => mySqlOptions
-                            .CharSetBehavior(CharSetBehavior.NeverAppend))
-                            .EnableSensitiveDataLogging()
-                            .EnableDetailedErrors();
-            });
+            // Replace with your connection string.
+            var connectionString = Configuration.GetConnectionString("MySQLConnection");
+
+            // Replace with your server version and type.
+            // Use 'MariaDbServerVersion' for MariaDB.
+            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
+            // For common usages, see pull request #1233.
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 22));
+
+            // Replace 'YourDbContext' with the name of your own DbContext derived class.
+            services.AddDbContext<DBContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, serverVersion)
+                    .EnableSensitiveDataLogging() // <-- These two calls are optional but help
+                    .EnableDetailedErrors()       // <-- with debugging (remove for production).
+            );
 
             string _apiPath = _apiPathExpress;
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 

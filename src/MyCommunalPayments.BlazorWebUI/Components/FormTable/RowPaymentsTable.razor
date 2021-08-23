@@ -48,13 +48,8 @@
     <TableColumnComponent ColClass="text-center">
         <ColFragment>
             <button class="btn btn-sm btn-warning" disabled="@(Payment.IdOrder == 0? "disabled" : null)" @onclick="(() => DownloadFileEvent.InvokeAsync(Payment))">Платежка</button>
-<<<<<<< Updated upstream:src/MyCommunalPayments.BlazorWebUI/Components/FormTable/RowPaymentsTable.razor
-        </ColFragment>
+    </ColFragment>
     </TableColumnComponent>
-=======
-        </div
-    </td>
->>>>>>> Stashed changes:MyCommunalPayments.BlazorWebUI/Components/FormTable/RowPaymentsTable.razor
 </tr>
 
 @code {
