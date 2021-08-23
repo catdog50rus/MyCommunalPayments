@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyCommunalPayments.Api</name>
+    </assembly>
+    <members>
+        <member name="T:MyCommunalPayments.Api.Controllers.InvoiceController">
+            <summary>
+            Invoice controller
+            </summary>
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.#ctor(MyCommunalPayments.Data.Services.Repositories.Base.IRepository{MyCommunalPayments.Models.Models.Invoice})">
+            <summary>
+            Invoice Controller
+            </summary>
+            <param name="repository"></param>
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.GetAll">
+            <summary>
+            Get All Invoices
+            </summary>
+            <returns>All Invoces</returns>
+            <response code="500">Ошибка базы данных</response> 
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.GetById(System.Int32)">
+            <summary>
+            Get By Id
+            </summary>
+            <param name="id">Invoice Id</param>
+            <returns>Invoice</returns>
+            <response code="200">Find Invoice</response> 
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.CreateNew(MyCommunalPayments.Models.Models.Invoice)">
+            <summary>
+            Create New Invoice
+            </summary>
+            <param name="item">Invoice</param>
+            <returns>Invoice</returns>
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.Update(System.Int32,MyCommunalPayments.Models.Models.Invoice)">
+            <summary>
+            Update Invoice
+            </summary>
+            <param name="id">Invoice Id</param>
+            <param name="item">Invoice</param>
+            <returns></returns>
+        </member>
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.Delete(System.Int32)">
+            <summary>
+            Delete 
+            </summary>
+            <param name="id">Invoice Id</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
