@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\Development\C#Repository\MyCommunalPayments\MyCommunalPayments.Api\MyCommunalPayments.Api.xml</DocumentationFile>
+    <DocumentationFile>D:\Development\C#Repository\MyCommunalPayments\src\MyCommunalPayments.Api\MyCommunalPayments.Api.xml</DocumentationFile>
     <NoWarn>1701;1702;1591;</NoWarn>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
