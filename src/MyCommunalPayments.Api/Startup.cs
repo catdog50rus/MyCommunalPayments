@@ -25,21 +25,25 @@ namespace MyCommunalPayments.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<DBContext>(options =>
-            {
-                //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
-                
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                new MySqlServerVersion(new Version(8, 0, 22)), 
-                    mySqlOptions => mySqlOptions
-                        .CharSetBehavior(CharSetBehavior.NeverAppend))
-                    // Everything from this point on is optional but helps with debugging.
-                        .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors();
-            });
+
+            // Replace with your connection string.
+            var connectionString = Configuration.GetConnectionString("MySQLConnection");
+
+            // Replace with your server version and type.
+            // Use 'MariaDbServerVersion' for MariaDB.
+            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
+            // For common usages, see pull request #1233.
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 22));
+
+            // Replace 'YourDbContext' with the name of your own DbContext derived class.
+            services.AddDbContext<DBContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, serverVersion)
+                    .EnableSensitiveDataLogging() // <-- These two calls are optional but help
+                    .EnableDetailedErrors()       // <-- with debugging (remove for production).
+            );
             
             services.AddScoped<IRepository<Service>, SQLService<Service>>();
             services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();

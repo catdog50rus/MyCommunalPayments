@@ -23,7 +23,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FB7E72BA-1AD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{A3FD30BF-773A-4FC9-AB2D-51725621B1A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Data.DBModels", "src\MyCommunalPayments.Data.DBModels\MyCommunalPayments.Data.DBModels.csproj", "{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Data.DBModels", "src\MyCommunalPayments.Data.DBModels\MyCommunalPayments.Data.DBModels.csproj", "{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Data.Interfaces", "src\MyCommunalPayments.Data.Interfaces\MyCommunalPayments.Data.Interfaces.csproj", "{F2594521-B111-46A3-BB78-C785390A9CCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Data.Repositories.Impl", "src\MyCommunalPayments.Data.Repositories.Impl\MyCommunalPayments.Data.Repositories.Impl.csproj", "{6BDFB1EA-3A82-4681-8FF5-801737125BBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2594521-B111-46A3-BB78-C785390A9CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2594521-B111-46A3-BB78-C785390A9CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2594521-B111-46A3-BB78-C785390A9CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2594521-B111-46A3-BB78-C785390A9CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BDFB1EA-3A82-4681-8FF5-801737125BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BDFB1EA-3A82-4681-8FF5-801737125BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BDFB1EA-3A82-4681-8FF5-801737125BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BDFB1EA-3A82-4681-8FF5-801737125BBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +78,8 @@ Global
 		{FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
 		{A3FD30BF-773A-4FC9-AB2D-51725621B1A4} = {206EB788-5766-4FA0-970E-AEEFEDC16221}
 		{14A3CA8E-0D65-4E18-994C-46D5F4BEC8B7} = {DFB26203-FDC6-4134-823A-6BB7587BD563}
+		{F2594521-B111-46A3-BB78-C785390A9CCB} = {DFB26203-FDC6-4134-823A-6BB7587BD563}
+		{6BDFB1EA-3A82-4681-8FF5-801737125BBE} = {DFB26203-FDC6-4134-823A-6BB7587BD563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7A0B136-87BB-47E5-BF95-BFF1D5BA2DEA}

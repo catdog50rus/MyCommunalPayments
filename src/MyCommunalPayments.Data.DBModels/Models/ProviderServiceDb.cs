@@ -2,7 +2,7 @@
 
 namespace MyCommunalPayments.Data.DBModels.Models
 {
-    public class ProvidersServicesDb : BaseDbModel
+    public class ProviderServiceDb : BaseDbModel
     {
         public int IdProvider { get; set; }
         public ProviderDb Provider { get; set; }
