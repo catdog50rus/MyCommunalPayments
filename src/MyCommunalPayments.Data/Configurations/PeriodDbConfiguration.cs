@@ -13,15 +13,17 @@ namespace MyCommunalPayments.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<PeriodDb> builder)
         {
-            builder.ToTable("Periods1");
+            builder.ToTable("Periods");
 
             builder.HasKey(c => c.Id);
             builder.Property(p => p.Id).HasColumnName("IdKey");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.Year);
             builder.Property(p => p.Month);
+
+
         }
     }
 }

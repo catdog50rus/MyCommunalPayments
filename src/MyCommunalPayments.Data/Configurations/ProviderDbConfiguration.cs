@@ -12,8 +12,8 @@ namespace MyCommunalPayments.Data.Configurations
             builder.ToTable("Providers").HasKey(c => c.Id);
 
             builder.Property(p => p.Id).HasColumnName("IdProvider");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.NameProvider);
             builder.Property(p => p.WebSite);

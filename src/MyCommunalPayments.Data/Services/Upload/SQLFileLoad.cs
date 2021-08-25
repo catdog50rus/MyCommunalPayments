@@ -7,41 +7,41 @@ using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Data.Services.Upload
 {
-    public class SQLFileLoad : SQLRepository, IFileLoad
-    {
-        public int OrderId { get; private set; }
+    //public class SQLFileLoad : SQLRepository, IFileLoad
+    //{
+    //    public int OrderId { get; private set; }
 
-        public SQLFileLoad(DBContext context) : base(context) { }
+    //    public SQLFileLoad(DBContext context) : base(context) { }
 
-        public async Task UploadAsync(Order order)
-        {
-            Context.Orders.Add(order);
-            await Context.SaveChangesAsync();
-            OrderId = order.IdOrder;
-        }
+    //    public async Task UploadAsync(Order order)
+    //    {
+    //        Context.Orders.Add(order);
+    //        await Context.SaveChangesAsync();
+    //        OrderId = order.IdOrder;
+    //    }
 
-        public async Task<Order> GetOrderById(int id)
-        {
-            return await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
-        }
+    //    public async Task<Order> GetOrderById(int id)
+    //    {
+    //        return await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
+    //    }
 
-        public async Task<byte[]> GetOrder(int id)
-        {
-            var order = await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
-            var content = order.OrderScreen;
+    //    public async Task<byte[]> GetOrder(int id)
+    //    {
+    //        var order = await Context.Orders.FirstOrDefaultAsync(i => i.IdOrder == id);
+    //        var content = order.OrderScreen;
 
-            return content;
-        }
+    //        return content;
+    //    }
 
-        public async Task<bool> RemoveAsync(int id)
-        {
-            var order = await GetOrderById(id);
-            if (order == null) return false;
+    //    public async Task<bool> RemoveAsync(int id)
+    //    {
+    //        var order = await GetOrderById(id);
+    //        if (order == null) return false;
 
-            Context.Remove(order);
-            await Context.SaveChangesAsync();
-            return true;
+    //        Context.Remove(order);
+    //        await Context.SaveChangesAsync();
+    //        return true;
 
-        }
-    }
+    //    }
+    //}
 }

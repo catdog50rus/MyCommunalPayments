@@ -45,6 +45,45 @@ namespace MyCommunalPayments.Infrastructure.Mapper
                opt => opt.MapFrom(i => i.Id));
 
             #endregion
+
+
+            #region Model => Entity
+
+            CreateMap<Invoice, InvoiceDb>()
+                .ForMember(dist => dist.Id,
+                opt => opt.MapFrom(i => i.IdInvoice));
+
+            CreateMap<InvoiceServices, InvoiceServiceDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdInvoiceServices));
+
+            CreateMap<Order, OrderDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdOrder));
+
+            CreateMap<Payment, PaymentDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdPayment));
+
+            CreateMap<Period, PeriodDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdKey));
+
+            CreateMap<Provider, ProviderDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdProvider));
+
+            CreateMap<ProvidersServices, ProviderServiceDb>();
+
+            CreateMap<Service, ServiceDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdService));
+
+            CreateMap<ServiceCounter, ServiceCounterDb>()
+               .ForMember(dist => dist.Id,
+               opt => opt.MapFrom(i => i.IdCounter));
+
+            #endregion
         }
     }
 }

@@ -25,9 +25,9 @@ namespace MyCommunalPayments.Data.Repositories.Impl.SQL.Base
             _dbset = _context.Set<TEntity>();
         }
 
-        public async Task<ICollection<TEntity>> GetEntitiesAsync(CancellationToken cancel = default)
+        public virtual async Task<ICollection<TEntity>> GetEntitiesAsync(CancellationToken cancel = default)
         {
-            var result = await _dbset
+            var result = await Items
                 .AsNoTracking()
                 .ToArrayAsync(cancel)
                 .ConfigureAwait(false);

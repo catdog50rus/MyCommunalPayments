@@ -12,8 +12,8 @@ namespace MyCommunalPayments.Data.Configurations
             builder.ToTable("Orders").HasKey(c => c.Id);
 
             builder.Property(p => p.Id).HasColumnName("IdOrder");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.FileName);
             builder.Property(p => p.OrderScreen);

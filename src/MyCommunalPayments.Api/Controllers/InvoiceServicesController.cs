@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.BL.Interfaces;
 using MyCommunalPayments.Models.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Api.Controllers
 {
@@ -16,35 +14,37 @@ namespace MyCommunalPayments.Api.Controllers
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class InvoiceServicesController : ControllerBase
     {
-        private readonly IRepository<InvoiceServices> repository;
+        private readonly IInvoiceServiceService  _service;
 
-        public InvoiceServicesController(IRepository<InvoiceServices> repository) => this.repository = repository;
-
-
-        [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<InvoiceServices>>> Search(string name)
+        public InvoiceServicesController(IInvoiceServiceService service)
         {
-            try
-            {
-                var result = await repository.Search(name);
-
-                if (result.Any()) return Ok(result);
-
-                return NotFound($"Не найдено!");
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
-            }
+             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
+        //[HttpGet("{search}")]
+        //public async Task<ActionResult<IEnumerable<InvoiceServices>>> Search(string name)
+        //{
+        //    try
+        //    {
+        //        var result = await repository.Search(name);
+
+        //        if (result.Any()) return Ok(result);
+
+        //        return NotFound($"Не найдено!");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Ошибка базы данных {ex.Message}");
+        //    }
+        //}
 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
             try
             {
-                return Ok(await repository.GetAllAsync());
+                return Ok(await _service.GetEntitiesAsync());
             }
             catch (Exception ex)
             {
@@ -58,8 +58,9 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var result = await repository.GetByIdAsync(id);
-                if (result == null) return NotFound($"Запись с ID: {id} не найдена");
+                var result = await _service.GetEntityAsync(id);
+                if (result == null) 
+                    return NotFound($"Запись с ID: {id} не найдена");
 
                 return result;
             }
@@ -72,14 +73,15 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InvoiceServices>> CreateNew(InvoiceServices item)
+        public async Task<ActionResult<InvoiceServices>> CreateNew(InvoiceServices newInvoiceService)
         {
             try
             {
-                if (item == null) return BadRequest($"Запрос пустой");
+                if (newInvoiceService == null) 
+                    return BadRequest($"Запрос пустой");
 
-                var result = await repository.AddAsync(item);
-                return CreatedAtAction(nameof(GetById), new { id = result.IdInvoiceServices }, result);
+                var result = await _service.CreateEntityAsync(newInvoiceService);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -88,16 +90,15 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<InvoiceServices>> Update(int id, InvoiceServices item)
+        public async Task<ActionResult> Update(int id, InvoiceServices item)
         {
             try
             {
-                if (item == null || id != item.IdInvoiceServices) return BadRequest($"ID: {id} не соответствует запросу");
-                var updateContent = await repository.GetByIdAsync(id);
+                if (item == null || id != item.IdInvoiceServices) 
+                    return BadRequest($"ID: {id} не соответствует запросу");
 
-                if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.EditAsync(item);
+                await _service.UpdateEntityAsync(item);
+                return Ok();
 
             }
             catch (Exception ex)
@@ -107,18 +108,16 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<InvoiceServices>> Update(InvoiceServices item)
+        public async Task<ActionResult> Update(InvoiceServices item)
         {
             try
             {
-                if (item == null) return BadRequest();
-                int id = item.IdInvoiceServices;
-                var updateContent = await repository.GetByIdAsync(id);
-
-                if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.EditAsync(item);
-
+                if (item == null) 
+                    return BadRequest();
+                
+                await _service.UpdateEntityAsync(item);
+                
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -127,16 +126,12 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<InvoiceServices>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                var deleteContent = await repository.GetByIdAsync(id);
-
-                if (deleteContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.RemoveAsync(id);
-
+                await _service.DeleteEntityAsync(id);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -144,5 +139,5 @@ namespace MyCommunalPayments.Api.Controllers
             }
         }
     }
-    
+
 }

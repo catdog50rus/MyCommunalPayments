@@ -12,14 +12,26 @@ namespace MyCommunalPayments.Data.Configurations
             builder.ToTable("Payments").HasKey(c => c.Id);
 
             builder.Property(p => p.Id).HasColumnName("IdPayment");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.IdInvoice);
             builder.Property(p => p.IdOrder);
             builder.Property(p => p.PaymentSum);
             builder.Property(p => p.Paid);
             builder.Property(p => p.DatePayment);
+
+            builder
+                .HasOne(x => x.Invoice)
+                .WithOne()
+                .HasForeignKey<PaymentDb>(x => x.IdInvoice)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder
+               .HasOne(x => x.Order)
+               .WithOne()
+               .HasForeignKey<PaymentDb>(x => x.IdOrder)
+               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

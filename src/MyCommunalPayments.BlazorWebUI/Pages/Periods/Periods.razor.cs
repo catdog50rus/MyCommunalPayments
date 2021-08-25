@@ -58,7 +58,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             pageOfSet = page[0];
             pageSize = page[1];
             await StateUpdate();
-
         }
 
         protected override async Task OnInitializedAsync()
@@ -66,7 +65,6 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
             pageSize = pageSizeList[0];
             await StateUpdate();
             NavMenu.SetSubMenu(true);
-
         }
 
         #endregion

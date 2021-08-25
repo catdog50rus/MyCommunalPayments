@@ -9,20 +9,29 @@ namespace MyCommunalPayments.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<InvoiceDb> builder)
         {
-            builder.ToTable("Invoices1");
+            builder.ToTable("Invoices");
 
             builder.HasKey(c => c.Id);
-            builder.Property(p => p.Id).HasColumnName("IdInvoice1");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt1").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            builder.Property(p => p.Id).HasColumnName("IdInvoice");
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.IdPeriod).HasColumnName("IdPeriod");
             builder.Property(p => p.IdProvider).HasColumnName("IdProvider");
             builder.Property(p => p.InvoiceSum).HasColumnName("InvoiceSum");
             builder.Property(p => p.Pay).HasColumnName("Pay");
 
-            builder.HasOne<PeriodDb>(nameof(InvoiceDb.Period));
-            builder.HasOne<ProviderDb>(nameof(InvoiceDb.Provider));
+            builder
+                .HasOne(i => i.Period)
+                .WithOne()
+                .HasForeignKey<InvoiceDb>(x=>x.IdPeriod)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder
+                .HasOne(i => i.Provider)
+                .WithOne()
+                .HasForeignKey<InvoiceDb>(x=>x.IdProvider)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

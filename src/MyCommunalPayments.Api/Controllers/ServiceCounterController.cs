@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyCommunalPayments.Data.Services.Repositories.Base;
+using MyCommunalPayments.BL.Interfaces;
 using MyCommunalPayments.Models.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace MyCommunalPayments.Api.Controllers
 {
@@ -16,41 +14,42 @@ namespace MyCommunalPayments.Api.Controllers
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class ServiceCounterController : ControllerBase
     {
-        private readonly IRepository<ServiceCounter> repository;
+        private readonly IServiceCounterService  _service;
 
-        public ServiceCounterController(IRepository<ServiceCounter> repository) => this.repository = repository;
-
-
-        [HttpGet("{search}")]
-        public async Task<ActionResult<IEnumerable<ServiceCounter>>> Search(string name)
+        public ServiceCounterController(IServiceCounterService service)
         {
-            try
-            {
-                var result = await repository.Search(name);
-
-                if (result.Any()) return Ok(result);
-
-                return NotFound($"Не найдено!");
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Ошибка базы данных {ex.Message}");
-            }
+             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
+        //[HttpGet("{search}")]
+        //public async Task<ActionResult<IEnumerable<ServiceCounter>>> Search(string name)
+        //{
+        //    try
+        //    {
+        //        var result = await repository.Search(name);
+
+        //        if (result.Any()) return Ok(result);
+
+        //        return NotFound($"Не найдено!");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Ошибка базы данных {ex.Message}");
+        //    }
+        //}
 
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
             try
             {
-                return Ok(await repository.GetAllAsync());
+                return Ok(await _service.GetEntitiesAsync());
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
-
         }
 
         [HttpGet("{id:int}")]
@@ -58,7 +57,7 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var result = await repository.GetByIdAsync(id);
+                var result = await _service.GetEntityAsync(id);
                 if (result == null) return NotFound($"Запись с ID: {id} не найдена");
 
                 return result;
@@ -67,8 +66,6 @@ namespace MyCommunalPayments.Api.Controllers
             {
                 return StatusCode(500, $"Ошибка базы данных {ex.Message}");
             }
-
-
         }
 
         [HttpPost]
@@ -76,10 +73,11 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                if (item == null) return BadRequest($"Запрос пустой");
+                if (item == null)
+                    return BadRequest($"Запрос пустой");
 
-                var result = await repository.AddAsync(item);
-                return CreatedAtAction(nameof(GetById), new { id = result.IdCounter }, result);
+                var result = await _service.CreateEntityAsync(item);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -88,17 +86,14 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ServiceCounter>> Update(int id, ServiceCounter item)
+        public async Task<ActionResult> Update(int id, ServiceCounter item)
         {
             try
             {
                 if (item == null || id != item.IdCounter) return BadRequest($"ID: {id} не соответствует запросу");
-                var updateContent = await repository.GetByIdAsync(id);
+                await _service.UpdateEntityAsync(item);
 
-                if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.EditAsync(item);
-
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -107,18 +102,14 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceCounter>> Update(ServiceCounter item)
+        public async Task<ActionResult> Update(ServiceCounter item)
         {
             try
             {
                 if (item == null) return BadRequest();
-                int id = item.IdCounter;
-                var updateContent = await repository.GetByIdAsync(id);
+                await _service.UpdateEntityAsync(item);
 
-                if (updateContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.EditAsync(item);
-
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -131,12 +122,8 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                var deleteContent = await repository.GetByIdAsync(id);
-
-                if (deleteContent == null) return BadRequest($"Запись с ID: {id} не найдена");
-
-                return await repository.RemoveAsync(id);
-
+                await _service.DeleteEntityAsync(id);
+                return Ok();
             }
             catch (Exception ex)
             {

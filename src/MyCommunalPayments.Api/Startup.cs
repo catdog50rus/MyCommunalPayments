@@ -48,14 +48,14 @@ namespace MyCommunalPayments.Api
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
             
-            services.AddScoped<IRepository<Service>, SQLService<Service>>();
-            services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
-            services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
-            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
-            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
-            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+            //services.AddScoped<IRepository<Service>, SQLService<Service>>();
+            //services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
+            //services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
+            //services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
+            //services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
+            //services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
+            //services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            //services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
 
             services.AddCustomAutoMapper();
 

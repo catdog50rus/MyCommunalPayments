@@ -12,12 +12,18 @@ namespace MyCommunalPayments.Data.Configurations
             builder.ToTable("ServicesCounters").HasKey(c => c.Id);
 
             builder.Property(p => p.Id).HasColumnName("IdCounter");
-            builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
-            builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.CreatedAt).HasColumnName("CreatedAt").HasColumnType(nameof(DateTime));
+            //builder.Property(p => p.UpdatedAt).HasColumnName("UpdatedAt").HasColumnType(nameof(DateTime));
 
             builder.Property(p => p.DateCount);
             builder.Property(p => p.IdService);
             builder.Property(p => p.ValueCounter);
+
+            builder
+               .HasOne(x => x.Service)
+               .WithOne()
+               .HasForeignKey<ServiceCounterDb>(x => x.IdService)
+               .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

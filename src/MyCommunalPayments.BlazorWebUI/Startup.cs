@@ -83,7 +83,7 @@ namespace MyCommunalPayments.BlazorWebUI
                 client.BaseAddress = new Uri(_apiPath);
             });
 
-            services.AddScoped<IFileLoad, SQLFileLoad>();
+            //services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
 
