@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using MyCommunalPayments.Data.Services.Upload;
-using MyCommunalPayments.Models.Models;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
@@ -17,7 +15,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected UploadViewModel uploadViewModel;
 
         [Inject]
-        public IFileLoad FileUploadRepository { get; set; }
+        public IFileService FileService { get; set; }
 
         [Parameter]
         public EventCallback<int> OnUploadReturnToPayment { get; set; }
@@ -74,25 +72,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected async Task SaveFileAsync()
         {
             isLoad = false;
-            //Создаем поток
-            using var stream = uploadViewModel.File.OpenReadStream();
 
-            var ms = new MemoryStream();
-            //Присваиваем имя файла для хранения в БД
-            Guid guid = Guid.NewGuid();
-            var filename = $"{guid}.pdf";
-            //Считываем файл в память
-            await stream.CopyToAsync(ms);
-            //Создаем и инициализируем экземпляр модели
-            var order = new Order()
-            {
-                OrderScreen = ms.ToArray(),
-                FileName = filename
-            };
-            //Сохраняем модель в БД
-            await FileUploadRepository.UploadAsync(order);
+            var file = uploadViewModel.File;
+
+            await FileService.UploadFile(file); 
             //Получаем id
-            orderId = FileUploadRepository.OrderId;
+            orderId = 0;
             isLoad = false;
         }
 

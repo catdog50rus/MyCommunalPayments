@@ -44,7 +44,8 @@ namespace MyCommunalPayments.Api.Controllers
         {
             try
             {
-                return Ok(await _service.GetEntitiesAsync());
+                var result = await _service.GetEntitiesAsync();
+                return Ok(result);
             }
             catch (Exception ex)
             {

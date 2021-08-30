@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MyCommunalPayments.Api.Infrastucture.ApiContracts;
 using MyCommunalPayments.Data.DBModels.Models;
 using MyCommunalPayments.Models.Models;
 
@@ -84,6 +85,14 @@ namespace MyCommunalPayments.Infrastructure.Mapper
                opt => opt.MapFrom(i => i.IdCounter));
 
             #endregion
+
+
+            #region Models => Contract
+
+            CreateMap<Order, OrderContract>();
+
+            #endregion
+
         }
     }
 }

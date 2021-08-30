@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyCommunalPayments.BL.Interfaces;
-using MyCommunalPayments.Data.Services.Repositories.Base;
 using MyCommunalPayments.Models.Models;
+using System;
+using System.Threading.Tasks;
 
 
 namespace MyCommunalPayments.Api.Controllers

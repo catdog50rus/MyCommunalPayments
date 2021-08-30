@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Toast;
-using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 
 namespace MyCommunalPayments.BlazorWebUI
@@ -17,8 +17,6 @@ namespace MyCommunalPayments.BlazorWebUI
     public class Startup
     {
         private const string _apiPathExpress = @"https://localhost:3001/";
-
-        
 
         public Startup(IConfiguration configuration)
         {
@@ -79,6 +77,10 @@ namespace MyCommunalPayments.BlazorWebUI
                 client.BaseAddress = new Uri(_apiPath);
             });
             services.AddHttpClient<IApiRepository<Invoice>, InvoiceService>(client =>
+            {
+                client.BaseAddress = new Uri(_apiPath);
+            });
+            services.AddHttpClient<IFileService, FileService>(client =>
             {
                 client.BaseAddress = new Uri(_apiPath);
             });

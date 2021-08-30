@@ -31,11 +31,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Data.Rep
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastucture", "Infrastucture", "{8659C16B-AD2E-426E-982F-627D7195ECC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Infrastructure.Mapper", "src\MyCommunalPayments.Infrastructure.Mapper\MyCommunalPayments.Infrastructure.Mapper.csproj", "{52D5BDB5-BC94-4948-9747-D44B1FBB892B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.Infrastructure.Mapper", "src\MyCommunalPayments.Infrastructure.Mapper\MyCommunalPayments.Infrastructure.Mapper.csproj", "{52D5BDB5-BC94-4948-9747-D44B1FBB892B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.BL.Interfaces", "src\MyCommunalPayments.BL.Interfaces\MyCommunalPayments.BL.Interfaces.csproj", "{75889617-C3AA-4EB8-A60A-035E94113C44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.BL.Interfaces", "src\MyCommunalPayments.BL.Interfaces\MyCommunalPayments.BL.Interfaces.csproj", "{75889617-C3AA-4EB8-A60A-035E94113C44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.BL.Services", "src\MyCommunalPayments.BL.Services\MyCommunalPayments.BL.Services.csproj", "{2017E0FB-910D-42C0-8423-CB68A025027D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCommunalPayments.BL.Services", "src\MyCommunalPayments.BL.Services\MyCommunalPayments.BL.Services.csproj", "{2017E0FB-910D-42C0-8423-CB68A025027D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Api.Infrastucture", "src\MyCommunalPayments.Api.Infrastucture\MyCommunalPayments.Api.Infrastucture.csproj", "{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.UI.ViewModels", "src\MyCommunalPayments.UI.ViewModels\MyCommunalPayments.UI.ViewModels.csproj", "{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +87,14 @@ Global
 		{2017E0FB-910D-42C0-8423-CB68A025027D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2017E0FB-910D-42C0-8423-CB68A025027D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2017E0FB-910D-42C0-8423-CB68A025027D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +116,8 @@ Global
 		{52D5BDB5-BC94-4948-9747-D44B1FBB892B} = {8659C16B-AD2E-426E-982F-627D7195ECC5}
 		{75889617-C3AA-4EB8-A60A-035E94113C44} = {EEA598E9-D552-4808-9E91-E973F9815FE3}
 		{2017E0FB-910D-42C0-8423-CB68A025027D} = {EEA598E9-D552-4808-9E91-E973F9815FE3}
+		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA} = {FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758}
+		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87} = {A3FD30BF-773A-4FC9-AB2D-51725621B1A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7A0B136-87BB-47E5-BF95-BFF1D5BA2DEA}

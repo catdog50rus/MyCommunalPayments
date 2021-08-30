@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyCommunalPayments.Api.Infrastucture\MyCommunalPayments.Api.Infrastucture.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Data.DBModels\MyCommunalPayments.Data.DBModels.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Models\MyCommunalPayments.Models.csproj" />
   </ItemGroup>
