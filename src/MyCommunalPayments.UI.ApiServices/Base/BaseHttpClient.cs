@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace MyCommunalPayments.BlazorWebUI.Services.ApiServices.Base
+namespace MyCommunalPayments.UI.ApiServices.Base
 {
     public abstract class BaseHttpClient
     {

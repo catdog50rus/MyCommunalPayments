@@ -4,13 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyCommunalPayments.BlazorWebUI.Services.ApiServices;
-using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using MyCommunalPayments.Data.Context;
-using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Toast;
-using MyCommunalPayments.Models.Models;
 using System;
+using MyCommunalPayments.UI.ApiServices.Registration;
 
 namespace MyCommunalPayments.BlazorWebUI
 {
@@ -47,45 +44,7 @@ namespace MyCommunalPayments.BlazorWebUI
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
 
-            string _apiPath = _apiPathExpress;
-            services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<Period>, PeriodsService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<Provider>, ProvidersService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<ProvidersServices>, ProviderServicesService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<ServiceCounter>, ServiceCounterService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<Payment>, PaymentsService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<InvoiceServices>, InvoiceServicesService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IApiRepository<Invoice>, InvoiceService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-            services.AddHttpClient<IFileService, FileService>(client =>
-            {
-                client.BaseAddress = new Uri(_apiPath);
-            });
-
-            //services.AddScoped<IFileLoad, SQLFileLoad>();
+            services.AddApiServices(_apiPathExpress);
             services.AddScoped<IToast, ToastService>();
 
 

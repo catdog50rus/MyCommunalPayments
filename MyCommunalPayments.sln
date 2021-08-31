@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.Api.Infr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.UI.ViewModels", "src\MyCommunalPayments.UI.ViewModels\MyCommunalPayments.UI.ViewModels.csproj", "{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyCommunalPayments.UI.ApiServices", "src\MyCommunalPayments.UI.ApiServices\MyCommunalPayments.UI.ApiServices.csproj", "{80AEBEC5-4F6D-426C-AB78-1992551EBDFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80AEBEC5-4F6D-426C-AB78-1992551EBDFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80AEBEC5-4F6D-426C-AB78-1992551EBDFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80AEBEC5-4F6D-426C-AB78-1992551EBDFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80AEBEC5-4F6D-426C-AB78-1992551EBDFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{2017E0FB-910D-42C0-8423-CB68A025027D} = {EEA598E9-D552-4808-9E91-E973F9815FE3}
 		{7E4C310E-3FFD-44D4-A34C-FEFCA45416EA} = {FB7E72BA-1AD4-4B4B-8B2F-F889F89E4758}
 		{14DAC316-0DE5-491B-8FFE-EC9120A7BE87} = {A3FD30BF-773A-4FC9-AB2D-51725621B1A4}
+		{80AEBEC5-4F6D-426C-AB78-1992551EBDFE} = {A3FD30BF-773A-4FC9-AB2D-51725621B1A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7A0B136-87BB-47E5-BF95-BFF1D5BA2DEA}

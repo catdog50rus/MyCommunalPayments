@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Components;
 using MyCommunalPayments.BlazorWebUI.Shared;
-using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Toast;
 using MyCommunalPayments.Models.Models;
 using System;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MyCommunalPayments.UI.ApiServices;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Periods
 {

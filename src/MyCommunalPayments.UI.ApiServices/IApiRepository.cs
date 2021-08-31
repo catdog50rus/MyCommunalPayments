@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyCommunalPayments.Data.Services.ApiServices
+namespace MyCommunalPayments.UI.ApiServices
 {
     public interface IApiRepository<T> where T : class
     {

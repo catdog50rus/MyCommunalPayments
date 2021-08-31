@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MyCommunalPayments.UI.ApiServices.Interfaces;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 {

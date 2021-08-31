@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MyCommunalPayments.BlazorWebUI.Components;
-using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Models.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MyCommunalPayments.UI.ApiServices;
 
 namespace MyCommunalPayments.BlazorWebUI.Pages.Services.Base
 {

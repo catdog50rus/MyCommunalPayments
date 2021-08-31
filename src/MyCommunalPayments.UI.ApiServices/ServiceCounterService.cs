@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
-using MyCommunalPayments.Models.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.Models.Models;
+using MyCommunalPayments.UI.ApiServices.Base;
 
-namespace MyCommunalPayments.Data.Services.ApiServices
+namespace MyCommunalPayments.UI.ApiServices
 {
-    public class ServiceCounterService : BaseService, IApiRepository<ServiceCounter>
+    public class ServiceCounterService : BaseHttpClient, IApiRepository<ServiceCounter>
     {
         public ServiceCounterService(HttpClient httpClient) : base(httpClient) { }
 

@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
-using MyCommunalPayments.Models.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MyCommunalPayments.Models.Models;
+using MyCommunalPayments.UI.ApiServices.Base;
 
-namespace MyCommunalPayments.Data.Services.ApiServices
+namespace MyCommunalPayments.UI.ApiServices
 {
-    public class InvoiceServicesService : BaseService, IApiRepository<InvoiceServices>
+    public class InvoiceServicesService : BaseHttpClient, IApiRepository<InvoiceServices>
     {
         public InvoiceServicesService(HttpClient httpClient) : base(httpClient) { }
 
