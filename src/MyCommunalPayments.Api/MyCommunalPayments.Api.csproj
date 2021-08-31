@@ -24,7 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyCommunalPayments.Api.Infrastucture\MyCommunalPayments.Api.Infrastucture.csproj" />
+    <ProjectReference Include="..\MyCommunalPayments.BL.Services\MyCommunalPayments.BL.Services.csproj" />
+    <ProjectReference Include="..\MyCommunalPayments.Data.Repositories.Impl\MyCommunalPayments.Data.Repositories.Impl.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Data\MyCommunalPayments.Data.csproj" />
+    <ProjectReference Include="..\MyCommunalPayments.Infrastructure.Mapper\MyCommunalPayments.Infrastructure.Mapper.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Models\MyCommunalPayments.Models.csproj" />
   </ItemGroup>
 

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyCommunalPayments.Api.Infrastucture\MyCommunalPayments.Api.Infrastucture.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Data\MyCommunalPayments.Data.csproj" />
     <ProjectReference Include="..\MyCommunalPayments.Models\MyCommunalPayments.Models.csproj" />
   </ItemGroup>
@@ -35,6 +36,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\ApiServices\Interfaces\" />
   </ItemGroup>
 
 </Project>

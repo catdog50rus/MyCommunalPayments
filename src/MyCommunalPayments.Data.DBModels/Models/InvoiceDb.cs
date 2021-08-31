@@ -1,4 +1,5 @@
 ﻿using MyCommunalPayments.Data.DBModels.Models.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyCommunalPayments.Data.DBModels.Models
 {

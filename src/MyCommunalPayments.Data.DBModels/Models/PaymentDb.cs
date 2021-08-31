@@ -14,7 +14,7 @@ namespace MyCommunalPayments.Data.DBModels.Models
 
         public bool Paid { get; set; }
 
-        public int IdOrder { get; set; }
+        public int? IdOrder { get; set; }
 
         public OrderDb Order { get; set; }
     }

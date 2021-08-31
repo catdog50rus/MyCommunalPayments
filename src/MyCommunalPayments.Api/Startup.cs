@@ -5,11 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MyCommunalPayments.Api.Infrastucture.ApiServices;
+using MyCommunalPayments.BL.Services;
 using MyCommunalPayments.Data.Context;
-using MyCommunalPayments.Data.Services.Repositories;
-using MyCommunalPayments.Data.Services.Repositories.Base;
-using MyCommunalPayments.Models.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using MyCommunalPayments.Data.Repositories.Impl;
+using MyCommunalPayments.Infrastructure.Mapper;
 using System;
 using System.IO;
 using System.Reflection;
@@ -25,30 +25,42 @@ namespace MyCommunalPayments.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<DBContext>(options =>
-            {
-                //options.UseSqlite(Configuration.GetConnectionString("MySQLiteDB"));
-                
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                new MySqlServerVersion(new Version(8, 0, 22)), 
-                    mySqlOptions => mySqlOptions
-                        .CharSetBehavior(CharSetBehavior.NeverAppend))
-                    // Everything from this point on is optional but helps with debugging.
-                        .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors();
-            });
-            
-            services.AddScoped<IRepository<Service>, SQLService<Service>>();
-            services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
-            services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
-            services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
-            services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
-            services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+
+            // Replace with your connection string.
+            var connectionString = Configuration.GetConnectionString("MySQLConnection");
+
+            // Replace with your server version and type.
+            // Use 'MariaDbServerVersion' for MariaDB.
+            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
+            // For common usages, see pull request #1233.
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 22));
+
+            // Replace 'YourDbContext' with the name of your own DbContext derived class.
+            services.AddDbContext<DBContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, serverVersion)
+                    .EnableSensitiveDataLogging() // <-- These two calls are optional but help
+                    .EnableDetailedErrors()       // <-- with debugging (remove for production).
+            );
+
+            //services.AddScoped<IRepository<Service>, SQLService<Service>>();
+            //services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
+            //services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
+            //services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
+            //services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
+            //services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
+            //services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
+            //services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+
+            services.AddScoped<IApiFileService, ApiFileService>();
+
+            services.AddCustomAutoMapper();
+
+            services.AddRepositories();
+
+            services.AddServices();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

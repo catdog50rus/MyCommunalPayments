@@ -9,11 +9,10 @@
             Invoice controller
             </summary>
         </member>
-        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.#ctor(MyCommunalPayments.Data.Services.Repositories.Base.IRepository{MyCommunalPayments.Models.Models.Invoice})">
+        <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.#ctor(MyCommunalPayments.BL.Interfaces.IInvoiceService)">
             <summary>
             Invoice Controller
             </summary>
-            <param name="repository"></param>
         </member>
         <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.GetAll">
             <summary>
@@ -34,7 +33,7 @@
             <summary>
             Create New Invoice
             </summary>
-            <param name="item">Invoice</param>
+            <param name="newInvoice">Invoice</param>
             <returns>Invoice</returns>
         </member>
         <member name="M:MyCommunalPayments.Api.Controllers.InvoiceController.Update(System.Int32,MyCommunalPayments.Models.Models.Invoice)">

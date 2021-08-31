@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MyCommunalPayments.BlazorWebUI.Components;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using MyCommunalPayments.Data.Services.ApiServices;
-using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
@@ -35,8 +35,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         public IApiRepository<Payment> Repository { get; set; }
         [Inject]
         public IApiRepository<Invoice> InvoiceRepository { get; set; }
+        //[Inject]
+        //public IFileLoad FileLoad { get; set; }
         [Inject]
-        public IFileLoad FileLoad { get; set; }
+        public IFileService FileService { get; set; }
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
@@ -144,7 +146,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             //Удаляем платеж и вносим изменения в БД
             await Repository.RemoveAsync(item.IdPayment);
-            await FileLoad.RemoveAsync(item.IdOrder);
+            await FileService.RemoveAsync(item.IdOrder);
             Invoice.Pay = false;
             await InvoiceRepository.EditAsync(Invoice);
             await StateUpdate();
@@ -190,7 +192,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             //Проверяем модель а наличие записи о файле платежки и удаляем ее
             if (payment.IdOrder != 0)
             {
-                await FileLoad.RemoveAsync(payment.IdOrder);
+                await FileService.RemoveAsync(payment.IdOrder);
                 payment.IdOrder = 0;
             }
 
@@ -203,7 +205,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         protected async void DownloadFile(Payment item)
         {
             //Проверяем есть ли в БД файл платежки
-            Order order = await FileLoad.GetOrderById(item.IdOrder);
+            var order = await FileService.GetOrderById(item.IdOrder);
             if (order != null)
             {
                 //Получаем из БД файл в виде массива байтов и имя файла
@@ -235,9 +237,10 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             await GetAllAsync();
             if (Invoice != null)
             {
-                paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice);
+                paymentsList = (await Repository.GetAllAsync()).Where(i => i.IdInvoice == Invoice.IdInvoice);
                 totalItems = paymentsList.Count();
-                if (!paymentsList.Any()) payment = default;
+                if (!paymentsList.Any()) 
+                    payment = default;
             }
         }
 
@@ -245,13 +248,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             if (totalItems == 0)
             {
-                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(d => d.Invoice.Period.ToSort());
+                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(i => i.Invoice.Period.ToSort());
                 totalItems = paymentsList.Count();
                 paymentsList = paymentsList.Skip(pageOfSet).Take(pageSize);
             }
             else
-                paymentsList = (await Repository.GetAllAsync())
-                    .OrderByDescending(d => d.Invoice.Period.ToSort())
+                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(i => i.Invoice.Period.ToSort())
                     .Skip(pageOfSet)
                     .Take(pageSize);
 

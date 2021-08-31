@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices;
+using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Services.ApiServices;
 using MyCommunalPayments.Data.Services.Toast;
-using MyCommunalPayments.Data.Services.Upload;
 using MyCommunalPayments.Models.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 
 namespace MyCommunalPayments.BlazorWebUI
@@ -17,8 +17,6 @@ namespace MyCommunalPayments.BlazorWebUI
     public class Startup
     {
         private const string _apiPathExpress = @"https://localhost:3001/";
-
-        
 
         public Startup(IConfiguration configuration)
         {
@@ -31,16 +29,23 @@ namespace MyCommunalPayments.BlazorWebUI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContextPool<DBContext>(options =>
-            {
 
-                options.UseMySql(Configuration.GetConnectionString("MySQLConnection"),
-                        new MySqlServerVersion(new Version(8, 0, 22)),
-                        mySqlOptions => mySqlOptions
-                            .CharSetBehavior(CharSetBehavior.NeverAppend))
-                            .EnableSensitiveDataLogging()
-                            .EnableDetailedErrors();
-            });
+            // Replace with your connection string.
+            var connectionString = Configuration.GetConnectionString("MySQLConnection");
+
+            // Replace with your server version and type.
+            // Use 'MariaDbServerVersion' for MariaDB.
+            // Alternatively, use 'ServerVersion.AutoDetect(connectionString)'.
+            // For common usages, see pull request #1233.
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 22));
+
+            // Replace 'YourDbContext' with the name of your own DbContext derived class.
+            services.AddDbContext<DBContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(connectionString, serverVersion)
+                    .EnableSensitiveDataLogging() // <-- These two calls are optional but help
+                    .EnableDetailedErrors()       // <-- with debugging (remove for production).
+            );
 
             string _apiPath = _apiPathExpress;
             services.AddHttpClient<IApiRepository<Service>, ServicesService>(client=> 
@@ -75,8 +80,12 @@ namespace MyCommunalPayments.BlazorWebUI
             {
                 client.BaseAddress = new Uri(_apiPath);
             });
+            services.AddHttpClient<IFileService, FileService>(client =>
+            {
+                client.BaseAddress = new Uri(_apiPath);
+            });
 
-            services.AddScoped<IFileLoad, SQLFileLoad>();
+            //services.AddScoped<IFileLoad, SQLFileLoad>();
             services.AddScoped<IToast, ToastService>();
 
 
