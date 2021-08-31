@@ -15,7 +15,7 @@ namespace MyCommunalPayments.Data.Services.ApiServices
         public async Task AddAsync(Payment item) => await httpClient.PostJsonAsync<Payment>("api/payment", item);
 
 
-        public async Task EditAsync(Payment item) => await httpClient.PutJsonAsync<Payment>("api/payment", item);
+        public async Task EditAsync(Payment item) => await httpClient.PutJsonAsync("api/payment", item);
 
 
         public async Task<IEnumerable<Payment>> GetAllAsync() => await httpClient.GetJsonAsync<Payment[]>("api/payment");

@@ -237,7 +237,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
             await GetAllAsync();
             if (Invoice != null)
             {
-                paymentsList = paymentsList.Where(i => i.IdInvoice == Invoice.IdInvoice);
+                paymentsList = (await Repository.GetAllAsync()).Where(i => i.IdInvoice == Invoice.IdInvoice);
                 totalItems = paymentsList.Count();
                 if (!paymentsList.Any()) 
                     payment = default;

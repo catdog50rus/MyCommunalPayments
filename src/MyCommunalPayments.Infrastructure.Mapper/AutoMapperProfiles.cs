@@ -93,6 +93,12 @@ namespace MyCommunalPayments.Infrastructure.Mapper
 
             #endregion
 
+            #region Contract => Models
+
+            CreateMap<OrderContract, Order>();
+
+            #endregion
+
         }
     }
 }

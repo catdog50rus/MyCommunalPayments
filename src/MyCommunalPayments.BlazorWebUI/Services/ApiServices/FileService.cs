@@ -7,6 +7,7 @@ using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
 using MyCommunalPayments.Models.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -15,6 +16,18 @@ namespace MyCommunalPayments.BlazorWebUI.Services.ApiServices
 {
     public class FileService : BaseHttpClient, IFileService
     {
+        private static readonly Dictionary<string, List<byte[]>> _fileSignatires = new()
+        {
+            {
+                ".pdf",
+                new List<byte[]>
+                {
+                    new byte[] { 25, 50, 44, 46 }
+                }
+            }
+        };
+
+
         public FileService(HttpClient httpClient) : base(httpClient)
         {
         }
@@ -33,8 +46,49 @@ namespace MyCommunalPayments.BlazorWebUI.Services.ApiServices
 
         public async Task<int> UploadFile(IBrowserFile file)
         {
-            var orderId = await httpClient.SendJsonAsync<int>(HttpMethod.Post ,"api/Order", file);
-            return 0;
+            if (file is null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            //bool fileSignatureValidation = FileSignatureValidator(file);
+
+            //if (!fileSignatureValidation)
+            //    throw new Exception("Файл не соответствует типу");
+
+            using var stream = file.OpenReadStream();
+
+            var ms = new MemoryStream();
+            //Присваиваем имя файла для хранения в БД
+            Guid guid = Guid.NewGuid();
+            var filename = $"{guid}.pdf";
+            //Считываем файл в память
+            await stream.CopyToAsync(ms);
+            //Создаем и инициализируем экземпляр модели
+            var order = new OrderContract()
+            {
+                OrderScreen = ms.ToArray(),
+                FileName = filename
+            };
+
+            var orderId = await httpClient.PostJsonAsync<int>("api/Order", order);
+            return orderId;
+        }
+
+
+        private bool FileSignatureValidator(IBrowserFile file)
+        {
+            var fileExtention = Path.GetExtension(file.Name);
+            var signature = _fileSignatires[fileExtention];
+            if (signature is null || signature.Count == 0)
+                return false;
+
+            using var reader = new BinaryReader(file.OpenReadStream());
+            var headBytes = reader.ReadBytes(signature.Max(s => s.Length));
+            if (!signature.Any(signature => headBytes.Take(signature.Length).SequenceEqual(signature)))
+                return false;
+
+            return true;
         }
     }
 }

@@ -29,19 +29,19 @@ namespace MyCommunalPayments.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<int> UploadOrder(IFormFile file)
+        public async Task<int> UploadOrder(OrderContract inputOrder)
         {
-            if (file is null)
+            if (inputOrder is null)
             {
-                return 0;
+                throw new ArgumentNullException(nameof(inputOrder));
             }
-            //var inputOrder = await _fileService.UploadFileAsync(file);
 
-            //var order = _mapper.Map<Order>(inputOrder);
+            
+            var order = _mapper.Map<Order>(inputOrder);
 
-            //var neworder = await _orderService.CreateEntityAsync(order);
+            var neworder = await _orderService.CreateEntityAsync(order);
 
-            return 0;
+            return neworder.IdOrder;
         }
 
         [HttpGet("{id:int}")]

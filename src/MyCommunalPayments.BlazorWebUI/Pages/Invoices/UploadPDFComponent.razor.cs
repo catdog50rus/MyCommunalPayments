@@ -75,9 +75,8 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
             var file = uploadViewModel.File;
 
-            await FileService.UploadFile(file); 
             //Получаем id
-            orderId = 0;
+            orderId = await FileService.UploadFile(file);
             isLoad = false;
         }
 
