@@ -1,6 +1,6 @@
-﻿using System;
+﻿
 
-namespace MyCommunalPayments.Data.Services.Toast
+namespace MyCommunalPayments.BlazorWebUI.Services.Toast
 {
     public interface IToast
     {

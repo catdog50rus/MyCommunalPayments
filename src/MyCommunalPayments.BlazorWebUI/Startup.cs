@@ -5,9 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyCommunalPayments.Data.Context;
-using MyCommunalPayments.Data.Services.Toast;
 using System;
 using MyCommunalPayments.UI.ApiServices.Registration;
+using IToast = MyCommunalPayments.BlazorWebUI.Services.Toast.IToast;
+using ToastService = MyCommunalPayments.BlazorWebUI.Services.Toast.ToastService;
 
 namespace MyCommunalPayments.BlazorWebUI
 {

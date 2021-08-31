@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MyCommunalPayments.Data.Services.Toast;
+using IToast = MyCommunalPayments.BlazorWebUI.Services.Toast.IToast;
+using ToastLevel = MyCommunalPayments.BlazorWebUI.Services.Toast.ToastLevel;
 
 namespace MyCommunalPayments.BlazorWebUI.Components
 {

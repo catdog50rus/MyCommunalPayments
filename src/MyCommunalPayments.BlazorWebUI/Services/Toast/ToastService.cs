@@ -1,6 +1,6 @@
-﻿namespace MyCommunalPayments.Data.Services.Toast
+﻿namespace MyCommunalPayments.BlazorWebUI.Services.Toast
 {
-    public class ToastService : IToast
+    public class ToastService : BlazorWebUI.Services.Toast.IToast
     {
         public string BackgroundCssClass { get; set; }
         public string IconCssClass { get; set; }
