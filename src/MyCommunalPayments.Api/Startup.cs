@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MyCommunalPayments.Api.Infrastucture.ApiServices;
 using MyCommunalPayments.BL.Services;
 using MyCommunalPayments.Data.Context;
 using MyCommunalPayments.Data.Repositories.Impl;
@@ -43,7 +44,7 @@ namespace MyCommunalPayments.Api
                     .EnableSensitiveDataLogging() // <-- These two calls are optional but help
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
-            
+
             //services.AddScoped<IRepository<Service>, SQLService<Service>>();
             //services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
             //services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
@@ -52,6 +53,8 @@ namespace MyCommunalPayments.Api
             //services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
             //services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
             //services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
+
+            services.AddScoped<IApiFileService, ApiFileService>();
 
             services.AddCustomAutoMapper();
 

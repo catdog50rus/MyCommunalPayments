@@ -248,12 +248,12 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         {
             if (totalItems == 0)
             {
-                paymentsList = (await Repository.GetAllAsync());
+                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(i => i.Invoice.Period.ToSort());
                 totalItems = paymentsList.Count();
                 paymentsList = paymentsList.Skip(pageOfSet).Take(pageSize);
             }
             else
-                paymentsList = (await Repository.GetAllAsync())
+                paymentsList = (await Repository.GetAllAsync()).OrderByDescending(i => i.Invoice.Period.ToSort())
                     .Skip(pageOfSet)
                     .Take(pageSize);
 

@@ -14,7 +14,7 @@ namespace MyCommunalPayments.Data.Repositories.Impl.SQL
         }
 
         protected override IQueryable<InvoiceServiceDb> Items => base.Items
-            .Include(i => i.IdInvoice)
+            .Include(i => i.Invoice)
             .Include(i => i.Service);
     }
 }

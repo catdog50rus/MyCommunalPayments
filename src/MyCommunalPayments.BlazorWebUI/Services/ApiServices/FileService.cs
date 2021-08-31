@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using MyCommunalPayments.Api.Infrastucture.ApiContracts;
 using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Base;
 using MyCommunalPayments.BlazorWebUI.Services.ApiServices.Interfaces;
@@ -32,8 +33,8 @@ namespace MyCommunalPayments.BlazorWebUI.Services.ApiServices
 
         public async Task<int> UploadFile(IBrowserFile file)
         {
-            var orderId = await httpClient.PostJsonAsync<int>("api/Order", file);
-            return orderId;
+            var orderId = await httpClient.SendJsonAsync<int>(HttpMethod.Post ,"api/Order", file);
+            return 0;
         }
     }
 }

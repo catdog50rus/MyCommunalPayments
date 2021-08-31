@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyCommunalPayments.Api.Infrastucture.ApiContracts;
 using MyCommunalPayments.Api.Infrastucture.ApiServices;
@@ -14,35 +15,36 @@ namespace MyCommunalPayments.Api.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IMapper  _mapper;
-        private readonly IApiFileService  _fileService;
-        private readonly IOrderService  _orderService;
+        private readonly IMapper _mapper;
+        private readonly IApiFileService _fileService;
+        private readonly IOrderService _orderService;
 
         public OrderController(IMapper mapper,
                                IApiFileService fileService,
                                IOrderService orderService)
         {
-             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
             _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
         }
 
         [HttpPost]
-        public async Task<int> UploadOrder(IBrowserFile file)
+        public async Task<int> UploadOrder(IFormFile file)
         {
             if (file is null)
             {
                 return 0;
             }
-            var inputOrder = await _fileService.UploadFileAsync(file);
+            //var inputOrder = await _fileService.UploadFileAsync(file);
 
-            var order = _mapper.Map<Order>(inputOrder);
+            //var order = _mapper.Map<Order>(inputOrder);
 
-            var neworder = await _orderService.CreateEntityAsync(order);
+            //var neworder = await _orderService.CreateEntityAsync(order);
 
-            return neworder.IdOrder;
+            return 0;
         }
 
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOrder(int id)
         {
             var order = await _orderService.GetEntityAsync(id);
