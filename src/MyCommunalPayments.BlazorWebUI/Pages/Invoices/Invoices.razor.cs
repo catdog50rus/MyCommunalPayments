@@ -16,7 +16,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
         /// <summary>
         /// Модель представления
         /// </summary>
-        protected InvoiceViewModel InvoiceViewModel = new InvoiceViewModel();
+        protected InvoiceViewModel InvoiceViewModel;
 
         [Parameter]
         public IApiRepository<Invoice> Repository { get; set; }
@@ -80,6 +80,7 @@ namespace MyCommunalPayments.BlazorWebUI.Pages.Invoices
 
         protected override async Task OnInitializedAsync()
         {
+            InvoiceViewModel = new InvoiceViewModel();
             invoice = default;
             isPay = default;
             pageSize = pageSizeList[0];

@@ -45,15 +45,6 @@ namespace MyCommunalPayments.Api
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
 
-            //services.AddScoped<IRepository<Service>, SQLService<Service>>();
-            //services.AddScoped<IRepository<Period>, SQLPeriod<Period>>();
-            //services.AddScoped<IRepository<Provider>, SQLProvider<Provider>>();
-            //services.AddScoped<IRepository<ProvidersServices>, SQLProvidersServices<ProvidersServices>>();
-            //services.AddScoped<IRepository<ServiceCounter>, SQLServicesCounter<ServiceCounter>>();
-            //services.AddScoped<IRepository<Payment>, SQLPayments<Payment>>();
-            //services.AddScoped<IRepository<InvoiceServices>, SQLInvoiceServises<InvoiceServices>>();
-            //services.AddScoped<IRepository<Invoice>, SQLInvoice<Invoice>>();
-
             services.AddScoped<IApiFileService, ApiFileService>();
 
             services.AddCustomAutoMapper();
@@ -72,9 +63,6 @@ namespace MyCommunalPayments.Api
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
             });
         }
 

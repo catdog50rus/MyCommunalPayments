@@ -1,4 +1,4 @@
-﻿namespace MyCommunalPayments.UI.ViewModels.Order
+﻿namespace MyCommunalPayments.UI.ViewModels.Orders
 {
     public class Order
     {
